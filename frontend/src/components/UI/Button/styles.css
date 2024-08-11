@@ -43,7 +43,7 @@
 
 button:disabled.primary-button,
 button:disabled:hover.primary-button {
-    background-color: #D7DFFB !important;
+    background-color: var(--primary-disabled-color) !important;
 }
 
 button:disabled,

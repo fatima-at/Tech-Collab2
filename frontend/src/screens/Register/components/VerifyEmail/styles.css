@@ -1,0 +1,34 @@
+.verify-email-screen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verify-email-box {
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    width: 25rem;
+    max-width: 90%;
+    align-items: center;
+    text-align: center;
+}
+
+.verify-email-box img {
+    width: 6rem;
+}
+
+.verify-email-back-to-login {
+    display: flex;
+    align-items: center;
+    color: white;
+    gap: .5rem;
+}
+
+.verify-email-back-to-login span span:hover {
+    text-decoration: underline;
+}

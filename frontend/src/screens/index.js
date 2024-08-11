@@ -1,3 +1,4 @@
-import Auth from "./Auth/Auth";
+import Auth from "./Auth";
+import Register from "./Register";
 
-export {Auth}
+export {Auth, Register}
