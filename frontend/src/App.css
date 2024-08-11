@@ -1,0 +1,51 @@
+:root {
+    --primary-color: #692a31;
+    --primary-hover-color: #7b3a42;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    overflow: auto !important;
+    font-family: 'Work Sans';
+}
+  
+
+h1, h2 {
+  margin: 0;
+}
+
+/* Text.css */
+
+h1 {
+  font-size: 2.5em; /* Example: larger h1 */
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.75em;
+}
+
+h4 {
+  font-size: 1.5em;
+}
+
+h5 {
+  font-size: 1.25em;
+}
+
+h6 {
+  font-size: 1em;
+}
+
+p {
+  font-size: 1em;
+}
+
+small {
+  font-size: 0.85em;
+}
