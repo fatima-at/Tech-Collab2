@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Button, Input, Text } from "../../../../components";
 import { useNavigate } from "react-router-dom";
 import { AUTH_ROUTE } from "../../../../constants/routes";
+import { toast } from "react-toastify";
+import { signUp } from "../../../../services/AuthApi";
 
-const RegisterForm = () => {
+const RegisterForm = ({ setDidSubmit }) => {
   const navigate = useNavigate();
   const [isFormValid, setIsFormValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,9 +40,26 @@ const RegisterForm = () => {
     setIsFormValid(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("ss");
+    setIsLoading(true);
+
+    const body = {
+      name: registeredInfo.name,
+      email: registeredInfo.email,
+      password: registeredInfo.password,
+      user_type: "student",
+    };
+
+    try {
+      const response = await signUp(body);
+      toast.success(response.message);
+      setDidSubmit(true);
+    } catch (error) {
+      toast.error(error?.message || "Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const login = () => {

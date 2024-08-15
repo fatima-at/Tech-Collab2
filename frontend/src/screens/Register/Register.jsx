@@ -12,7 +12,11 @@ const Register = () => {
   return (
     <div className="register-screen">
       <LogoHeader />
-      {didSubmit ? <VerifyEmail /> : <RegisterForm />}
+      {didSubmit ? (
+        <VerifyEmail />
+      ) : (
+        <RegisterForm setDidSubmit={setDidSubmit} />
+      )}
     </div>
   );
 };

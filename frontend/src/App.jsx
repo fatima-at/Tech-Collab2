@@ -4,6 +4,8 @@ import { AUTH_ROUTE } from "./constants/routes";
 import { useAuth } from "./context";
 import { useNavigate } from "react-router-dom";
 import RootNavigation from "./navigation/RootNavigation";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const { token } = useAuth();
@@ -11,17 +13,26 @@ const App = () => {
   const initialize = () => {
     if (token) {
       console.log("authorize");
-    } else {
-      navigate(AUTH_ROUTE);
     }
+    // } else {
+    //   navigate(AUTH_ROUTE);
+    // }
   };
 
   useEffect(() => {
     initialize();
   }, []);
   return (
-    <div style={{ width: "100%", height: "100vh", overflow:"visible", display: "flex" }}>
+    <div className="main-screen">
       <RootNavigation />
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnHover
+      />
     </div>
   );
 };

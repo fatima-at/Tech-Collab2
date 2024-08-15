@@ -42,11 +42,7 @@ const Button = ({
       }
       {...rest}
     >
-      {loading ? (
-        <FontAwesomeIcon icon={faSpinner} className="button-spinner" />
-      ) : (
-        children
-      )}
+      {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : children}
     </button>
   );
 };

@@ -18,6 +18,8 @@ return new class extends Migration
                 $table->string('email')->unique();
                 $table->string('password');
                 $table->enum('user_type', ['student', 'mentor']);
+                $table->boolean('email_verified')->default(false); 
+                $table->boolean('registration_completed')->default(false);
                 $table->timestamps();
             });
         }
