@@ -1,30 +1,25 @@
 import { useEffect } from "react";
 import "./App.css";
-import { AUTH_ROUTE } from "./constants/routes";
 import { useAuth } from "./context";
-import { useNavigate } from "react-router-dom";
 import RootNavigation from "./navigation/RootNavigation";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "./components/Loaders/Loader";
+import MainNavigation from "./navigation/MainNavigation";
 
 const App = () => {
-  const { token } = useAuth();
-  const navigate = useNavigate();
-  const initialize = () => {
-    if (token) {
-      console.log("authorize");
-    }
-    // } else {
-    //   navigate(AUTH_ROUTE);
-    // }
+  const { checkAuthentication, isAuthenticated, isPageReadyToRender } =
+    useAuth();
+  const initialize = async () => {
+    await checkAuthentication();
   };
 
   useEffect(() => {
     initialize();
   }, []);
+  
   return (
     <div className="main-screen">
-      <RootNavigation />
       <ToastContainer
         position="top-right"
         autoClose={4000}
@@ -33,6 +28,15 @@ const App = () => {
         closeOnClick
         pauseOnHover
       />
+      {isPageReadyToRender ? (
+        isAuthenticated ? (
+          <MainNavigation />
+        ) : (
+          <RootNavigation />
+        )
+      ) : (
+        <Loader />
+      )}
     </div>
   );
 };

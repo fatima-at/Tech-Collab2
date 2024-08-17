@@ -5,13 +5,15 @@ import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import Loader from "../../components/Loaders/Loader";
 import { Button } from "../../components";
-import { FINISH_REGISTRATION_ROUTE } from "../../constants/routes";
+import { useAuth } from "../../context";
+import { TOKEN_KEY } from "../../context/AuthContext";
 
 const Verify = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get("token");
+  const { checkAuthentication } = useAuth();
   const [loading, setLoading] = useState(true);
 
   const verifyEmail = async () => {
@@ -25,8 +27,9 @@ const Verify = () => {
     try {
       const response = await verifyEmailApi(body);
       if (response?.status) {
+        localStorage.setItem(TOKEN_KEY, response.token);
+        await checkAuthentication();
         toast.success(response.message);
-        navigate(`/${FINISH_REGISTRATION_ROUTE}`);
       } else {
         toast.error(response.message);
         setLoading(false);
@@ -37,10 +40,9 @@ const Verify = () => {
     }
   };
 
-    useEffect(() => {
-      verifyEmail();
-      console.log('test')
-    }, []);
+  useEffect(() => {
+    verifyEmail();
+  }, []);
 
   return (
     <>

@@ -12,3 +12,7 @@ export const login = async (body, signal) => {
 export const verifyEmail = async (body, signal) => {
     return await HttpRequest.post(e.VERIFY_EMAIL, body, 'auth', signal);
 };
+
+export const refresh = async (body, signal) => {
+    return await HttpRequest.post(e.REFRESH_TOKEN, body, 'auth', signal);
+};

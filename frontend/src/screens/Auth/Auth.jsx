@@ -6,9 +6,14 @@ import Button from "../../components/UI/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { REGISTER_ROUTE } from "../../constants/routes";
 import { LogoHeader } from "../../components";
+import { login } from "../../services/AuthApi";
+import { toast } from "react-toastify";
+import { TOKEN_KEY, useAuth } from "../../context/AuthContext";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { checkAuthentication } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const [authInfo, setAuthInfo] = useState({
     email: "",
     password: "",
@@ -40,8 +45,31 @@ const Auth = () => {
     setIsFormValid(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
+    const body = {
+      email: authInfo.email,
+      password: authInfo.password,
+    };
+
+    try {
+      const response = await login(body);
+      if (response.status) {
+        localStorage.setItem(TOKEN_KEY, response.token);
+        await checkAuthentication();
+        toast.success(response.message);
+      } else {
+        toast.error(
+          response?.message || "Registration failed. Please try again."
+        );
+      }
+    } catch (error) {
+      toast.error(error?.message || "Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const signUp = () => {
@@ -86,6 +114,7 @@ const Auth = () => {
               style={{ width: "100%", marginTop: ".5rem" }}
               disabled={!isFormValid}
               submit
+              loading={isLoading}
             >
               Login
             </Button>

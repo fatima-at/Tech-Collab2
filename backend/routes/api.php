@@ -9,5 +9,5 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('verify', [AuthController::class, 'verifyEmail']);
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('me', [AuthController::class, 'me']);
+    Route::post('refresh', [AuthController::class, 'refreshToken']);
 });

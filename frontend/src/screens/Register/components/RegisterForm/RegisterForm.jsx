@@ -53,8 +53,14 @@ const RegisterForm = ({ setDidSubmit }) => {
 
     try {
       const response = await signUp(body);
-      toast.success(response.message);
-      setDidSubmit(true);
+      if (response.status) {
+        toast.success(response.message);
+        setDidSubmit(true);
+      } else {
+        toast.error(
+          response?.message || "Registration failed. Please try again."
+        );
+      }
     } catch (error) {
       toast.error(error?.message || "Registration failed. Please try again.");
     } finally {

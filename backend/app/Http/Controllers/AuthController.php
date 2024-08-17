@@ -64,22 +64,44 @@ class AuthController extends Controller
             $user->email_verified = true;
             $user->save();
     
-            return response()->json(['message' => 'Email verified successfully.', 'status' => true]);
+            // Generate a new token for the user
+            $newToken = JWTAuth::fromUser($user);
+    
+            // Return the new token, user object, and status
+            return response()->json([
+                'message' => 'Email verified successfully.',
+                'status' => true,
+                'token' => $newToken,
+                'user' => $user,
+            ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Token is invalid or expired.'], 400);
         }
-    }    
-
+    }      
 
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (!$token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        return response()->json(compact('token'));
+        $user = JWTAuth::user();
+
+        if (!$user->email_verified) {
+            Mail::send('emails.verify', ['user' => $user, 'token' => $verificationToken], function ($message) use ($user) {
+                $message->to($user->email);
+                $message->subject('Verify your email address');
+            });
+            return response()->json(['message' => 'Your email is not verified yet. Kindly check your inbox'], 403);
+        }
+
+        return response()->json([
+            'status' => true,
+            'token' => $token,
+            'user' => $user,
+        ]);
     }
 
     public function logout()
@@ -92,4 +114,35 @@ class AuthController extends Controller
     {
         return response()->json(Auth::user());
     }
+
+    public function refreshToken(Request $request)
+    {
+        try {
+            // Retrieve the token from the Authorization header
+            $currentToken = JWTAuth::getToken();
+    
+            if (!$currentToken) {
+                return response()->json(['message' => 'Token not provided.'], 400);
+            }
+    
+            // Refresh the token
+            $newToken = JWTAuth::refresh($currentToken);
+    
+            // Retrieve the authenticated user
+            $user = JWTAuth::setToken($newToken)->authenticate();
+    
+            // Return the new token and user object
+            return response()->json([
+                'message' => 'Token refreshed successfully.',
+                'status' => true,
+                'token' => $newToken,
+                'user' => $user,
+            ]);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['message' => 'Token is invalid.'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['message' => 'Could not refresh token.'], 500);
+        }
+    }
+    
 }
