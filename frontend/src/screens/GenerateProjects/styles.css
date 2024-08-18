@@ -1,0 +1,44 @@
+.generate-projects-screen {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.generate-projects-inputs-box {
+    flex: 1;
+    background-color: #2d2d2d;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: .75rem;
+    border-radius: 8px;
+    
+}
+
+.generate-projects-inputs-container {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.generate-projects-outputs-box {
+    flex: 3;
+    background-color: #2d2d2d;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: .75rem;
+    border-radius: 8px;
+}
+
+.generate-projects-project-card {
+    width: 100%;
+    padding: .75rem;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    background-color: #3c3c3c;
+}
