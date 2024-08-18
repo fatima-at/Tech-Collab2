@@ -104,34 +104,58 @@ const Input = ({
         {!!icon && <img src={icon} className="register-form-icon" />}
         {type !== "select" ? (
           <>
-            <input
-              autoComplete="off"
-              data-testid={testId}
-              type={getInputType()}
-              placeholder={placeholder}
-              onBlur={handleBlur}
-              onFocus={handleFocus}
-              value={value}
-              style={{
-                paddingLeft: fontAwesomeIcon || icon ? "32px" : "12px",
-                background: background ? background : "white",
-                ...inputStyle,
-              }}
-              className={
-                required && isTouched && !isValid
-                  ? "register-input register-input-error"
-                  : "register-input"
-              }
-              {...rest}
-            />
-            {type === "password" && (
-              <FontAwesomeIcon
-                icon={passwordVisible ? faEyeSlash : faEye}
-                color={inputColor}
-                size="1x"
-                className="register-form-toggle-password-visibility-icon"
-                onClick={togglePasswordVisibility}
+            {type === "textarea" ? (
+              <textarea
+                className={
+                  required && isTouched && !isValid
+                    ? "register-input register-input-error"
+                    : "register-input"
+                }
+                style={{
+                  paddingLeft: fontAwesomeIcon || icon ? "32px" : "12px",
+                  background: background ? background : "white",
+                  ...inputStyle,
+                }}
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+                placeholder={placeholder}
+                value={value}
+                required={required}
+                {...rest}
               />
+            ) : (
+              <>
+                <input
+                  autoComplete="off"
+                  data-testid={testId}
+                  type={getInputType()}
+                  placeholder={placeholder}
+                  onBlur={handleBlur}
+                  required={required}
+                  onFocus={handleFocus}
+                  value={value}
+                  style={{
+                    paddingLeft: fontAwesomeIcon || icon ? "32px" : "12px",
+                    background: background ? background : "white",
+                    ...inputStyle,
+                  }}
+                  className={
+                    required && isTouched && !isValid
+                      ? "register-input register-input-error"
+                      : "register-input"
+                  }
+                  {...rest}
+                />
+                {type === "password" && (
+                  <FontAwesomeIcon
+                    icon={passwordVisible ? faEyeSlash : faEye}
+                    color={inputColor}
+                    size="1x"
+                    className="register-form-toggle-password-visibility-icon"
+                    onClick={togglePasswordVisibility}
+                  />
+                )}
+              </>
             )}
           </>
         ) : (
@@ -140,6 +164,8 @@ const Input = ({
               !value || optionEmptyValue ? "register-select-placeholder" : ""
             }`}
             style={{ paddingLeft: fontAwesomeIcon || icon ? "32px" : "12px" }}
+            required={required}
+            value={value}
             {...rest}
           >
             <option value={optionEmptyValue ? optionEmptyValue : ""} hidden>

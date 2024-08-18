@@ -14,5 +14,5 @@ export const verifyEmail = async (body, signal) => {
 };
 
 export const refresh = async (body, signal) => {
-    return await HttpRequest.post(e.REFRESH_TOKEN, body, 'auth', signal);
+    return await HttpRequest.post(e.REFRESH_TOKEN, body, 'token', signal);
 };

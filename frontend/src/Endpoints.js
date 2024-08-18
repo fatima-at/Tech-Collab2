@@ -1,3 +1,5 @@
+import { TOKEN_KEY } from "./context/AuthContext";
+
 export const CRUD_API = `${import.meta.env.VITE_API_URL}/api/v1`
 
 export const SIGN_UP = `${import.meta.env.VITE_API_URL}/api/auth/register`;
@@ -7,7 +9,7 @@ export const REFRESH_TOKEN = `${import.meta.env.VITE_API_URL}/api/auth/refresh`;
 export const LOG_OUT = `${import.meta.env.VITE_API_URL}/api/auth/logout`;
 
 export const HeadersWithToken = (overrideToken) => {
-    let token = overrideToken || localStorage.getItem("access_token");
+    let token = overrideToken || localStorage.getItem(TOKEN_KEY);
     return {
       Accept: "application/json",
       Authorization: "Bearer " + token,

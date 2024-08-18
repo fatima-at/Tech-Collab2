@@ -11,3 +11,11 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refreshToken']);
 });
+
+Route::group([
+    'middleware' => ['auth:api'],
+    'prefix' => 'v1'
+
+], function ($router) {
+    Route::post('complete-registration', [AuthController::class, 'completeRegistration']);
+});

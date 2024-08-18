@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Models\User;
+use App\Models\StudentData;
+use App\Models\Skill;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -130,6 +134,10 @@ class AuthController extends Controller
     
             // Retrieve the authenticated user
             $user = JWTAuth::setToken($newToken)->authenticate();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found.'], 404);
+            }
     
             // Return the new token and user object
             return response()->json([
@@ -143,6 +151,60 @@ class AuthController extends Controller
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
             return response()->json(['message' => 'Could not refresh token.'], 500);
         }
+    }
+
+    public function completeRegistration(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'bio' => 'nullable|string',
+            'general_field' => 'nullable|string',
+            'skills' => 'nullable|array',
+            'skills.*' => 'string',
+            'cv' => 'nullable|file|mimes:pdf|max:5120',
+        ]);
+
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Create or update the student data
+        $studentData = StudentData::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'bio' => $request->input('bio'),
+                'general_field' => $request->input('general_field'),
+                'profile_picture' => $user->profile_picture, // Assuming it's set somewhere else
+            ]
+        );
+
+        // Handle the CV file upload
+        if ($request->hasFile('cv')) {
+            $cvPath = $request->file('cv')->store('cvs', 'public');
+            $studentData->cv = $cvPath;
+            $studentData->save();
+        }
+
+        // Handle the skills
+        if ($request->has('skills')) {
+            // Remove existing skills
+            Skill::where('user_id', $user->id)->delete();
+            
+            // Add new skills
+            foreach ($request->input('skills') as $skillName) {
+                $user->skills()->create(['skill' => $skillName]);
+            }
+        }
+
+        // Mark the user's registration as completed
+        $user->registration_completed = true;
+        $user->save();
+
+        return response()->json([
+            'message' => 'User information completed successfully.',
+            'status' => true,
+            'user' => $user,
+            'student_data' => $studentData,
+        ]);
     }
     
 }
