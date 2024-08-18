@@ -3,5 +3,7 @@ import Register from "./Register";
 import Verify from "./Verify";
 import Home from "./Home";
 import FinishRegistration from "./FinishRegistration";
+import GenerateProjects from "./GenerateProjects";
+import Profile from "./Profile/Profile";
 
-export {Auth, Register, Verify, Home, FinishRegistration}
+export {Auth, Register, Verify, Home, FinishRegistration, GenerateProjects, Profile}

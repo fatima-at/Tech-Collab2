@@ -3,8 +3,7 @@ import { verifyEmail as verifyEmailApi } from "../../services/AuthApi";
 import "./styles.css";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import Loader from "../../components/Loaders/Loader";
-import { Button } from "../../components";
+import { Button, Loader } from "../../components";
 import { useAuth } from "../../context";
 import { TOKEN_KEY } from "../../context/AuthContext";
 

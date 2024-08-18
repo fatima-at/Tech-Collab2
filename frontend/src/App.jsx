@@ -4,7 +4,7 @@ import { useAuth } from "./context";
 import RootNavigation from "./navigation/RootNavigation";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loader from "./components/Loaders/Loader";
+import { Loader } from "./components";
 import MainNavigation from "./navigation/MainNavigation";
 
 const App = () => {
@@ -17,7 +17,7 @@ const App = () => {
   useEffect(() => {
     initialize();
   }, []);
-  
+
   return (
     <div className="main-screen">
       <ToastContainer

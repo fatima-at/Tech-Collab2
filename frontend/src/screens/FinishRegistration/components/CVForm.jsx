@@ -32,14 +32,18 @@ const CVForm = ({ formInputs, setCurrentStep }) => {
     setIsLoading(true);
     const formData = new FormData();
     formData.append("bio", formInputs.bio);
-    formData.append("general_field", formInputs.generalField);
+    formData.append(
+      "general_field",
+      formInputs.generalField === "Other"
+        ? formInputs.otherGeneralField
+        : formInputs.generalField
+    );
     formData.append("cv", selectedFile);
 
     // Append skills as individual entries
     formInputs.skills?.forEach((skill, index) => {
       formData.append(`skills[${index}]`, skill.name);
     });
-    console.log(formData);
     try {
       const response = await fetch(`${CRUD_API}/complete-registration`, {
         method: "POST",

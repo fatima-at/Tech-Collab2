@@ -88,6 +88,7 @@ const SkillsForm = ({ setFormInputs, setCurrentStep, skills, setSkills }) => {
               <div
                 style={skill.isSelected ? { background: primaryColor } : {}}
                 onClick={() => toggleSkillSelection(skill.id)}
+                key={skill.id}
               >
                 {skill.name}
               </div>

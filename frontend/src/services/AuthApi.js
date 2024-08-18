@@ -16,3 +16,7 @@ export const verifyEmail = async (body, signal) => {
 export const refresh = async (body, signal) => {
     return await HttpRequest.post(e.REFRESH_TOKEN, body, 'token', signal);
 };
+
+export const logout = async (signal) => {
+    return await HttpRequest.post(e.LOG_OUT, null, 'token', signal);
+};

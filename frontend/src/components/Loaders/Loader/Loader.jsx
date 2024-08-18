@@ -1,6 +1,6 @@
 import React from "react";
 import HashLoader from "react-spinners/HashLoader";
-import { primaryColor } from "../../constants/colors";
+import { primaryColor } from "../../../constants/colors";
 import "./styles.css";
 
 const Loader = () => {

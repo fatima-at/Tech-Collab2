@@ -1,33 +1,49 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { FINISH_REGISTRATION_ROUTE, HOME_ROUTE } from "../constants/routes";
-import { Home } from "../screens";
+import {
+  FINISH_REGISTRATION_ROUTE,
+  GENERATE_PROJECTS_ROUTE,
+  HOME_ROUTE,
+  PROFILE_ROUTE,
+} from "../constants/routes";
+import { GenerateProjects, Home, Profile } from "../screens";
 import { FinishRegistration } from "../screens";
 import { useAuth } from "../context";
+import { Sidebar } from "../components";
+import { ToastContainer } from "react-toastify";
 
 const MainNavigation = () => {
   const { authUser } = useAuth();
   return (
-    <Routes>
-      {authUser?.registration_completed ? (
-        <>
-          <Route exact path={HOME_ROUTE} element={<Home />} />
-          <Route path="*" element={<Navigate to={HOME_ROUTE} />} />
-        </>
-      ) : (
-        <>
-          <Route
-            exact
-            path={FINISH_REGISTRATION_ROUTE}
-            element={<FinishRegistration />}
-          />
-          <Route
-            path="*"
-            element={<Navigate to={FINISH_REGISTRATION_ROUTE} />}
-          />
-        </>
-      )}
-    </Routes>
+    <div style={{ display: "flex", width: "100%" }}>
+      {authUser?.registration_completed ? <Sidebar /> : <></>}
+      <Routes>
+        {authUser?.registration_completed ? (
+          <>
+            <Route exact path={HOME_ROUTE} element={<Home />} />
+            <Route
+              exact
+              path={GENERATE_PROJECTS_ROUTE}
+              element={<GenerateProjects />}
+            />
+            <Route exact path={PROFILE_ROUTE} element={<Profile />} />
+            <Route path="*" element={<Navigate to={HOME_ROUTE} />} />
+          </>
+        ) : (
+          <>
+            <Route
+              exact
+              path={FINISH_REGISTRATION_ROUTE}
+              element={<FinishRegistration />}
+            />
+            <Route
+              path="*"
+              element={<Navigate to={FINISH_REGISTRATION_ROUTE} />}
+            />
+          </>
+        )}
+      </Routes>
+    </div>
   );
 };
 
