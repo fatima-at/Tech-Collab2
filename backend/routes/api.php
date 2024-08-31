@@ -18,4 +18,14 @@ Route::group([
 
 ], function ($router) {
     Route::post('complete-registration', [AuthController::class, 'completeRegistration']);
+
+    // Project session routes
+    Route::post('project-sessions', [ProjectSessionController::class, 'createSession']); 
+    Route::get('project-sessions', [ProjectSessionController::class, 'getUserSessions']); 
+    Route::get('project-sessions/{sessionId}/projects', [ProjectSessionController::class, 'getSessionProjects']);
+
+    // Project routes
+    Route::post('project-sessions/{sessionId}/projects', [ProjectController::class, 'createProject']); 
+    Route::post('projects', [ProjectController::class, 'createStandaloneProject']); 
+    Route::get('projects/standalone', [ProjectController::class, 'getStandaloneProjects']);
 });

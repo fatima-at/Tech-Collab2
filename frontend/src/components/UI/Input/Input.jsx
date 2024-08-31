@@ -1,9 +1,18 @@
 import React, { useState } from "react";
+import {
+  Input as ChakraInput,
+  Textarea,
+  Select,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  IconButton,
+} from "@chakra-ui/react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { primaryColor } from "../../../constants/colors";
-import "./styles.css";
-import arrowDownIcon from "./svgs/arrowDown.svg";
 
 const Input = ({
   label,
@@ -74,59 +83,49 @@ const Input = ({
     setIsValid(isValidPhoneNumber(value || ""));
   };
 
-  const inputColor =
-    required && isTouched && !isValid ? "#ff0000" : primaryColor;
+  const inputColor = required && isTouched && !isValid ? "red.500" : "primary";
 
   return (
-    <div
-      className="register-label-input-container"
-      style={fullWidth ? { width: "100%", ...style } : style}
+    <FormControl
+      isInvalid={required && isTouched && !isValid}
+      width={fullWidth ? "100%" : undefined}
+      style={style}
     >
       {label && (
-        <label
-          className={
-            required && isTouched && !isValid ? "register-label-error" : ""
-          }
-        >
+        <FormLabel color="white">
           {label}
-          {required ? <span>*</span> : null}
-        </label>
+          {required && <span>*</span>}
+        </FormLabel>
       )}
-      <div className="register-input-container">
-        {!!fontAwesomeIcon && (
-          <FontAwesomeIcon
-            icon={fontAwesomeIcon}
-            color={inputColor}
-            size="1x"
-            className="register-form-icon"
-          />
+
+      <InputGroup>
+        {fontAwesomeIcon && (
+          <InputLeftElement pointerEvents="none">
+            <FontAwesomeIcon icon={fontAwesomeIcon} />
+          </InputLeftElement>
         )}
-        {!!icon && <img src={icon} className="register-form-icon" />}
+        {icon && (
+          <InputLeftElement pointerEvents="none">
+            <img src={icon} alt="icon" />
+          </InputLeftElement>
+        )}
         {type !== "select" ? (
           <>
             {type === "textarea" ? (
-              <textarea
-                className={
-                  required && isTouched && !isValid
-                    ? "register-input register-input-error"
-                    : "register-input"
-                }
-                style={{
-                  paddingLeft: fontAwesomeIcon || icon ? "32px" : "12px",
-                  background: background ? background : "white",
-                  ...inputStyle,
-                }}
+              <Textarea
+                data-testid={testId}
+                placeholder={placeholder}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
-                placeholder={placeholder}
                 value={value}
                 required={required}
+                bg={background || "white"}
+                style={inputStyle}
                 {...rest}
               />
             ) : (
               <>
-                <input
-                  autoComplete="off"
+                <ChakraInput
                   data-testid={testId}
                   type={getInputType()}
                   placeholder={placeholder}
@@ -134,41 +133,32 @@ const Input = ({
                   required={required}
                   onFocus={handleFocus}
                   value={value}
-                  style={{
-                    paddingLeft: fontAwesomeIcon || icon ? "32px" : "12px",
-                    background: background ? background : "white",
-                    ...inputStyle,
-                  }}
-                  className={
-                    required && isTouched && !isValid
-                      ? "register-input register-input-error"
-                      : "register-input"
-                  }
+                  bg={background || "white"}
+                  style={inputStyle}
                   {...rest}
                 />
                 {type === "password" && (
-                  <FontAwesomeIcon
-                    icon={passwordVisible ? faEyeSlash : faEye}
-                    color={inputColor}
-                    size="1x"
-                    className="register-form-toggle-password-visibility-icon"
-                    onClick={togglePasswordVisibility}
-                  />
+                  <InputRightElement>
+                    <IconButton
+                      icon={passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                      onClick={togglePasswordVisibility}
+                      size="sm"
+                    />
+                  </InputRightElement>
                 )}
               </>
             )}
           </>
         ) : (
-          <select
-            className={`register-select-input ${
-              !value || optionEmptyValue ? "register-select-placeholder" : ""
-            }`}
-            style={{ paddingLeft: fontAwesomeIcon || icon ? "32px" : "12px" }}
-            required={required}
+          <Select
+            placeholder={placeholder}
             value={value}
+            required={required}
+            bg={background || "white"}
+            style={inputStyle}
             {...rest}
           >
-            <option value={optionEmptyValue ? optionEmptyValue : ""} hidden>
+            <option value={optionEmptyValue || ""} hidden>
               {placeholder}
             </option>
             {options?.length > 0 ? (
@@ -195,16 +185,11 @@ const Input = ({
                 {emptyState}
               </option>
             )}
-          </select>
+          </Select>
         )}
-        {type === "select" && (
-          <img src={arrowDownIcon} className="register-select-input-arrow" />
-        )}
-      </div>
-      {required && isTouched && !isValid && error ? (
-        <p className="register-input-message">{error}</p>
-      ) : null}
-    </div>
+      </InputGroup>
+      {error && <FormErrorMessage>{error}</FormErrorMessage>}
+    </FormControl>
   );
 };
 

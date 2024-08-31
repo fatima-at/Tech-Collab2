@@ -5,18 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class ToolsAndTechnologies extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'project_session_id',
-        'title',
-        'is_bookmarked',
+        'name',
     ];
 
     public function projectSession()
     {
-        return $this->belongsTo(ProjectSession::class, 'project_session_id');
+        return $this->belongsTo(ProjectSession::class);
     }
 }

@@ -86,6 +86,7 @@ const Sidebar = () => {
             onClick={() => {
               navigate(`/${button.route}`);
             }}
+            key={button.name}
           >
             <FontAwesomeIcon icon={button.logo} color="white" />
             <Text type="p" color="white">

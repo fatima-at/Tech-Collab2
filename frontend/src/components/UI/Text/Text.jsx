@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Text = ({ type, color, children, style }) => {
+const Text = ({ type, color = "black", children, style }) => {
   const getTextElement = () => {
     switch (type) {
       case "h1":
@@ -33,10 +33,6 @@ Text.propTypes = {
     .isRequired,
   color: PropTypes.string,
   children: PropTypes.node.isRequired,
-};
-
-Text.defaultProps = {
-  color: "black",
 };
 
 export default Text;

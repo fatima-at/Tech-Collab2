@@ -9,11 +9,13 @@ const ReactSelect = ({
   handleChange,
   placeholder,
   selectedOption,
+  disabled,
 }) => {
   return (
     <>
       {isMulti ? (
         <Select
+          isDisabled={disabled}
           isMulti
           value={selectedOptions}
           onChange={handleChange}
@@ -62,6 +64,7 @@ const ReactSelect = ({
         />
       ) : (
         <Select
+          isDisabled={disabled}
           value={selectedOption}
           onChange={handleChange}
           options={options}
