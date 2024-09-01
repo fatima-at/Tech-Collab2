@@ -41,4 +41,29 @@ class ProjectController extends Controller
             'status' => true
         ], 200);
     }
+
+    public function toggleBookmark($projectId)
+    {
+        // Find the project by ID
+        $project = Project::find($projectId);
+
+        // Check if the project exists
+        if (!$project) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Project not found.',
+            ], 404);
+        }
+
+        // Toggle the bookmark status
+        $project->is_bookmarked = !$project->is_bookmarked;
+        $project->save();
+
+        // Return a response
+        return response()->json([
+            'status' => true,
+            'message' => 'Project bookmark status updated successfully.',
+            'data' => $project,
+        ], 200);
+    }
 }

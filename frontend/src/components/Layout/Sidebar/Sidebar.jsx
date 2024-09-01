@@ -2,6 +2,7 @@ import React from "react";
 import "./styles.css";
 import LogoHeader from "../../UI/LogoHeader";
 import {
+  faHistory,
   faHouse,
   faProjectDiagram,
   faSignOut,
@@ -14,6 +15,7 @@ import {
   GENERATE_PROJECTS_ROUTE,
   HOME_ROUTE,
   PROFILE_ROUTE,
+  SESSIONS_HISTORY_ROUTE,
 } from "../../../constants/routes";
 import { useLocation, useNavigate } from "react-router-dom";
 import { primaryColor } from "../../../constants/colors";
@@ -36,6 +38,11 @@ const Sidebar = () => {
       name: "Generate Projects",
       logo: faProjectDiagram,
       route: GENERATE_PROJECTS_ROUTE,
+    },
+    {
+      name: "Sessions History",
+      logo: faHistory, 
+      route: SESSIONS_HISTORY_ROUTE 
     },
   ];
 

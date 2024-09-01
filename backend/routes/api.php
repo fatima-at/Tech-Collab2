@@ -21,11 +21,12 @@ Route::group([
 
     // Project session routes
     Route::post('project-sessions', [ProjectSessionController::class, 'createSession']); 
-    Route::get('project-sessions', [ProjectSessionController::class, 'getUserSessions']); 
-    Route::get('project-sessions/{sessionId}/projects', [ProjectSessionController::class, 'getSessionProjects']);
+    Route::get('project-sessions', [ProjectSessionController::class, 'getUserProjectSessions']); 
+    Route::get('project-sessions/{sessionId}', [ProjectSessionController::class, 'getSessionData']);
 
     // Project routes
     Route::post('project-sessions/{sessionId}/projects', [ProjectController::class, 'createProject']); 
     Route::post('projects', [ProjectController::class, 'createStandaloneProject']); 
+    Route::post('projects/{projectId}/bookmark', [ProjectController::class, 'toggleBookmark']);
     Route::get('projects/standalone', [ProjectController::class, 'getStandaloneProjects']);
 });

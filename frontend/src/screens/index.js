@@ -5,5 +5,6 @@ import Home from "./Home";
 import FinishRegistration from "./FinishRegistration";
 import GenerateProjects from "./GenerateProjects";
 import Profile from "./Profile/Profile";
+import SessionsHistory from "./SessionsHistory";
 
-export {Auth, Register, Verify, Home, FinishRegistration, GenerateProjects, Profile}
+export {Auth, Register, Verify, Home, FinishRegistration, GenerateProjects, Profile, SessionsHistory}

@@ -9,6 +9,7 @@ export const REFRESH_TOKEN = `${import.meta.env.VITE_API_URL}/api/auth/refresh`;
 export const LOG_OUT = `${import.meta.env.VITE_API_URL}/api/auth/logout`;
 
 export const CRUD_PROJECT_SESSIONS = `${import.meta.env.VITE_API_URL}/api/v1/project-sessions`;
+export const CRUD_PROJECTS = `${import.meta.env.VITE_API_URL}/api/v1/projects`;
 
 export const HeadersWithToken = (overrideToken) => {
     let token = overrideToken || localStorage.getItem(TOKEN_KEY);

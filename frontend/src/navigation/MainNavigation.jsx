@@ -5,12 +5,18 @@ import {
   GENERATE_PROJECTS_ROUTE,
   HOME_ROUTE,
   PROFILE_ROUTE,
+  SESSIONS_HISTORY_ROUTE,
+  SESSION_DETAIL_ROUTE,
 } from "../constants/routes";
-import { GenerateProjects, Home, Profile } from "../screens";
-import { FinishRegistration } from "../screens";
+import {
+  GenerateProjects,
+  Home,
+  Profile,
+  SessionsHistory,
+  FinishRegistration,
+} from "../screens";
 import { useAuth } from "../context";
 import { Sidebar } from "../components";
-import { ToastContainer } from "react-toastify";
 
 const MainNavigation = () => {
   const { authUser } = useAuth();
@@ -24,6 +30,16 @@ const MainNavigation = () => {
             <Route
               exact
               path={GENERATE_PROJECTS_ROUTE}
+              element={<GenerateProjects />}
+            />
+            <Route
+              exact
+              path={SESSIONS_HISTORY_ROUTE}
+              element={<SessionsHistory />}
+            />
+            <Route
+              exact
+              path={SESSION_DETAIL_ROUTE}
               element={<GenerateProjects />}
             />
             <Route exact path={PROFILE_ROUTE} element={<Profile />} />

@@ -4,3 +4,7 @@ import * as e from "../Endpoints";
 export const createProject = async (body, sessionId, signal) => {
     return await HttpRequest.post(e.CRUD_PROJECT_SESSIONS + "/" + sessionId + "/projects", body, 'token', signal);
 };
+
+export const toggleBookmarkProject = async (projectId, signal) => {
+    return await HttpRequest.post(e.CRUD_PROJECTS + "/" + projectId + "/bookmark", null, 'token', signal);
+};

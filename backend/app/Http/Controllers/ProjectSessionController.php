@@ -57,31 +57,53 @@ class ProjectSessionController extends Controller
     /**
      * Retrieve all project sessions for the authenticated user.
      */
-    public function getUserSessions()
+    public function getUserProjectSessions()
     {
-        $projectSessions = ProjectSession::where('user_id', Auth::id())->get();
-
+        // Get the authenticated user's ID
+        $userId = Auth::id();
+    
+        // Query to get the project sessions with the required fields
+        $projectSessions = ProjectSession::where('user_id', $userId)
+            ->withCount('projects') // Get the count of related projects
+            ->get(['id', 'title', 'created_at']) // Get only the required fields
+            ->map(function ($session) {
+                return [
+                    'id' => $session->id,
+                    'title' => $session->title,
+                    'created_at' => $session->created_at,
+                    'projects_count' => $session->projects_count,
+                ];
+            });
+    
         return response()->json([
             'status' => true,
-            'project_sessions' => $projectSessions,
+            'message' => 'Project sessions retrieved successfully.',
+            'data' => $projectSessions,
         ], 200);
     }
 
     /**
      * Retrieve all projects for a specific session.
      */
-    public function getSessionProjects($sessionId)
+    public function getSessionData($sessionId)
     {
-        $projectSession = ProjectSession::with('projects')->where('id', $sessionId)->where('user_id', Auth::id())->first();
+        // Retrieve the session with related focus areas, tools and technologies, and projects
+        $session = ProjectSession::with(['focusAreas', 'toolsAndTechnologies', 'projects'])
+            ->find($sessionId);
 
-        if (!$projectSession) {
-            return response()->json(['message' => 'Project session not found.'], 404);
+        // Check if session exists
+        if (!$session) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Session not found.',
+            ], 404);
         }
 
+        // Return the session data
         return response()->json([
             'status' => true,
-            'project_session' => $projectSession,
-            'projects' => $projectSession->projects,
+            'message' => 'Session retrieved successfully.',
+            'data' => $session,
         ], 200);
     }
 }

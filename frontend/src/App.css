@@ -2,7 +2,8 @@
     --primary-color: #692a31;
     --primary-hover-color: #7b3a42;
     --primary-disabled-color: #a58b8f;
-    --background-color: #191919
+    --background-color: #191919;
+    --text-primary-color: #FFF;
 }
 
 body {
@@ -11,6 +12,7 @@ body {
     box-sizing: border-box;
     overflow: auto !important;
     font-family: 'Work Sans';
+    color: var(--text-primary-color);
 }
   
 
