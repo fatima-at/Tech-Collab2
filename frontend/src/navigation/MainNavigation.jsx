@@ -5,6 +5,7 @@ import {
   GENERATE_PROJECTS_ROUTE,
   HOME_ROUTE,
   PROFILE_ROUTE,
+  SAVED_PROJECTS_ROUTE,
   SESSIONS_HISTORY_ROUTE,
   SESSION_DETAIL_ROUTE,
 } from "../constants/routes";
@@ -14,6 +15,7 @@ import {
   Profile,
   SessionsHistory,
   FinishRegistration,
+  SavedProjects,
 } from "../screens";
 import { useAuth } from "../context";
 import { Sidebar } from "../components";
@@ -41,6 +43,11 @@ const MainNavigation = () => {
               exact
               path={SESSION_DETAIL_ROUTE}
               element={<GenerateProjects />}
+            />
+            <Route
+              exact
+              path={SAVED_PROJECTS_ROUTE}
+              element={<SavedProjects />}
             />
             <Route exact path={PROFILE_ROUTE} element={<Profile />} />
             <Route path="*" element={<Navigate to={HOME_ROUTE} />} />

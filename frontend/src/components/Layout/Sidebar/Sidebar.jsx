@@ -2,6 +2,7 @@ import React from "react";
 import "./styles.css";
 import LogoHeader from "../../UI/LogoHeader";
 import {
+  faBookmark,
   faHistory,
   faHouse,
   faProjectDiagram,
@@ -15,6 +16,7 @@ import {
   GENERATE_PROJECTS_ROUTE,
   HOME_ROUTE,
   PROFILE_ROUTE,
+  SAVED_PROJECTS_ROUTE,
   SESSIONS_HISTORY_ROUTE,
 } from "../../../constants/routes";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -41,8 +43,13 @@ const Sidebar = () => {
     },
     {
       name: "Sessions History",
-      logo: faHistory, 
-      route: SESSIONS_HISTORY_ROUTE 
+      logo: faHistory,
+      route: SESSIONS_HISTORY_ROUTE,
+    },
+    {
+      name: "Saved Projects",
+      logo: faBookmark,
+      route: SAVED_PROJECTS_ROUTE,
     },
   ];
 

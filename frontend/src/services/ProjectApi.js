@@ -8,3 +8,7 @@ export const createProject = async (body, sessionId, signal) => {
 export const toggleBookmarkProject = async (projectId, signal) => {
     return await HttpRequest.post(e.CRUD_PROJECTS + "/" + projectId + "/bookmark", null, 'token', signal);
 };
+
+export const getBookmarkedProjects = async (signal) => {
+    return await HttpRequest.get(e.CRUD_PROJECTS + "/bookmarked", null, 'token', signal);
+};

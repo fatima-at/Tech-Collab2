@@ -28,5 +28,6 @@ Route::group([
     Route::post('project-sessions/{sessionId}/projects', [ProjectController::class, 'createProject']); 
     Route::post('projects', [ProjectController::class, 'createStandaloneProject']); 
     Route::post('projects/{projectId}/bookmark', [ProjectController::class, 'toggleBookmark']);
+    Route::get('projects/bookmarked', [ProjectController::class, 'getBookmarkedProjects']);
     Route::get('projects/standalone', [ProjectController::class, 'getStandaloneProjects']);
 });

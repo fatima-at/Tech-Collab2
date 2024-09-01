@@ -6,6 +6,7 @@ import Loader from "./Loaders/Loader";
 import Sidebar from "./Layout/Sidebar";
 import Popup from "./Custom/Popup";
 import ScreenContainer from "./Containers/ScreenContainer";
+import EmptyState from "./UI/EmptyState";
 
 
-export {Input, Text, Button, LogoHeader, Loader, Sidebar, Popup, ScreenContainer}
+export {Input, Text, Button, LogoHeader, Loader, Sidebar, Popup, ScreenContainer, EmptyState}

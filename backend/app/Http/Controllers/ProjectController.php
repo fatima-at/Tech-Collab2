@@ -66,4 +66,25 @@ class ProjectController extends Controller
             'data' => $project,
         ], 200);
     }
+
+    public function getBookmarkedProjects()
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Fetch bookmarked projects for the user and include the related project session
+        $bookmarkedProjects = Project::with('projectSession')
+            ->whereHas('projectSession', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->where('is_bookmarked', true)
+            ->get();
+
+        // Return the response
+        return response()->json([
+            'status' => true,
+            'message' => 'Bookmarked projects retrieved successfully.',
+            'data' => $bookmarkedProjects,
+        ], 200);
+    }
 }
