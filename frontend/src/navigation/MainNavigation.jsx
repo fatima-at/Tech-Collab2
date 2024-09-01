@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import {
+  EXPLORE_PROJECTS_ROUTE,
   FINISH_REGISTRATION_ROUTE,
   GENERATE_PROJECTS_ROUTE,
   HOME_ROUTE,
@@ -16,6 +17,7 @@ import {
   SessionsHistory,
   FinishRegistration,
   SavedProjects,
+  ExploreProjects,
 } from "../screens";
 import { useAuth } from "../context";
 import { Sidebar } from "../components";
@@ -48,6 +50,11 @@ const MainNavigation = () => {
               exact
               path={SAVED_PROJECTS_ROUTE}
               element={<SavedProjects />}
+            />
+            <Route
+              exact
+              path={EXPLORE_PROJECTS_ROUTE}
+              element={<ExploreProjects />}
             />
             <Route exact path={PROFILE_ROUTE} element={<Profile />} />
             <Route path="*" element={<Navigate to={HOME_ROUTE} />} />

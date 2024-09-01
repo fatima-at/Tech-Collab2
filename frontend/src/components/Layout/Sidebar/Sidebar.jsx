@@ -6,6 +6,7 @@ import {
   faHistory,
   faHouse,
   faProjectDiagram,
+  faSearch,
   faSignOut,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Text from "../../UI/Text";
 import { logo } from "../../../assets";
 import {
+  EXPLORE_PROJECTS_ROUTE,
   GENERATE_PROJECTS_ROUTE,
   HOME_ROUTE,
   PROFILE_ROUTE,
@@ -36,6 +38,11 @@ const Sidebar = () => {
   const { openModal, closeModal, isModalOpened } = useModal();
   const sidebarButtons = [
     { name: "Home", logo: faHouse, route: HOME_ROUTE },
+    {
+      name: "Explore Projects",
+      logo: faSearch,
+      route: EXPLORE_PROJECTS_ROUTE,
+    },
     {
       name: "Generate Projects",
       logo: faProjectDiagram,
