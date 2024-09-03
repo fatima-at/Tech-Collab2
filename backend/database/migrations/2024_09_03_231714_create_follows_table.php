@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('project_requests', function (Blueprint $table) {
+        Schema::create('follows', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->text('request_text');
-            $table->text('response_text')->nullable();
+            $table->foreignId('follower_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('followee_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
+            
+            $table->unique(['follower_id', 'followee_id']); // To prevent duplicate follows
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('project_requests');
+        Schema::dropIfExists('follows');
     }
 };

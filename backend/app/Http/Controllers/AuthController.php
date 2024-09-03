@@ -22,14 +22,12 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'user_type' => 'required|in:student,mentor',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'user_type' => $request->user_type,
             'email_verified' => false,
             'registration_completed' => false,
         ]);
@@ -163,27 +161,24 @@ class AuthController extends Controller
             'skills.*' => 'string',
             'cv' => 'nullable|file|mimes:pdf|max:5120',
         ]);
-
+    
         // Get the authenticated user
         $user = Auth::user();
-
-        // Create or update the student data
-        $studentData = StudentData::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'bio' => $request->input('bio'),
-                'general_field' => $request->input('general_field'),
-                'profile_picture' => $user->profile_picture, // Assuming it's set somewhere else
-            ]
-        );
-
+    
+        // Update the user's information directly in the users table
+        $user->update([
+            'bio' => $request->input('bio'),
+            'general_field' => $request->input('general_field'),
+            'profile_picture' => $user->profile_picture, // Assuming it's set somewhere else
+        ]);
+    
         // Handle the CV file upload
         if ($request->hasFile('cv')) {
             $cvPath = $request->file('cv')->store('cvs', 'public');
-            $studentData->cv = $cvPath;
-            $studentData->save();
+            $user->cv = $cvPath;
+            $user->save();
         }
-
+    
         // Handle the skills
         if ($request->has('skills')) {
             // Remove existing skills
@@ -194,17 +189,15 @@ class AuthController extends Controller
                 $user->skills()->create(['skill' => $skillName]);
             }
         }
-
+    
         // Mark the user's registration as completed
         $user->registration_completed = true;
         $user->save();
-
+    
         return response()->json([
             'message' => 'User information completed successfully.',
             'status' => true,
             'user' => $user,
-            'student_data' => $studentData,
         ]);
-    }
-    
+    }    
 }

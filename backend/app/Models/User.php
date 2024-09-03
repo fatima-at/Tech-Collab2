@@ -40,6 +40,13 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'bio',
+        'general_field',
+        'profile_picture',
+        'cv',
+        'linkedin_profile',
+        'email_verified',
+        'registration_completed',
     ];
 
     /**
@@ -62,6 +69,8 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'email_verified' => 'boolean',
+            'registration_completed' => 'boolean',
         ];
     }
 
@@ -69,5 +78,24 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Skill::class);
     }
-    
+
+    public function projectSessions()
+    {
+        return $this->hasMany(ProjectSession::class);
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followee_id');
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followee_id', 'follower_id');
+    }
+
+    public function userProjects()
+    {
+        return $this->hasMany(UserProject::class);
+    }
 }

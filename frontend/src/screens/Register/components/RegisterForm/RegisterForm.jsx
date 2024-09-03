@@ -48,7 +48,6 @@ const RegisterForm = ({ setDidSubmit }) => {
       name: registeredInfo.name,
       email: registeredInfo.email,
       password: registeredInfo.password,
-      user_type: "student",
     };
 
     try {
