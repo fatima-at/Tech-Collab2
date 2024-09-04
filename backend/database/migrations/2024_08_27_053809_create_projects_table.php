@@ -17,6 +17,11 @@ class CreateProjectsTable extends Migration
             $table->id();
             $table->foreignId('project_session_id')->nullable()->constrained('project_sessions')->onDelete('cascade');
             $table->string('title');
+            $table->text('project_description')->nullable();
+            $table->json('project_steps')->nullable();
+            $table->json('project_requirements')->nullable();
+            $table->json('project_tips')->nullable();
+            $table->json('project_applications')->nullable();
             $table->boolean('is_bookmarked')->default(false);
             $table->timestamps();
         });

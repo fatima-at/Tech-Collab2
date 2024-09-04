@@ -11,7 +11,12 @@ class Project extends Model
 
     protected $fillable = [
         'project_session_id',
-        'title',
+        'title', 
+        'project_description',
+        'project_steps',
+        'project_requirements',
+        'project_tips',
+        'project_applications',
         'is_bookmarked',
     ];
 
