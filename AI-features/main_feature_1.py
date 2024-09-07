@@ -87,7 +87,7 @@ def save_b64_as_pdf(base64_pdf, output_filename='this_resume.pdf'):
 def write_and_read_json(json_string, file_name='temp.txt'):
     try:
         # Write the JSON string to a text file
-        with open(file_name, 'w') as file:
+        with open(file_name, 'w', encoding='utf-8') as file:
             print(json_string)
             file.write(json_string)
         
@@ -151,6 +151,6 @@ async def generate_project_2(pdf_b64: str = Form(),
 
 if __name__ == "__main__":
     # uvicorn.run(app, host='0.0.0.0', port=int(os.getenv("PORT")))
-    uvicorn.run(app, host='0.0.0.0', port=80)
+    uvicorn.run(app, host='0.0.0.0', port=8001)
 
     
