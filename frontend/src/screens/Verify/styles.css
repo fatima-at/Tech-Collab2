@@ -1,0 +1,47 @@
+.verify-screen-error {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+    background-color: #2d2d2d;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .verify-screen-error h2 {
+    font-size: 24px;
+    color: #e74c3c;
+    margin-bottom: 20px;
+  }
+  
+  .verify-screen-error p {
+    font-size: 16px;
+    color: #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .verify-screen-error ul {
+    list-style-type: disc;
+    text-align: left;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+  
+  .verify-screen-error ul li {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .verify-screen-error a {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+  
+  .verify-screen-error a:hover {
+    text-decoration: underline;
+  }
+  
+  
+  

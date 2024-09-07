@@ -1,0 +1,61 @@
+.secondary-button,
+.primary-button,
+.cancel-button,
+.danger-button {
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    min-width: 65px;
+    align-items: center;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    font-family: 'Work Sans';
+    cursor: pointer;
+    gap: 4px;
+    width: fit-content;
+    transition: 100ms ease-in-out;
+    border: none;
+}
+
+.secondary-button,
+.primary-button,
+.danger-button {
+    padding: 12px;
+}
+
+.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.secondary-button {
+    border: 1.5px solid #ACB5BD;
+    background-color: white;
+    color: #495057;
+}
+
+.danger-button {
+    background-color: #EB5757;
+    color: white;
+}
+
+button:disabled.primary-button,
+button:disabled:hover.primary-button {
+    background-color: var(--primary-disabled-color) !important;
+}
+
+button:disabled,
+button:disabled:hover {
+    background-color: #ccc !important;
+    cursor: not-allowed !important;
+}
+
+.primary-button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.secondary-button:hover {
+    background-color: #cccece;
+}

@@ -8,4 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'project_session_id',
+        'title', 
+        'project_description',
+        'project_steps',
+        'project_requirements',
+        'project_tips',
+        'project_applications',
+        'is_bookmarked',
+    ];
+
+    public function projectSession()
+    {
+        return $this->belongsTo(ProjectSession::class, 'project_session_id');
+    }
 }

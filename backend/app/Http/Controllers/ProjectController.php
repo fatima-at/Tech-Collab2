@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\ProjectSession;
+use App\Models\Project;
+use Illuminate\Support\Facades\Auth;
+
+class ProjectController extends Controller
+{
+    public function createProject(Request $request, $sessionId)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'is_bookmarked' => 'sometimes|boolean',
+        ]);
+
+        // Check if the session exists and belongs to the authenticated user
+        $projectSession = ProjectSession::where('id', $sessionId)->where('user_id', Auth::id())->first();
+
+        if (!$projectSession) {
+            return response()->json([
+                'message' => 'Project session not found or not accessible.',
+                'data' => null,
+                'status' => false
+            ], 404);
+        }
+
+        // Create a new project linked to the session
+        $project = Project::create([
+            'project_session_id' => $sessionId,
+            'title' => $request->input('title'),
+            'is_bookmarked' => $request->input('is_bookmarked', false), 
+        ]);
+
+        return response()->json([
+            'message' => 'Project created successfully.',
+            'data' => $project,
+            'status' => true
+        ], 200);
+    }
+
+    public function toggleBookmark($projectId)
+    {
+        // Find the project by ID
+        $project = Project::find($projectId);
+
+        // Check if the project exists
+        if (!$project) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Project not found.',
+            ], 404);
+        }
+
+        // Toggle the bookmark status
+        $project->is_bookmarked = !$project->is_bookmarked;
+        $project->save();
+
+        // Return a response
+        return response()->json([
+            'status' => true,
+            'message' => 'Project bookmark status updated successfully.',
+            'data' => $project,
+        ], 200);
+    }
+
+    public function getBookmarkedProjects()
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Fetch bookmarked projects for the user and include the related project session
+        $bookmarkedProjects = Project::with('projectSession')
+            ->whereHas('projectSession', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->where('is_bookmarked', true)
+            ->get();
+
+        // Return the response
+        return response()->json([
+            'status' => true,
+            'message' => 'Bookmarked projects retrieved successfully.',
+            'data' => $bookmarkedProjects,
+        ], 200);
+    }
+}

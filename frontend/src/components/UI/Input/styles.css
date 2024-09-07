@@ -1,0 +1,149 @@
+.register-label-input-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* gap: 8px; */
+    /* flex: 1; */
+    width: 248px;
+    max-width: 100%;
+}
+
+.register-label-input-container label {
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.register-label-input-container label span {
+    font-size: 18px;
+    color: var(--primary-color);
+}
+
+.register-input {
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #CACDD3;
+    border-radius: 6px;
+    outline: none;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    color: #4A4F5E;
+}
+
+.register-label-input-container div input:focus {
+    outline: auto;
+}
+
+.register-form-icon {
+    position: absolute;
+    left: 10px;
+    transform: translateY(-50%);
+    top: 50%;
+}
+
+.register-form-toggle-password-visibility-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.register-input-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    /* width: fit-content; */
+}
+
+/* .register-input {
+    max-width: 100%;
+} */
+
+.register-input-error,
+.register-input-error:focus {
+    outline: 1px solid #EB5757 !important;
+    box-shadow: 0 0 2px #EB5757 !important;
+  }
+  
+.register-label-error,
+.register-label-error span {
+  color: #EB5757 !important;
+}
+
+.register-select-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #CACDD3;
+    border-radius: 6px;
+    /* outline: none; */
+    font-family: 'Work Sans', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #616B77;
+    line-height: 16px;
+    background: white;
+    cursor: pointer;
+}
+
+.register-input-message {
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 20px;
+    color: #EB5757;
+    /* position: absolute;
+    top: 100%;
+    left: 0; */
+    /* transform: translateY(-6px); */
+}
+
+.register-select-placeholder,
+.register-input::placeholder {
+    font-family: 'Work Sans';
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #9EA1A8;
+}
+
+.register-select-input option {
+    font-style: normal;
+    color: #20253F;
+    font-weight: 500;
+}
+
+.register-select-input-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

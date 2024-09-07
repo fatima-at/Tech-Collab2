@@ -17,7 +17,13 @@ return new class extends Migration
                 $table->string('name');
                 $table->string('email')->unique();
                 $table->string('password');
-                $table->enum('user_type', ['student', 'mentor']);
+                $table->boolean('email_verified')->default(false); 
+                $table->boolean('registration_completed')->default(false);
+                $table->text('bio')->nullable();
+                $table->string('general_field')->nullable();
+                $table->string('profile_picture')->nullable();
+                $table->string('cv')->nullable();
+                $table->string('linkedin_profile')->nullable();
                 $table->timestamps();
             });
         }
