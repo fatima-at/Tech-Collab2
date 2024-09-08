@@ -8,6 +8,7 @@ import Profile from "./Profile/Profile";
 import SessionsHistory from "./SessionsHistory";
 import SavedProjects from "./SavedProjects";
 import ExploreProjects from "./ExploreProjects";
+import ExploreUsers from "./ExploreUsers";
 
 export {Auth, Register, Verify, Home, FinishRegistration, GenerateProjects, Profile, 
-    SessionsHistory, SavedProjects, ExploreProjects}
+    SessionsHistory, SavedProjects, ExploreProjects, ExploreUsers}

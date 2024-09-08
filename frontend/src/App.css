@@ -1,8 +1,8 @@
 :root {
-    --primary-color: #692a31;
-    --primary-hover-color: #7b3a42;
-    --primary-disabled-color: #a58b8f;
-    --background-color: #191919;
+  --primary-color: #00796B;
+    --primary-hover-color: #00897B;
+    --primary-disabled-color: #B2DFDB;
+    --background-color: #EDEDED;
     --text-primary-color: #FFF;
 }
 
@@ -11,7 +11,7 @@ body {
     padding: 0px;
     box-sizing: border-box;
     overflow: auto !important;
-    font-family: 'Work Sans';
+    font-family: 'Roboto' !important;
     color: var(--text-primary-color);
 }
   

@@ -9,12 +9,14 @@ import {
   faSearch,
   faSignOut,
   faUser,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Text from "../../UI/Text";
 import { logo } from "../../../assets";
 import {
   EXPLORE_PROJECTS_ROUTE,
+  EXPLORE_USERS_ROUTE,
   GENERATE_PROJECTS_ROUTE,
   HOME_ROUTE,
   PROFILE_ROUTE,
@@ -37,7 +39,12 @@ const Sidebar = () => {
   const { checkAuthentication } = useAuth();
   const { openModal, closeModal, isModalOpened } = useModal();
   const sidebarButtons = [
-    { name: "Home", logo: faHouse, route: HOME_ROUTE },
+    // { name: "Home", logo: faHouse, route: HOME_ROUTE },
+    {
+      name: "Explore Users",
+      logo: faUsers,
+      route: EXPLORE_USERS_ROUTE,
+    },
     {
       name: "Explore Projects",
       logo: faSearch,

@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import {
   EXPLORE_PROJECTS_ROUTE,
+  EXPLORE_USERS_ROUTE,
   FINISH_REGISTRATION_ROUTE,
   GENERATE_PROJECTS_ROUTE,
   HOME_ROUTE,
@@ -18,6 +19,7 @@ import {
   FinishRegistration,
   SavedProjects,
   ExploreProjects,
+  ExploreUsers,
 } from "../screens";
 import { useAuth } from "../context";
 import { Sidebar } from "../components";
@@ -55,6 +57,11 @@ const MainNavigation = () => {
               exact
               path={EXPLORE_PROJECTS_ROUTE}
               element={<ExploreProjects />}
+            />
+            <Route
+              exact
+              path={EXPLORE_USERS_ROUTE}
+              element={<ExploreUsers />}
             />
             <Route exact path={PROFILE_ROUTE} element={<Profile />} />
             <Route path="*" element={<Navigate to={HOME_ROUTE} />} />
