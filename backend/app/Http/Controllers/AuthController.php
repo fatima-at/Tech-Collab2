@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -199,5 +200,41 @@ class AuthController extends Controller
             'status' => true,
             'user' => $user,
         ]);
-    }    
+    }   
+    
+    public function getCvAsBase64()
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+    
+        // Ensure the user has a CV
+        if (!$user->cv) {
+            return response()->json([
+                'message' => 'No CV found for this user.',
+                'status' => false
+            ], 404);
+        }
+    
+        // Get the file path from the user's cv column
+        $filePath = $user->cv;
+    
+        // Check if the file exists in storage
+        if (!Storage::disk('public')->exists($filePath)) {
+            return response()->json([
+                'message' => 'CV file not found.',
+                'status' => false
+            ], 404);
+        }
+    
+        // Get the contents of the file
+        $fileContent = Storage::disk('public')->get($filePath);
+    
+        // Convert the file contents to base64
+        $base64Cv = base64_encode($fileContent);
+    
+        return response()->json([
+            'data' => $base64Cv,
+            'status' => true
+        ], 200);
+    }
 }

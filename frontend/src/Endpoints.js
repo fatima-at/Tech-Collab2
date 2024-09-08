@@ -11,6 +11,10 @@ export const LOG_OUT = `${import.meta.env.VITE_API_URL}/api/auth/logout`;
 export const CRUD_PROJECT_SESSIONS = `${import.meta.env.VITE_API_URL}/api/v1/project-sessions`;
 export const CRUD_PROJECTS = `${import.meta.env.VITE_API_URL}/api/v1/projects`;
 
+export const CRUD_USER = `${import.meta.env.VITE_API_URL}/api/v1/user`;
+
+export const AI_API = `${import.meta.env.VITE_AI_API_URL}`;
+
 export const HeadersWithToken = (overrideToken) => {
     let token = overrideToken || localStorage.getItem(TOKEN_KEY);
     return {

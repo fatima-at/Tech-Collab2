@@ -1,6 +1,7 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import React from "react";
 import { refresh } from "../services/AuthApi";
+import { getUserBase64Cv } from "../services/UserApi";
 export const AuthContext = createContext();
 
 export const TOKEN_KEY = "token";
@@ -38,6 +39,25 @@ export const AuthContextProvider = ({ children }) => {
       if (!isPageReadyToRender) setIsPageReadyToRender(true);
     }
   };
+
+  const fetchUserBase64Cv = async () => {
+    try {
+      const response = await getUserBase64Cv();
+      if (response?.status) {
+        setAuthUser((current) => {
+          return { ...current, base64Cv: response.data };
+        });
+      } else console.log(response.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (authUser?.cv) {
+      fetchUserBase64Cv();
+    }
+  }, [authUser]);
 
   return (
     <AuthContext.Provider

@@ -5,6 +5,10 @@ import {
   Stack,
   IconButton,
   useColorModeValue,
+  VStack,
+  ListItem,
+  UnorderedList,
+  Divider,
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { toggleBookmarkProject } from "../../../services/ProjectApi";
@@ -17,6 +21,20 @@ const ProjectCard = ({ project }) => {
   const [isBookmarked, setIsBookmarked] = useState(project.is_bookmarked);
   const debounceRef = useRef(false);
 
+  // Parse the stringified arrays
+  const projectSteps = project.project_steps
+    ? JSON.parse(project.project_steps)
+    : [];
+  const projectRequirements = project.project_requirements
+    ? JSON.parse(project.project_requirements)
+    : [];
+  const projectTips = project.project_tips
+    ? JSON.parse(project.project_tips)
+    : [];
+  const projectApplications = project.project_applications
+    ? JSON.parse(project.project_applications)
+    : [];
+
   const handleBookmarkToggle = async () => {
     if (debounceRef.current) return;
 
@@ -25,9 +43,7 @@ const ProjectCard = ({ project }) => {
     try {
       const response = await toggleBookmarkProject(project.id);
       if (response.status) {
-        setIsBookmarked((current) => {
-          return !current;
-        });
+        setIsBookmarked((current) => !current);
       } else {
         toast.error(response.message);
       }
@@ -43,30 +59,106 @@ const ProjectCard = ({ project }) => {
   return (
     <Box
       w="100%"
-      p={4}
+      p={6}
       borderRadius="md"
       bg={bgColor}
       color={textColor}
       display="flex"
-      alignItems="center"
-      justifyContent="space-between"
+      flexDirection="column"
       boxShadow="md"
       _hover={{ boxShadow: "lg" }}
     >
-      <Stack spacing={2}>
+      <Stack spacing={4} mb={4}>
         <Text fontSize="lg" fontWeight="bold">
           {project.title}
         </Text>
         <Text fontSize="sm" color="gray.400">
-          {`Created at: ${new Date().toLocaleDateString()}`}{" "}
+          {`Created at: ${new Date().toLocaleDateString()}`}
+        </Text>
+        <Text fontSize="md" color="gray.300">
+          {project.project_description}
         </Text>
       </Stack>
+
+      <Divider my={4} borderColor="gray.500" />
+
+      {/* Display project steps */}
+      {projectSteps.length > 0 && (
+        <VStack align="start" spacing={2} mb={4}>
+          <Text fontSize="md" fontWeight="bold">
+            Steps:
+          </Text>
+          <UnorderedList spacing={1} pl={4}>
+            {projectSteps.map((step, index) => (
+              <ListItem key={index} fontSize="sm">
+                {step}
+              </ListItem>
+            ))}
+          </UnorderedList>
+        </VStack>
+      )}
+
+      <Divider my={4} borderColor="gray.500" />
+
+      {/* Display project requirements */}
+      {projectRequirements.length > 0 && (
+        <VStack align="start" spacing={2} mb={4}>
+          <Text fontSize="md" fontWeight="bold">
+            Requirements:
+          </Text>
+          <UnorderedList spacing={1} pl={4}>
+            {projectRequirements.map((requirement, index) => (
+              <ListItem key={index} fontSize="sm">
+                {requirement}
+              </ListItem>
+            ))}
+          </UnorderedList>
+        </VStack>
+      )}
+
+      <Divider my={4} borderColor="gray.500" />
+
+      {/* Display project tips */}
+      {projectTips.length > 0 && (
+        <VStack align="start" spacing={2} mb={4}>
+          <Text fontSize="md" fontWeight="bold">
+            Tips:
+          </Text>
+          <UnorderedList spacing={1} pl={4}>
+            {projectTips.map((tip, index) => (
+              <ListItem key={index} fontSize="sm">
+                {tip}
+              </ListItem>
+            ))}
+          </UnorderedList>
+        </VStack>
+      )}
+
+      <Divider my={4} borderColor="gray.500" />
+
+      {/* Display project applications */}
+      {projectApplications.length > 0 && (
+        <VStack align="start" spacing={2} mb={4}>
+          <Text fontSize="md" fontWeight="bold">
+            Applications:
+          </Text>
+          <UnorderedList spacing={1} pl={4}>
+            {projectApplications.map((application, index) => (
+              <ListItem key={index} fontSize="sm">
+                {application}
+              </ListItem>
+            ))}
+          </UnorderedList>
+        </VStack>
+      )}
+
       <IconButton
         aria-label="Bookmark project"
         icon={<StarIcon />}
         variant={isBookmarked ? "solid" : "outline"}
         colorScheme="yellow"
         onClick={handleBookmarkToggle}
+        alignSelf="end"
       />
     </Box>
   );

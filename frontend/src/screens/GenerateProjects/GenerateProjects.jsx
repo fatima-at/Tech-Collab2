@@ -16,11 +16,13 @@ import {
 } from "../../services/ProjectSessionApi";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context";
-import { createProject, toggleBookmarkProject } from "../../services/ProjectApi";
+import { createProject } from "../../services/ProjectApi";
 import SelectField from "./components/SelectField ";
 import InputField from "./components/InputField";
 import { useParams } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
+import { generateProjectWithoutCv } from "../../services/ProjectAiApi";
+import { AI_API } from "../../Endpoints";
 
 const GenerateProjects = () => {
   const { authUser } = useAuth();
@@ -50,12 +52,83 @@ const GenerateProjects = () => {
     }));
   };
 
-  const generateProject = async () => {
-    setLoading(true);
-    const newProject =
-      "lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem";
+  const generateSessionString = (sessionData) => {
+    const {
+      selectedFocusAreaOptions,
+      selectedToolsAndTechnologiesOptions,
+      selectedComplexityLevel,
+      selectedDuration,
+      selectedTeamSize,
+      selectedExpectedOutcome,
+    } = sessionData;
 
-    const createProjectBody = { title: newProject };
+    // Create a string for focus areas
+    const focusAreas = selectedFocusAreaOptions
+      .map((option) => option.label)
+      .join(" - ");
+
+    // Create a string for tools and technologies
+    const toolsAndTechnologies = selectedToolsAndTechnologiesOptions
+      .map((option) => option.label)
+      .join(" - ");
+
+    // Construct the full string
+    const sessionString = `Focus Area: ${focusAreas}, Complexity Level: ${
+      selectedComplexityLevel?.label || "N/A"
+    }, Duration: ${selectedDuration?.label || "N/A"}, Team Size: ${
+      selectedTeamSize?.label || "N/A"
+    }, Expected Outcome: ${
+      selectedExpectedOutcome?.label || "N/A"
+    }, Tools and Technologies: ${toolsAndTechnologies}`;
+
+    return sessionString;
+  };
+
+  const generateProject = async (sessionData) => {
+    // Construct the form data
+    const formData = new FormData();
+    formData.append("preference", generateSessionString(sessionData));
+    if (sessionData.includeCV) formData.append("pdf_b64", authUser.base64Cv);
+
+    const apiRoute = sessionData.includeCV
+      ? "/generate_project_2"
+      : "/generate_project_1";
+
+    try {
+      const response = await fetch(AI_API + apiRoute, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Error: ${data.message || "Failed to generate project"}`
+        );
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error:", error.message);
+      return null;
+    }
+  };
+
+  const handleGenerateClick = async () => {
+    setLoading(true);
+    const newProject = await generateProject(sessionData);
+
+    const createProjectBody = {
+      title: newProject?.Project_Name || "",
+      project_description: newProject?.Project_Description || "",
+      project_steps: JSON.stringify(newProject?.Project_Steps || []),
+      project_requirements: JSON.stringify(
+        newProject?.Project_Requirements || []
+      ),
+      project_tips: JSON.stringify(newProject?.Project_Tips || []),
+      project_applications: JSON.stringify(
+        newProject?.Project_Applications || []
+      ),
+    };
 
     try {
       if (!sessionData.sessionId) {
@@ -162,10 +235,6 @@ const GenerateProjects = () => {
     fetchSessionData();
   }, [routeSessionId]);
 
-  useEffect(() => {
-    console.log(sessionData, complexityLevelOptions);
-  }, [sessionData]);
-
   return (
     <>
       {fetchingSessionDataLoading ? (
@@ -185,7 +254,7 @@ const GenerateProjects = () => {
                     updateSessionData("includeCV", !sessionData.includeCV)
                   }
                   colorScheme="primary"
-                  disabled={sessionData.sessionId}
+                  disabled={sessionData.sessionId || loading}
                 />
               </div>
 
@@ -196,7 +265,7 @@ const GenerateProjects = () => {
                   updateSessionData("sessionTitle", e.target.value)
                 }
                 placeholder="Enter session title"
-                disabled={sessionData.sessionId}
+                disabled={sessionData.sessionId || loading}
               />
 
               <SelectField
@@ -207,7 +276,7 @@ const GenerateProjects = () => {
                   updateSessionData("selectedFocusAreaOptions", selected)
                 }
                 placeholder="Select focus area options..."
-                disabled={sessionData.sessionId}
+                disabled={sessionData.sessionId || loading}
                 isMulti
               />
 
@@ -219,7 +288,7 @@ const GenerateProjects = () => {
                   updateSessionData("selectedComplexityLevel", selected)
                 }
                 placeholder="Select complexity level"
-                disabled={sessionData.sessionId}
+                disabled={sessionData.sessionId || loading}
               />
 
               <SelectField
@@ -235,7 +304,7 @@ const GenerateProjects = () => {
                   )
                 }
                 placeholder="Select tools and technologies..."
-                disabled={sessionData.sessionId}
+                disabled={sessionData.sessionId || loading}
                 isMulti
               />
 
@@ -247,7 +316,7 @@ const GenerateProjects = () => {
                   updateSessionData("selectedDuration", selected)
                 }
                 placeholder="Select project duration"
-                disabled={sessionData.sessionId}
+                disabled={sessionData.sessionId || loading}
               />
 
               <SelectField
@@ -258,7 +327,7 @@ const GenerateProjects = () => {
                   updateSessionData("selectedTeamSize", selected)
                 }
                 placeholder="Select team size"
-                disabled={sessionData.sessionId}
+                disabled={sessionData.sessionId || loading}
               />
 
               <SelectField
@@ -269,14 +338,14 @@ const GenerateProjects = () => {
                   updateSessionData("selectedExpectedOutcome", selected)
                 }
                 placeholder="Select expected outcome"
-                disabled={sessionData.sessionId}
+                disabled={sessionData.sessionId || loading}
               />
             </div>
 
             <Button
               type="Primary"
               style={{ width: "100%" }}
-              onClick={generateProject}
+              onClick={handleGenerateClick}
               loading={loading}
             >
               Generate
@@ -285,10 +354,7 @@ const GenerateProjects = () => {
 
           <div className="generate-projects-outputs-box">
             {sessionData.generatedProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-              />
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         </div>

@@ -14,12 +14,17 @@ class ProjectController extends Controller
         // Validate the incoming request data
         $request->validate([
             'title' => 'required|string|max:255',
+            'project_description' => 'required|string',
+            'project_steps' => 'nullable|string',
+            'project_requirements' => 'nullable|string',
+            'project_tips' => 'nullable|string',
+            'project_applications' => 'nullable|string',
             'is_bookmarked' => 'sometimes|boolean',
         ]);
-
+    
         // Check if the session exists and belongs to the authenticated user
         $projectSession = ProjectSession::where('id', $sessionId)->where('user_id', Auth::id())->first();
-
+    
         if (!$projectSession) {
             return response()->json([
                 'message' => 'Project session not found or not accessible.',
@@ -27,14 +32,19 @@ class ProjectController extends Controller
                 'status' => false
             ], 404);
         }
-
+    
         // Create a new project linked to the session
         $project = Project::create([
             'project_session_id' => $sessionId,
             'title' => $request->input('title'),
-            'is_bookmarked' => $request->input('is_bookmarked', false), 
+            'project_description' => $request->input('project_description'),
+            'project_steps' => $request->input('project_steps'),
+            'project_requirements' => $request->input('project_requirements'),
+            'project_tips' => $request->input('project_tips'),
+            'project_applications' => $request->input('project_applications'),
+            'is_bookmarked' => $request->input('is_bookmarked', false),
         ]);
-
+    
         return response()->json([
             'message' => 'Project created successfully.',
             'data' => $project,

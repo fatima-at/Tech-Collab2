@@ -30,4 +30,6 @@ Route::group([
     Route::post('projects/{projectId}/bookmark', [ProjectController::class, 'toggleBookmark']);
     Route::get('projects/bookmarked', [ProjectController::class, 'getBookmarkedProjects']);
     Route::get('projects/standalone', [ProjectController::class, 'getStandaloneProjects']);
+
+    Route::get('user/cv-base64', [AuthController::class, 'getCvAsBase64']);
 });
