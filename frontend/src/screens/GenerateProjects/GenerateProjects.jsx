@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./styles.css";
-import { Button, Loader, Text } from "../../components";
+import { Button, EmptyState, Loader, Text } from "../../components";
 import { Switch } from "@chakra-ui/react";
 import {
   focusAreaOptions,
@@ -244,7 +244,7 @@ const GenerateProjects = () => {
           <div className="generate-projects-inputs-box">
             <div className="generate-projects-inputs-container">
               <div className="flex-between">
-                <Text type="h6" color="white">
+                <Text type="h6" color="#333333">
                   Include CV:
                 </Text>
                 <Switch
@@ -353,9 +353,16 @@ const GenerateProjects = () => {
           </div>
 
           <div className="generate-projects-outputs-box">
-            {sessionData.generatedProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+            {sessionData.generatedProjects.length > 0 ? (
+              sessionData.generatedProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))
+            ) : (
+              <EmptyState
+                title="No Projects Generated Yet"
+                message="Start by selecting your preferences to generate projects."
+              />
+            )}
           </div>
         </div>
       )}

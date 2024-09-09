@@ -3,8 +3,14 @@ import "./styles.css";
 import LogoHeader from "../../UI/LogoHeader";
 import {
   faBookmark,
+  faClipboardList,
+  faCodeBranch,
+  faCogs,
+  faFolderOpen,
   faHistory,
   faHouse,
+  faLightbulb,
+  faMagic,
   faProjectDiagram,
   faSearch,
   faSignOut,
@@ -32,14 +38,15 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../../context";
 import { TOKEN_KEY } from "../../../context/AuthContext";
 import { AnimatePresence } from "framer-motion";
+import { useColorModeValue } from "@chakra-ui/react";
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { checkAuthentication } = useAuth();
   const { openModal, closeModal, isModalOpened } = useModal();
+  const sidebarBg = useColorModeValue("white", "#EDEDED");
   const sidebarButtons = [
-    // { name: "Home", logo: faHouse, route: HOME_ROUTE },
     {
       name: "Explore Users",
       logo: faUsers,
@@ -47,12 +54,12 @@ const Sidebar = () => {
     },
     {
       name: "Explore Projects",
-      logo: faSearch,
+      logo: faLightbulb,
       route: EXPLORE_PROJECTS_ROUTE,
     },
     {
       name: "Generate Projects",
-      logo: faProjectDiagram,
+      logo: faCodeBranch,
       route: GENERATE_PROJECTS_ROUTE,
     },
     {
@@ -96,7 +103,7 @@ const Sidebar = () => {
       </AnimatePresence>
       <div className="sidebar-header">
         <img src={logo} alt="" />
-        <Text type="h6" color="white">
+        <Text type="h6" color="black">
           Tech-Collab
         </Text>
       </div>
@@ -116,8 +123,20 @@ const Sidebar = () => {
             }}
             key={button.name}
           >
-            <FontAwesomeIcon icon={button.logo} color="white" />
-            <Text type="p" color="white">
+            <FontAwesomeIcon
+              icon={button.logo}
+              style={{
+                color: location.pathname.includes(button.route)
+                  ? "white"
+                  : "black",
+              }}
+            />
+            <Text
+              type="p"
+              color={
+                location.pathname.includes(button.route) ? "white" : "black"
+              }
+            >
               {button.name}
             </Text>
           </button>
@@ -135,14 +154,14 @@ const Sidebar = () => {
           }
           onClick={() => navigate(`/${PROFILE_ROUTE}`)}
         >
-          <FontAwesomeIcon icon={faUser} color="white" />
-          <Text type="p" color="white">
+          <FontAwesomeIcon icon={faUser} color="black" />
+          <Text type="p" color="black">
             Your Profile
           </Text>
         </button>
         <button className="sidebar-button" onClick={openModal}>
-          <FontAwesomeIcon icon={faSignOut} color="white" />
-          <Text type="p" color="white">
+          <FontAwesomeIcon icon={faSignOut} color="black" />
+          <Text type="p" color="black">
             Logout
           </Text>
         </button>

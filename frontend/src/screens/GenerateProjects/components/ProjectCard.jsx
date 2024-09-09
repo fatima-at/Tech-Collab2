@@ -9,14 +9,19 @@ import {
   ListItem,
   UnorderedList,
   Divider,
+  OrderedList,
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { toggleBookmarkProject } from "../../../services/ProjectApi";
 import { toast } from "react-toastify";
+import {
+  primaryTextColor,
+  secondaryTextColor,
+} from "../../../constants/colors";
 
 const ProjectCard = ({ project }) => {
-  const bgColor = useColorModeValue("#3c3c3c", "#1a202c");
-  const textColor = useColorModeValue("white", "gray.100");
+  const bgColor = useColorModeValue("#F5F5F5", "#FFF");
+  const textColor = useColorModeValue(primaryTextColor, secondaryTextColor);
 
   const [isBookmarked, setIsBookmarked] = useState(project.is_bookmarked);
   const debounceRef = useRef(false);
@@ -72,10 +77,10 @@ const ProjectCard = ({ project }) => {
         <Text fontSize="lg" fontWeight="bold">
           {project.title}
         </Text>
-        <Text fontSize="sm" color="gray.400">
+        <Text fontSize="sm" color="gray.500">
           {`Created at: ${new Date().toLocaleDateString()}`}
         </Text>
-        <Text fontSize="md" color="gray.300">
+        <Text fontSize="md" color="gray.600">
           {project.project_description}
         </Text>
       </Stack>
@@ -88,13 +93,13 @@ const ProjectCard = ({ project }) => {
           <Text fontSize="md" fontWeight="bold">
             Steps:
           </Text>
-          <UnorderedList spacing={1} pl={4}>
+          <OrderedList spacing={1} pl={4}>
             {projectSteps.map((step, index) => (
               <ListItem key={index} fontSize="sm">
                 {step}
               </ListItem>
             ))}
-          </UnorderedList>
+          </OrderedList>
         </VStack>
       )}
 

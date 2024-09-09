@@ -12,6 +12,7 @@ const durationOptions = [
   const expectedOutcomeOptions = [
     { label: "Working Prototype", value: "Working Prototype" },
     { label: "Research Paper", value: "Research Paper" },
+    { label: "Final Year Project", value: "Final Year Project" },
     { label: "Open-Source Contribution", value: "Open-Source Contribution" },
     { label: "Startup Idea", value: "Startup Idea" },
   ];

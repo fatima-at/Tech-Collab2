@@ -28,14 +28,14 @@ const SessionsHistory = () => {
     <ScreenContainer>
       {projectSessionsLoading ? (
         <Loader />
-      ) : projectSessions.length === 0 ? (
+      ) : projectSessions?.length === 0 ? (
         <EmptyState
           title="No sessions history found"
           message="You haven't started any project sessions yet."
         />
       ) : (
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-          {projectSessions.map((session) => (
+          {projectSessions?.map((session) => (
             <Card
               key={session.id}
               bg="#F3F4F6"

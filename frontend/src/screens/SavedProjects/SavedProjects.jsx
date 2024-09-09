@@ -66,14 +66,14 @@ const SavedProjects = () => {
     <ScreenContainer>
       {savedProjectsLoading ? (
         <Loader />
-      ) : savedProjects.length === 0 ? (
+      ) : savedProjects?.length === 0 ? (
         <EmptyState
           title="No saved projects yet"
           message="Bookmark your favorite projects to see them here."
         />
       ) : (
         <Grid templateColumns="repeat(3, minmax(250px, 1fr))" gap={6}>
-          {savedProjects.map((project) => (
+          {savedProjects?.map((project) => (
             <GridItem
               key={project.id}
               w="100%"

@@ -7,7 +7,7 @@
 
 .generate-projects-inputs-box {
     flex: 1;
-    background-color: #2d2d2d;
+    background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -27,7 +27,7 @@
 
 .generate-projects-outputs-box {
     flex: 3;
-    background-color: #2d2d2d;
+    background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -40,7 +40,7 @@
     width: 100%;
     padding: .75rem;
     border-radius: 8px;
-    color: white;
+    color: #333333;
     font-size: 14px;
-    background-color: #3c3c3c;
+    background-color: #F5F5F5 ;
 }

@@ -2,12 +2,10 @@ import React from "react";
 import { Center, VStack, Text, useColorModeValue, Box } from "@chakra-ui/react";
 
 const EmptyState = ({ title, message }) => {
-  const textColor = useColorModeValue("gray.800", "white");
-  const bgGradient = useColorModeValue(
-    "linear(to-r, gray.100, gray.200)",
-    "linear(to-r, gray.700, gray.600)"
-  );
-  const messageColor = useColorModeValue("gray.600", "gray.400");
+  const textColor = useColorModeValue("gray.700", "gray.100");
+  const bgColor = useColorModeValue("white", "gray.800");
+  const boxShadow = useColorModeValue("lg", "dark-lg");
+  const messageColor = useColorModeValue("gray.500", "gray.400");
 
   return (
     <Center h="100%">
@@ -16,22 +14,23 @@ const EmptyState = ({ title, message }) => {
         p={8}
         maxW="md"
         textAlign="center"
-        bgGradient={bgGradient}
-        boxShadow="md"
+        bg={bgColor}
+        boxShadow={boxShadow}
       >
-        <VStack spacing={4}>
+        <VStack spacing={5}>
           {/* Title */}
           <Text
             fontSize="2xl"
             fontWeight="bold"
             color={textColor}
+            letterSpacing="wider"
             lineHeight="1.4"
           >
             {title}
           </Text>
 
           {/* Message */}
-          <Text fontSize="md" color={messageColor} lineHeight="1.6">
+          <Text fontSize="lg" color={messageColor} lineHeight="1.6">
             {message}
           </Text>
         </VStack>

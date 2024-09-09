@@ -1,7 +1,7 @@
 :root {
-  --primary-color: #00796B;
-    --primary-hover-color: #00897B;
-    --primary-disabled-color: #B2DFDB;
+    --primary-color: #1E88E5;
+    --primary-hover-color: #1976D2;
+    --primary-disabled-color: #BBDEFB;
     --background-color: #EDEDED;
     --text-primary-color: #FFF;
 }

@@ -1,5 +1,6 @@
 import { Text } from "../../../components";
 import ReactSelect from "../../../components/UI/ReactSelect";
+import { primaryTextColor } from "../../../constants/colors";
 
 const SelectField = ({
   label,
@@ -12,7 +13,7 @@ const SelectField = ({
   isMulti = false,
 }) => (
   <div className="flex-col-05">
-    <Text type="p" color="white">
+    <Text type="p" color={primaryTextColor}>
       {label}
     </Text>
     <ReactSelect
