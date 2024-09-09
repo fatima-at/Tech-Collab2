@@ -5,6 +5,8 @@ import { AuthContextProvider } from "./context";
 import { extendTheme, ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { primaryColor } from "./constants/colors.js";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const theme = extendTheme({
   colors: {

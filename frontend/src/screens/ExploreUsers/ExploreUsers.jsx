@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  Grid,
   GridItem,
   Text,
   Avatar,
@@ -11,11 +10,12 @@ import {
   Input,
   Heading,
   Flex,
+  Center,
 } from "@chakra-ui/react";
+import Slider from "react-slick"; // Import react-slick for carousel
 import { ScreenContainer, EmptyState, Loader } from "../../components";
 import { UserPopup } from "./components/UserPopup";
-import { users as recommendedUsers } from "./users"; // Use 'users' for recommended dataset
-import { fetchAllUsers } from "../../services/UserApi"; // Simulate API call to fetch all users
+import { users as recommendedUsers } from "./users";
 
 const ExploreUsers = () => {
   const cardBg = useColorModeValue("white", "gray.800");
@@ -27,19 +27,7 @@ const ExploreUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [allUsers, setAllUsers] = useState([]);
-  const [usersLoading, setUsersLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate fetching all users from the API
-    const fetchUsers = async () => {
-      setUsersLoading(true);
-      const response = await fetchAllUsers(); // Replace with actual API call
-      setAllUsers(response.data || []); // Assuming response data is in "data" key
-      setUsersLoading(false);
-    };
-
-    fetchUsers();
-  }, []);
+  const [usersLoading, setUsersLoading] = useState(false);
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
@@ -51,10 +39,39 @@ const ExploreUsers = () => {
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Settings for react-slick carousel with custom arrows and 5 slides
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 5, // Display 5 users at once
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3, // Show 3 users on medium screens
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2, // Show 2 users on small screens
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1, // Show 1 user on very small screens
+        },
+      },
+    ],
+  };
+
   return (
     <ScreenContainer>
       {/* Recommended Users Section */}
-      <Box mb={6}>
+      <Box mb={6} position="relative">
         <Heading as="h1" size="lg" mb={2} color={textColor}>
           Recommended Users Based on Your Profile
         </Heading>
@@ -62,24 +79,22 @@ const ExploreUsers = () => {
           These users share similar interests or skills with you.
         </Text>
 
-        <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={4}>
+        <Slider {...settings}>
           {recommendedUsers.map((user) => (
-            <GridItem
-              key={user.id}
-              bg={cardBg}
-              p={3}
-              borderRadius="md"
-              boxShadow="md"
-              transition="all 0.3s ease-in-out"
-              _hover={{
-                boxShadow: "lg",
-                transform: "scale(1.05)",
-                bg: cardHoverBg,
-              }}
-              onClick={() => handleUserClick(user)}
-              cursor="pointer"
-            >
-              <VStack align="center" spacing={2}>
+            <Box key={user.id} p={3} cursor="pointer">
+              <VStack
+                bg={cardBg}
+                borderRadius="md"
+                boxShadow="md"
+                transition="all 0.3s ease-in-out"
+                _hover={{
+                  boxShadow: "lg",
+                  transform: "scale(1.05)",
+                  bg: cardHoverBg,
+                }}
+                onClick={() => handleUserClick(user)}
+                p={5}
+              >
                 <Avatar
                   name={user.name}
                   src={user.profile_picture}
@@ -107,29 +122,40 @@ const ExploreUsers = () => {
                   {user.bio ? user.bio : "No bio available"}
                 </Text>
               </VStack>
-            </GridItem>
+            </Box>
           ))}
-        </Grid>
+        </Slider>
       </Box>
 
       {/* Search Users Section */}
-      <Box mb={6}>
-        <Flex justifyContent="space-between" alignItems="center" mb={4}>
-          <Heading as="h2" size="md" color={textColor}>
-            Search for Users
-          </Heading>
+      <Box mb={6} mt={12}>
+        <Flex direction="column" alignItems="center" mb={4}>
           <Input
             placeholder="Search users by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             size="md"
-            width="300px" // Restrict width for better layout
+            width={{ base: "100%", sm: "400px", md: "500px" }}
             borderColor="gray.300"
+            borderRadius="md"
+            boxShadow="sm"
+            _focus={{ borderColor: "blue.500", boxShadow: "outline" }}
           />
         </Flex>
 
-        {/* Display Search Results */}
-        {usersLoading ? (
+        {/* Only display users if the search query is not empty */}
+        {searchQuery === "" ? (
+          <Center h="100%">
+            <VStack spacing={3}>
+              <Text fontSize="lg" fontWeight="semibold" color={textColor}>
+                Search for users
+              </Text>
+              <Text fontSize="sm" color="gray.500">
+                Start typing a name to find users.
+              </Text>
+            </VStack>
+          </Center>
+        ) : usersLoading ? (
           <Loader />
         ) : filteredAllUsers.length === 0 ? (
           <EmptyState

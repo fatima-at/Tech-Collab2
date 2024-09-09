@@ -64,7 +64,7 @@ const MainNavigation = () => {
               element={<ExploreUsers />}
             />
             <Route exact path={PROFILE_ROUTE} element={<Profile />} />
-            <Route path="*" element={<Navigate to={HOME_ROUTE} />} />
+            <Route path="*" element={<Navigate to={EXPLORE_USERS_ROUTE} />} />
           </>
         ) : (
           <>
