@@ -1,12 +1,11 @@
+import textwrap
 import google.generativeai as genai
+from IPython.display import display
+from IPython.display import Markdown
+
 # google_api_key = 'AIzaSyCxHZzWgfpgT91e-ReTrqioroVenes4Ato'
 google_api_key = 'AIzaSyDRqbzZeq1PU_7zBMDFZ0RSjyaHGMVlpgc'
 genai.configure(api_key= google_api_key)
-
-import textwrap
-
-from IPython.display import display
-from IPython.display import Markdown
 
 model = genai.GenerativeModel('gemini-pro')
 

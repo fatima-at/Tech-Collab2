@@ -194,7 +194,7 @@ def LLM_structure_resume(resume_text):
     prompt = f'''
             You are given raw CV data. Please extract and structure the following information into a JSON format:
 
-            1. Summary: A brief overview or summary of the individual's background.
+            1. Summary: A brief overview or summary of the individual's background. if not found, write a brief summary based on his background.
             2. Education: Extract the degree name from the education section.
             3. Skills: List the skills mentioned in the CV.
             4. Work Experience: For each work experience entry, include:
@@ -209,9 +209,8 @@ def LLM_structure_resume(resume_text):
             Incase no summary found, generate a summary according to his other info.
             Output the structured information in JSON format exactly as this:
 
-            ```json
             {{
-            "summary": "Summary of theresume_text individual's background.",
+            "summary": "Summary of the resume_text individual's background.",
             "education": [    {{      "degree": "Degree Name"    }}  ],
             "skills": [    "Skill 1",    "Skill 2"  ],
             "work_experience": [    {{      "role": "Job Title",      "summary": "Brief description of the role or key responsibilities."    }}  ],
@@ -312,5 +311,39 @@ def LLM_structure_project(project_text):
     Review the project to ensure it is well-defined, feasible, and aligned with the intended learning outcomes.
 
     Project Text: '''{project_text}'''
+    """
+    return get_completion(prompt)
+
+def LLM_prompt_RAG(resume_text, preference, context):
+    prompt = f"""
+    You are an expert career advisor specializing in technology and engineering fields. 
+    Given the resume text of a student, and his preferences.
+    Your task is to recommend based ONLY on the given context below, a suitable project for experience, skills, and summary provided in the resume.
+    The recommended project should be:
+    - Develop a project that is unique and innovative, clearly different from any of the student's previous work.
+    - Designed to enhance and expand the student's knowledge and abilities, pushing their boundaries to explore new areas.
+    - Resourceful: suggest links, techniques, text book references and examples in the steps and tips.
+
+    Provide your recommendation in the following JSON format:
+    {{
+        "Project_Name": "A concise, descriptive name for the project",
+        "Project_Description": "A detailed description of the project, including its objectives and relevance to the student's background",
+        "Project_Steps": [
+            "A list of clear, actionable steps to build the project (version 0)"
+        ],
+        "Project_Requirements": [
+            "A list of required knowledge, tools, and resources needed for the project"
+        ],
+        "Project_Tips": [
+            "Helpful tips and best practices for successfully completing the project"
+        ],
+        "Project_Applications": ["Applications to apply this project in real life"]
+    }}
+
+    Review the project to ensure it is feasible and beneficial for the student's academic and professional development, and ensure that it is not a mere repetition of their previous work.
+
+    Resume Text: '''{resume_text}'''
+    Preferences: '''{preference}'''
+    Here are all the projects you have to recommend from: '''{context}'''
     """
     return get_completion(prompt)
