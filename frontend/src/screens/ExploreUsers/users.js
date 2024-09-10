@@ -7,10 +7,8 @@ export const users = [
     general_field: "Software Engineering",
     skills: ["JavaScript", "React", "Node.js"],
     linkedin_profile: "https://linkedin.com/in/karimhaddad",
-    followers: [
-      { id: 2, name: "Maya Abou Hassan" },
-      { id: 3, name: "Rami Fakhoury" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 1,
@@ -32,10 +30,8 @@ export const users = [
     general_field: "Data Science",
     skills: ["Python", "TensorFlow", "Pandas"],
     linkedin_profile: "https://linkedin.com/in/mayaabouhassan",
-    followers: [
-      { id: 1, name: "Karim Haddad" },
-      { id: 3, name: "Rami Fakhoury" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 2,
@@ -58,10 +54,8 @@ export const users = [
     general_field: "Cloud Engineering",
     skills: ["AWS", "Terraform", "Docker"],
     linkedin_profile: "https://linkedin.com/in/ramifakhoury",
-    followers: [
-      { id: 1, name: "Karim Haddad" },
-      { id: 2, name: "Maya Abou Hassan" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 3,
@@ -84,10 +78,8 @@ export const users = [
     general_field: "Mobile Development",
     skills: ["Kotlin", "Swift", "Flutter"],
     linkedin_profile: "https://linkedin.com/in/sophiaghanem",
-    followers: [
-      { id: 1, name: "Karim Haddad" },
-      { id: 2, name: "Maya Abou Hassan" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 4,
@@ -110,10 +102,8 @@ export const users = [
     general_field: "Cybersecurity",
     skills: ["Penetration Testing", "Kali Linux", "Wireshark"],
     linkedin_profile: "https://linkedin.com/in/davidnasrallah",
-    followers: [
-      { id: 3, name: "Rami Fakhoury" },
-      { id: 4, name: "Sophia Ghanem" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 5,
@@ -136,10 +126,8 @@ export const users = [
     general_field: "Software Engineering",
     skills: ["JavaScript", "React", "Node.js"],
     linkedin_profile: "https://linkedin.com/in/karimhaddad",
-    followers: [
-      { id: 2, name: "Maya Abou Hassan" },
-      { id: 3, name: "Rami Fakhoury" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 1,
@@ -161,10 +149,8 @@ export const users = [
     general_field: "Data Science",
     skills: ["Python", "TensorFlow", "Pandas"],
     linkedin_profile: "https://linkedin.com/in/mayaabouhassan",
-    followers: [
-      { id: 1, name: "Karim Haddad" },
-      { id: 3, name: "Rami Fakhoury" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 2,
@@ -187,10 +173,8 @@ export const users = [
     general_field: "Cloud Engineering",
     skills: ["AWS", "Terraform", "Docker"],
     linkedin_profile: "https://linkedin.com/in/ramifakhoury",
-    followers: [
-      { id: 1, name: "Karim Haddad" },
-      { id: 2, name: "Maya Abou Hassan" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 3,
@@ -213,10 +197,8 @@ export const users = [
     general_field: "Mobile Development",
     skills: ["Kotlin", "Swift", "Flutter"],
     linkedin_profile: "https://linkedin.com/in/sophiaghanem",
-    followers: [
-      { id: 1, name: "Karim Haddad" },
-      { id: 2, name: "Maya Abou Hassan" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 4,
@@ -239,10 +221,8 @@ export const users = [
     general_field: "Cybersecurity",
     skills: ["Penetration Testing", "Kali Linux", "Wireshark"],
     linkedin_profile: "https://linkedin.com/in/davidnasrallah",
-    followers: [
-      { id: 3, name: "Rami Fakhoury" },
-      { id: 4, name: "Sophia Ghanem" },
-    ],
+    is_following: false,
+    followers_count: 2,
     userProjects: [
       {
         id: 5,

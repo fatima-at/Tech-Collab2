@@ -245,6 +245,8 @@ const ExploreUsers = () => {
         isOpen={isOpen}
         onClose={onClose}
         selectedUser={selectedUser}
+        setAllUsers={setAllUsers}
+        setSelectedUser={setSelectedUser}
       />
     </ScreenContainer>
   );

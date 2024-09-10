@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -16,15 +16,75 @@ import {
   Flex,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FaLinkedin } from "react-icons/fa"; // Import LinkedIn icon
+import { FaLinkedin, FaUserMinus, FaUserPlus } from "react-icons/fa";
+import { followUser, unfollowUser } from "../../../services/UserApi";
+import { useAuth } from "../../../context";
 
-export const UserPopup = ({ isOpen, onClose, selectedUser }) => {
+export const UserPopup = ({
+  isOpen,
+  onClose,
+  selectedUser,
+  setAllUsers,
+  setSelectedUser,
+}) => {
+  const { authUser } = useAuth();
   const cardBg = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.800", "white");
+  const buttonGradient = useColorModeValue(
+    "linear(to-r, blue.400, teal.400)",
+    "linear(to-r, teal.500, blue.500)"
+  );
   const modalBgGradient = useColorModeValue(
     "linear(to-br, gray.50, gray.100)",
     "linear(to-br, gray.700, gray.900)"
   );
+
+  const followButtonColor = selectedUser?.is_following ? "red.400" : "blue.400";
+  const followIcon = selectedUser?.is_following ? (
+    <FaUserMinus />
+  ) : (
+    <FaUserPlus />
+  );
+
+  const handleFollowToggle = async () => {
+    const body = {
+      followee_id: authUser?.id,
+    };
+    try {
+      let updatedUser;
+      if (selectedUser.is_following) {
+        // Unfollow the user
+        const response = await unfollowUser(body);
+        if (response.status) {
+          updatedUser = {
+            ...selectedUser,
+            is_following: false,
+            followers_count: selectedUser.followers_count - 1,
+          };
+        }
+      } else {
+        // Follow the user
+        const response = await followUser(body);
+        if (response.status) {
+          updatedUser = {
+            ...selectedUser,
+            is_following: true,
+            followers_count: selectedUser.followers_count + 1,
+          };
+        }
+      }
+
+      // Update the state with the updated user
+      setAllUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === updatedUser.id ? updatedUser : user
+        )
+      );
+      setSelectedUser(updatedUser);
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="2xl">
@@ -33,54 +93,74 @@ export const UserPopup = ({ isOpen, onClose, selectedUser }) => {
         bgGradient={modalBgGradient}
         borderRadius="lg"
         boxShadow="2xl"
+        p={6}
       >
-        <ModalHeader fontSize="2xl" fontWeight="bold">
-          {selectedUser?.name}
+        <ModalHeader fontSize="2xl" fontWeight="bold" textAlign="center">
+          <Flex flexDirection="column">
+            {selectedUser?.name}
+            <Button
+              onClick={handleFollowToggle}
+              colorScheme={selectedUser?.is_following ? "red" : "blue"}
+              leftIcon={followIcon} // Different icon for follow/unfollow
+              size="sm" // Smaller button
+              borderRadius="md"
+              alignSelf="center" // Centered under the user's name
+              mt={2}
+              boxShadow="lg"
+              px={4} // Reduced padding for a tighter look
+              _hover={{ bg: followButtonColor }}
+            >
+              {selectedUser?.is_following ? "Unfollow" : "Follow"}
+            </Button>
+          </Flex>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <VStack align="start" spacing={6} w="100%">
+          <VStack align="start" spacing={4} w="100%">
             {/* Profile Picture and General Info */}
-            <Flex alignItems="center" w="100%">
-              <Avatar
-                name={selectedUser?.name}
-                src={selectedUser?.profile_picture}
-                size="xl"
-              />
-              <VStack align="start" ml={5} spacing={2}>
-                <Text fontSize="lg" fontWeight="600" color={textColor}>
-                  {selectedUser?.general_field}
-                </Text>
-                <Text fontSize="md" fontWeight="400" color="gray.500">
-                  {selectedUser?.bio ? selectedUser.bio : "No bio available."}
-                </Text>
-                {/* LinkedIn Button */}
-                {selectedUser?.linkedin_profile && (
-                  <Link href={selectedUser.linkedin_profile} isExternal>
-                    <Button
-                      leftIcon={<FaLinkedin />}
-                      colorScheme="linkedin"
-                      size="sm"
-                    >
-                      LinkedIn
-                    </Button>
-                  </Link>
-                )}
-              </VStack>
+            <Flex alignItems="flex-start" justify="space-between" w="100%">
+              <Flex alignItems="center" gap={4}>
+                <Avatar
+                  name={selectedUser?.name}
+                  src={selectedUser?.profile_picture}
+                  size="xl"
+                  boxShadow="lg"
+                />
+                <VStack align="start" spacing={2}>
+                  <Text fontSize="lg" fontWeight="600" color={textColor}>
+                    {selectedUser?.general_field}
+                  </Text>
+                  <Text fontSize="md" fontWeight="400" color="gray.500">
+                    {selectedUser?.bio ? selectedUser.bio : "No bio available."}
+                  </Text>
+                  {/* LinkedIn Button */}
+                  {selectedUser?.linkedin_profile && (
+                    <Link href={selectedUser.linkedin_profile} isExternal>
+                      <Button
+                        leftIcon={<FaLinkedin />}
+                        colorScheme="linkedin"
+                        size="sm"
+                        mt={2}
+                      >
+                        LinkedIn
+                      </Button>
+                    </Link>
+                  )}
+                </VStack>
+              </Flex>
             </Flex>
-
             {/* Followers */}
-            <Text fontSize="lg" fontWeight="500" color={textColor}>
-              Followers: {selectedUser?.followers?.length || 0}
+            <Text fontSize="lg" fontWeight="500" color={textColor} mt={4}>
+              Followers: {selectedUser?.followers_count || 0}
             </Text>
 
             {/* Projects */}
             {selectedUser?.userProjects?.length > 0 && (
-              <VStack align="start" spacing={4} w="100%">
+              <VStack align="start" spacing={4} w="100%" mt={6}>
                 <Text fontSize="lg" fontWeight="500" color={textColor}>
                   Projects:
                 </Text>
-                {selectedUser.userProjects.map((project, index) => (
+                {selectedUser.userProjects.map((project) => (
                   <Box
                     key={project.id}
                     w="100%"
@@ -137,7 +217,6 @@ export const UserPopup = ({ isOpen, onClose, selectedUser }) => {
             )}
           </VStack>
         </ModalBody>
-        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );

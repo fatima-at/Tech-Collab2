@@ -33,7 +33,7 @@ Route::group([
 
     Route::get('user/cv-base64', [AuthController::class, 'getCvAsBase64']);
 
-    Route::post('/follow', [UserController::class, 'follow']);
-    Route::post('/unfollow', [UserController::class, 'unfollow']);
+    Route::post('user/follow', [UserController::class, 'follow']);
+    Route::post('user/unfollow', [UserController::class, 'unfollow']);
     Route::get('/users/search', [UserController::class, 'searchUsers']);
 });
