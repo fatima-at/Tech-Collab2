@@ -104,23 +104,6 @@ export const get = async (url, body, headersType, signal) => {
         });
 }
 
-export const getLocation = (url, signal) => {
-    var headers = new Headers();
-    headers.append("X-CSCAPI-KEY", "clpobVEyaEUxUVVXdWNpYW9WcDdYSnczWnJrWGxQSnNlc0dubmZ4Sw==");
-
-    var requestOptions = {
-        method: 'GET',
-        headers: headers,
-        redirect: 'follow',
-        signal
-    };
-
-    return fetch(url, requestOptions)
-        .then(response => response.json())
-        .then(result => result)
-        .catch(error => console.log('error', error));
-}
-
 export const deleteApi = async (url, body, headersType, signal) => {
     let headers;
     if (headersType === 'token') {

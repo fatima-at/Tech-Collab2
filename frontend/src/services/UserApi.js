@@ -16,3 +16,7 @@ export const followUser = async (body, signal) => {
 export const unfollowUser = async (body, signal) => {
     return await HttpRequest.post(e.CRUD_USER + `/unfollow`, body, 'token', signal);
 };
+
+export const getUser = async (userId, signal) => {
+    return await HttpRequest.get(e.CRUD_USER + `/${userId}`, null, 'token', signal);
+};

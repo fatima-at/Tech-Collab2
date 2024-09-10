@@ -39,6 +39,7 @@ const CVForm = ({ formInputs, setCurrentStep }) => {
         : formInputs.generalField
     );
     formData.append("cv", selectedFile);
+    formData.append("vector_id", 1);
 
     // Append skills as individual entries
     formInputs.skills?.forEach((skill, index) => {

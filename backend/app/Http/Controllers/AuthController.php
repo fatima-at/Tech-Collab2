@@ -131,14 +131,17 @@ class AuthController extends Controller
             // Refresh the token
             $newToken = JWTAuth::refresh($currentToken);
     
-            // Retrieve the authenticated user
+            // Retrieve the authenticated user with the related data
             $user = JWTAuth::setToken($newToken)->authenticate();
-
+    
             if (!$user) {
                 return response()->json(['message' => 'User not found.'], 404);
             }
     
-            // Return the new token and user object
+            // Eager load the relationships: skills, following, followers, and userProjects
+            $user->load('skills', 'following', 'followers', 'userProjects');
+    
+            // Return the new token and user object with the loaded relations
             return response()->json([
                 'message' => 'Token refreshed successfully.',
                 'status' => true,
@@ -151,6 +154,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Could not refresh token.'], 500);
         }
     }
+    
 
     public function completeRegistration(Request $request)
     {

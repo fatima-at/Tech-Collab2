@@ -149,13 +149,26 @@ const Sidebar = () => {
             location.pathname.includes(PROFILE_ROUTE)
               ? {
                   backgroundColor: primaryColor,
+                  color: "white",
                 }
               : {}
           }
           onClick={() => navigate(`/${PROFILE_ROUTE}`)}
         >
-          <FontAwesomeIcon icon={faUser} color="black" />
-          <Text type="p" color="black">
+          <FontAwesomeIcon
+            icon={faUser}
+            style={{
+              color: location.pathname.includes(PROFILE_ROUTE)
+                ? "white"
+                : "black",
+            }}
+          />
+          <Text
+            type="p"
+            color={
+              location.pathname.includes(PROFILE_ROUTE) ? "white" : "black"
+            }
+          >
             Your Profile
           </Text>
         </button>

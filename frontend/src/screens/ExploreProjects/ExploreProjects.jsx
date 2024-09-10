@@ -26,6 +26,7 @@ import { IoMdBulb } from "react-icons/io";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FaRobot } from "react-icons/fa";
+import ProjectCard from "../../components/Custom/ProjectCard/ProjectCard";
 
 const categories = [
   "All",
@@ -210,29 +211,13 @@ const ExploreProjects = () => {
         {/* Projects Grid */}
         <Grid templateColumns="repeat(3, minmax(250px, 1fr))" gap={6}>
           {filteredProjects.map((project) => (
-            <GridItem
-              key={project.title}
-              w="100%"
-              p={5}
-              borderRadius="lg"
-              boxShadow="md"
-              bg={bgColor}
-              _hover={{ boxShadow: "xl" }}
-              cursor="pointer"
-              onClick={() => handleProjectClick(project)}
-            >
-              <VStack align="start" spacing={3}>
-                <Text fontSize="xl" fontWeight="bold" color={textColor}>
-                  {project.title}
-                </Text>
-                <Text fontSize="md" color="gray.500">
-                  Category: {project.category}
-                </Text>
-                <Text fontSize="sm" color="gray.600">
-                  {project.description}
-                </Text>
-              </VStack>
-            </GridItem>
+            <ProjectCard
+              key={project.id}
+              title={project.title}
+              description={project.description}
+              subtitle={project.category}
+              handleProjectClick={() => handleProjectClick(project)}
+            />
           ))}
         </Grid>
       </Box>

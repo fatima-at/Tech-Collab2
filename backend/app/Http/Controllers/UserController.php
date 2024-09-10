@@ -75,6 +75,7 @@ class UserController extends Controller
         $authUserId = Auth::id();
 
         $users = User::where('name', 'like', '%' . $search . '%')
+            ->where('registration_completed', true)
             ->withCount('followers') 
             ->with(['followers' => function ($query) use ($authUserId) {
                 $query->where('follower_id', $authUserId);
@@ -97,6 +98,24 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Users retrieved successfully.',
             'data' => $users,
+            'status' => true,
+        ], 200);
+    }
+
+    function getUserById($id)
+    {
+        $user = User::with(['skills', 'userProjects'])->find($id);
+    
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+                'status' => false,
+            ], 404);
+        }
+    
+        return response()->json([
+            'message' => 'User found',
+            'data' => $user,
             'status' => true,
         ], 200);
     }

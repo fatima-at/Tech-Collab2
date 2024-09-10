@@ -37,16 +37,13 @@
             margin-top: 30px;
         }
         .verify-button {
-            background-color: #28a745;
+            background-color: #1E88E5;
             color: #ffffff;
             padding: 15px 30px;
             text-decoration: none;
             border-radius: 5px;
             font-size: 16px;
             display: inline-block;
-        }
-        .verify-button:hover {
-            background-color: #218838;
         }
         .footer {
             text-align: center;

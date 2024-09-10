@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -17,17 +17,20 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaLinkedin, FaUserMinus, FaUserPlus } from "react-icons/fa";
-import { followUser, unfollowUser } from "../../../services/UserApi";
 import { useAuth } from "../../../context";
+import { followUser, getUser, unfollowUser } from "../../../services/UserApi";
+import useFetch from "../../../hooks/useFetch";
+import Loader from "../../Loaders/Loader";
+import useFetchSelectedUser from "./hooks/useFetchSelectedUser";
 
 export const UserPopup = ({
   isOpen,
   onClose,
   selectedUser,
-  setAllUsers,
+  updateUsers,
   setSelectedUser,
 }) => {
-  const { authUser } = useAuth();
+  console.log(selectedUser);
   const cardBg = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.800", "white");
   const buttonGradient = useColorModeValue(
@@ -39,6 +42,9 @@ export const UserPopup = ({
     "linear(to-br, gray.700, gray.900)"
   );
 
+  const { userLoading, userData, fetchSelectedUser } = useFetchSelectedUser(
+    selectedUser?.id
+  );
   const followButtonColor = selectedUser?.is_following ? "red.400" : "blue.400";
   const followIcon = selectedUser?.is_following ? (
     <FaUserMinus />
@@ -48,7 +54,7 @@ export const UserPopup = ({
 
   const handleFollowToggle = async () => {
     const body = {
-      followee_id: authUser?.id,
+      followee_id: selectedUser?.id,
     };
     try {
       let updatedUser;
@@ -75,16 +81,16 @@ export const UserPopup = ({
       }
 
       // Update the state with the updated user
-      setAllUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === updatedUser.id ? updatedUser : user
-        )
-      );
+      updateUsers(updatedUser);
       setSelectedUser(updatedUser);
     } catch (error) {
       console.error("Error toggling follow status:", error);
     }
   };
+
+  useEffect(() => {
+    fetchSelectedUser(); // Fetch the selected user when the component mounts
+  }, [selectedUser?.id]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="2xl">
@@ -153,67 +159,100 @@ export const UserPopup = ({
             <Text fontSize="lg" fontWeight="500" color={textColor} mt={4}>
               Followers: {selectedUser?.followers_count || 0}
             </Text>
+            {userLoading ? (
+              <Loader />
+            ) : (
+              <>
+                {/* Skills Section */}
+                {userData?.skills?.length > 0 && (
+                  <VStack align="start" spacing={4} w="100%" mt={6}>
+                    <Text fontSize="lg" fontWeight="500" color={textColor}>
+                      Skills:
+                    </Text>
+                    <Wrap>
+                      {userData.skills.map((skill, index) => (
+                        <WrapItem key={index}>
+                          <Tag size="md" colorScheme="blue">
+                            {skill.skill}
+                          </Tag>
+                        </WrapItem>
+                      ))}
+                    </Wrap>
+                  </VStack>
+                )}
 
-            {/* Projects */}
-            {selectedUser?.userProjects?.length > 0 && (
-              <VStack align="start" spacing={4} w="100%" mt={6}>
-                <Text fontSize="lg" fontWeight="500" color={textColor}>
-                  Projects:
-                </Text>
-                {selectedUser.userProjects.map((project) => (
-                  <Box
-                    key={project.id}
-                    w="100%"
-                    bg={cardBg}
-                    p={6}
-                    borderRadius="lg"
-                    boxShadow="lg"
-                    transition="transform 0.2s"
-                    _hover={{ transform: "scale(1.02)" }}
-                  >
-                    <VStack align="start" spacing={3}>
-                      {/* Project Title */}
-                      <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
+                {/* Projects Section */}
+                {userData?.user_projects?.length > 0 && (
+                  <VStack align="start" spacing={4} w="100%" mt={6}>
+                    <Text fontSize="lg" fontWeight="500" color={textColor}>
+                      Projects:
+                    </Text>
+                    {userData?.user_projects?.map((project) => (
+                      <Box
+                        key={project.id}
                         w="100%"
+                        bg={cardBg}
+                        p={6}
+                        borderRadius="lg"
+                        boxShadow="lg"
+                        transition="transform 0.2s"
+                        _hover={{ transform: "scale(1.02)" }}
                       >
-                        <Text fontSize="xl" fontWeight="600" color={textColor}>
-                          {project.title}
-                        </Text>
-                      </Flex>
+                        <VStack align="start" spacing={3}>
+                          {/* Project Title */}
+                          <Flex
+                            justifyContent="space-between"
+                            alignItems="center"
+                            w="100%"
+                          >
+                            <Text
+                              fontSize="xl"
+                              fontWeight="600"
+                              color={textColor}
+                            >
+                              {project.title}
+                            </Text>
+                          </Flex>
 
-                      {/* Project Description */}
-                      <Text fontSize="md" fontWeight="400" color="gray.500">
-                        {project.description}
-                      </Text>
+                          {/* Project Description */}
+                          <Text fontSize="md" fontWeight="400" color="gray.500">
+                            {project.description}
+                          </Text>
 
-                      {/* Project URL */}
-                      {project.url && (
-                        <Link href={project.url} isExternal color="blue.500">
-                          Visit Project
-                        </Link>
-                      )}
+                          {/* Project URL */}
+                          {project.url && (
+                            <Link
+                              href={project.url}
+                              isExternal
+                              color="blue.500"
+                            >
+                              Visit Project
+                            </Link>
+                          )}
 
-                      {/* Technologies */}
-                      <Text fontSize="sm" fontWeight="400" color="gray.500">
-                        Technologies: {project.technologies.join(", ")}
-                      </Text>
+                          {/* Technologies */}
+                          <Text fontSize="sm" fontWeight="400" color="gray.500">
+                            Technologies: {project.technologies.join(", ")}
+                          </Text>
 
-                      {/* Project Dates */}
-                      <Text fontSize="sm" fontWeight="400" color="gray.500">
-                        {`Status: ${project.status}, Start: ${new Date(
-                          project.start_date
-                        ).toLocaleDateString()}, End: ${
-                          project.end_date
-                            ? new Date(project.end_date).toLocaleDateString()
-                            : "Ongoing"
-                        }`}
-                      </Text>
-                    </VStack>
-                  </Box>
-                ))}
-              </VStack>
+                          {/* Project Dates */}
+                          <Text fontSize="sm" fontWeight="400" color="gray.500">
+                            {`Status: ${project.status}, Start: ${new Date(
+                              project.start_date
+                            ).toLocaleDateString()}, End: ${
+                              project.end_date
+                                ? new Date(
+                                    project.end_date
+                                  ).toLocaleDateString()
+                                : "Ongoing"
+                            }`}
+                          </Text>
+                        </VStack>
+                      </Box>
+                    ))}
+                  </VStack>
+                )}
+              </>
             )}
           </VStack>
         </ModalBody>

@@ -15,6 +15,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { ProjectPopup } from "./components/ProjectPopup";
+import ProjectCard from "../../components/Custom/ProjectCard/ProjectCard";
 
 const SavedProjects = () => {
   const {
@@ -74,26 +75,13 @@ const SavedProjects = () => {
       ) : (
         <Grid templateColumns="repeat(3, minmax(250px, 1fr))" gap={6}>
           {savedProjects?.map((project) => (
-            <GridItem
+            <ProjectCard
               key={project.id}
-              w="100%"
-              p={5}
-              borderRadius="lg"
-              boxShadow="md"
-              bg={bgColor}
-              _hover={{ boxShadow: "xl" }}
-              cursor="pointer"
-              onClick={() => handleProjectClick(project)}
-            >
-              <VStack align="start" spacing={3}>
-                <Text fontSize="xl" fontWeight="bold" color={textColor}>
-                  {project.title}
-                </Text>
-                <Text fontSize="md" color="gray.500">
-                  Session: {project?.project_session?.title}
-                </Text>
-              </VStack>
-            </GridItem>
+              title={project.title}
+              description={project.project_description}
+              subtitle={project.project_session?.title}
+              handleProjectClick={() => handleProjectClick(project)}
+            />
           ))}
         </Grid>
       )}

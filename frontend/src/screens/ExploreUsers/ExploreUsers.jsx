@@ -15,9 +15,9 @@ import {
 } from "@chakra-ui/react";
 import Slider from "react-slick";
 import { ScreenContainer, EmptyState, Loader } from "../../components";
-import { UserPopup } from "./components/UserPopup";
 import { users as recommendedUsers } from "./users";
 import { searchUsers } from "../../services/UserApi";
+import { UserPopup } from "../../components/Popup/UserPopup/UserPopup";
 
 const ExploreUsers = () => {
   const cardBg = useColorModeValue("white", "gray.800");
@@ -63,6 +63,12 @@ const ExploreUsers = () => {
         },
       },
     ],
+  };
+
+  const updateUsers = (updatedUser) => {
+    setAllUsers((prevUsers) =>
+      prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    );
   };
 
   // Debouncing search query
@@ -245,7 +251,7 @@ const ExploreUsers = () => {
         isOpen={isOpen}
         onClose={onClose}
         selectedUser={selectedUser}
-        setAllUsers={setAllUsers}
+        updateUsers={updateUsers}
         setSelectedUser={setSelectedUser}
       />
     </ScreenContainer>

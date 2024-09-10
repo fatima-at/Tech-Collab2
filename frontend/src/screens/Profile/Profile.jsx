@@ -1,106 +1,316 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Avatar,
+  Heading,
   Text,
   VStack,
-  HStack,
-  SimpleGrid,
-  Badge,
+  Flex,
+  Grid,
+  GridItem,
   Button,
-  useColorModeValue,
+  Link,
+  Tag,
+  Wrap,
+  WrapItem,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
 } from "@chakra-ui/react";
-import { DownloadIcon } from "@chakra-ui/icons";
-import { ScreenContainer } from "../../components";
-
-const user = {
-  name: "John Doe",
-  email: "john.doe@example.com",
-  bio: "Passionate software developer with experience in building scalable web applications and working with modern technologies.",
-  general_field: "Web Development",
-  profile_picture: "https://via.placeholder.com/150", // Replace with actual URL
-  cv: "https://example.com/cv.pdf", // Replace with actual URL
-  skills: ["JavaScript", "React", "Node.js", "CSS", "HTML"],
-};
-
-const getInitials = (name) => {
-  const nameParts = name.split(" ");
-  const initials = nameParts.map((part) => part.charAt(0)).join("");
-  return initials.toUpperCase();
-};
+import { FaLinkedin } from "react-icons/fa";
+import { useAuth } from "../../context";
+import { UserPopup } from "../../components/Popup/UserPopup/UserPopup";
 
 const Profile = () => {
-  const bgColor = useColorModeValue("white", "gray.700");
-  const textColor = useColorModeValue("gray.800", "white");
+  const { authUser, setAuthUser } = useAuth();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isUserPopupOpen,
+    onOpen: onUserPopupOpen,
+    onClose: onUserPopupClose,
+  } = useDisclosure();
+  const [viewType, setViewType] = useState("followers"); // Modal state
+  const [selectedUser, setSelectedUser] = useState(null); // To store the selected user
+
+  // Trigger modal for followers or following
+  const handleViewFollowers = () => {
+    setViewType("followers");
+    onOpen();
+  };
+
+  const handleViewFollowing = () => {
+    setViewType("following");
+    onOpen();
+  };
+
+  // Open the UserPopup modal when a user is clicked
+  const handleUserClick = (user) => {
+    setSelectedUser(user);
+    onUserPopupOpen();
+  };
+
+  const updateFollowingList = (user) => {
+    if (
+      authUser.following.some((followingUser) => followingUser.id === user.id)
+    ) {
+      // Unfollow the user by removing them from the list
+      setAuthUser((current) => {
+        return {
+          ...current,
+          following: current.following.filter(
+            (followingUser) => followingUser.id !== user.id
+          ),
+        };
+      });
+    } else {
+      // Follow the user by adding them to the list
+      setAuthUser((current) => {
+        return {
+          ...current,
+          following: [...current.following, user],
+        };
+      });
+    }
+  };
 
   return (
-    <ScreenContainer>
-      <Box
-        maxW="900px"
+    <Box bg="#EDEDED" w="100%" minH="100vh" py={8} px={{ base: 4, md: 8 }}>
+      <Grid
+        templateColumns={{ base: "1fr", md: "1fr 2fr" }}
+        gap={8}
+        maxW="1400px"
         mx="auto"
-        p={6}
-        borderRadius="lg"
-        boxShadow="lg"
-        bg={bgColor}
       >
-        {/* Profile Header */}
-        <HStack spacing={6} alignItems="center" mb={6}>
-          <Avatar size="2xl" src={user.profile_picture}>
-            {!user.profile_picture && getInitials(user.name)}
-          </Avatar>
-          <VStack align="start" spacing={2}>
-            <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-              {user.name}
-            </Text>
-            <Text fontSize="md" color="gray.500">
-              {user.email}
-            </Text>
-            <Text fontSize="md" color={textColor}>
-              {user.general_field}
-            </Text>
-            <Text fontSize="sm" color="gray.500">
-              {user.bio}
-            </Text>
-          </VStack>
-        </HStack>
-
-        {/* CV Section */}
-        {user.cv && (
-          <Box mb={6}>
-            <Button
-              as="a"
-              href={user.cv}
-              target="_blank"
-              leftIcon={<DownloadIcon />}
-              colorScheme="teal"
-            >
-              Download CV
-            </Button>
+        {/* User Info */}
+        <GridItem>
+          <Box
+            bg="white"
+            borderRadius="lg"
+            boxShadow="lg"
+            p={6}
+            w="100%"
+            maxW="100%"
+          >
+            <VStack align="center" spacing={4}>
+              <Avatar
+                name={authUser?.name}
+                src={authUser?.profile_picture}
+                size="2xl"
+                boxShadow="lg"
+              />
+              <VStack align="center" spacing={2}>
+                <Heading fontSize="2xl" fontWeight="bold" color="gray.800">
+                  {authUser?.name}
+                </Heading>
+                <Text fontSize="lg" fontWeight="medium" color="gray.500">
+                  {authUser?.general_field || "Field of Expertise"}
+                </Text>
+                <Text fontSize="md" color="gray.700" maxW="lg">
+                  {authUser?.bio || "No bio available."}
+                </Text>
+                {authUser?.linkedin_profile && (
+                  <Link href={authUser.linkedin_profile} isExternal>
+                    <Button
+                      leftIcon={<FaLinkedin />}
+                      colorScheme="linkedin"
+                      size="sm"
+                    >
+                      LinkedIn
+                    </Button>
+                  </Link>
+                )}
+                <Flex justify="space-between">
+                  <Button
+                    variant="ghost"
+                    colorScheme="blue"
+                    onClick={handleViewFollowing}
+                    w="48%"
+                  >
+                    {authUser?.following?.length || 0} Following
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    colorScheme="blue"
+                    onClick={handleViewFollowers}
+                    w="48%"
+                  >
+                    {authUser?.followers?.length || 0} Followers
+                  </Button>
+                </Flex>
+              </VStack>
+            </VStack>
           </Box>
-        )}
+        </GridItem>
 
-        {/* Skills Section */}
-        <Box mb={6}>
-          <Text fontSize="xl" fontWeight="bold" mb={2} color={textColor}>
-            Skills
-          </Text>
-          <SimpleGrid columns={[2, 3, 4]} spacing={3}>
-            {user.skills.map((skill, index) => (
-              <Badge
-                key={index}
-                px={3}
-                py={1}
-                borderRadius="full"
-                colorScheme="teal"
-                fontSize="sm"
-              >
-                {skill}
-              </Badge>
-            ))}
-          </SimpleGrid>
-        </Box>
-      </Box>
-    </ScreenContainer>
+        {/* Skills, Projects */}
+        <GridItem>
+          <VStack spacing={6} align="stretch">
+            {/* Skills Section */}
+            <Box bg="white" p={6} borderRadius="lg" boxShadow="lg">
+              <Heading fontSize="lg" fontWeight="bold" color="gray.800" mb={4}>
+                Skills
+              </Heading>
+              <Wrap>
+                {authUser?.skills?.length > 0 ? (
+                  authUser.skills.map((skill, index) => (
+                    <WrapItem key={index}>
+                      <Tag size="md" colorScheme="blue">
+                        {skill.skill}
+                      </Tag>
+                    </WrapItem>
+                  ))
+                ) : (
+                  <Text fontSize="md" color="gray.500">
+                    No skills added.
+                  </Text>
+                )}
+              </Wrap>
+            </Box>
+
+            {/* Projects Section */}
+            <Box bg="white" p={6} borderRadius="lg" boxShadow="lg">
+              <Heading fontSize="lg" fontWeight="bold" color="gray.800" mb={4}>
+                Projects ({authUser?.user_projects?.length || 0})
+              </Heading>
+              <VStack align="start" spacing={4} w="100%" mt={6}>
+                {authUser?.user_projects?.length > 0 ? (
+                  authUser.user_projects.map((project) => (
+                    <Box
+                      key={project.id}
+                      w="100%"
+                      bg="gray.50"
+                      p={6}
+                      borderRadius="lg"
+                      boxShadow="lg"
+                      transition="transform 0.2s"
+                      _hover={{ transform: "scale(1.02)" }}
+                    >
+                      <VStack align="start" spacing={3}>
+                        <Text fontSize="xl" fontWeight="600" color="gray.800">
+                          {project.title}
+                        </Text>
+                        <Text fontSize="md" fontWeight="400" color="gray.500">
+                          {project.description}
+                        </Text>
+                        {project.url && (
+                          <Link href={project.url} isExternal color="blue.500">
+                            Visit Project
+                          </Link>
+                        )}
+                        <Text fontSize="sm" fontWeight="400" color="gray.500">
+                          Technologies: {project.technologies.join(", ")}
+                        </Text>
+                        <Text fontSize="sm" fontWeight="400" color="gray.500">
+                          {`Status: ${project.status}, Start: ${new Date(
+                            project.start_date
+                          ).toLocaleDateString()}, End: ${
+                            project.end_date
+                              ? new Date(project.end_date).toLocaleDateString()
+                              : "Ongoing"
+                          }`}
+                        </Text>
+                      </VStack>
+                    </Box>
+                  ))
+                ) : (
+                  <Text fontSize="md" color="gray.500">
+                    No projects found.
+                  </Text>
+                )}
+              </VStack>
+            </Box>
+          </VStack>
+        </GridItem>
+      </Grid>
+
+      {/* Modal for Followers/Following */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {viewType === "followers" ? "Followers" : "Following"}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              {viewType === "followers" && authUser?.followers?.length > 0 ? (
+                authUser.followers.map((user) => (
+                  <Flex
+                    key={user.id}
+                    align="center"
+                    w="100%"
+                    gap={4}
+                    onClick={() => handleUserClick(user)} // Open UserPopup for clicked user
+                    cursor="pointer"
+                    _hover={{ bg: "gray.100" }}
+                    p={2}
+                    borderRadius="md"
+                  >
+                    <Avatar
+                      name={user.name}
+                      src={user.profile_picture}
+                      size="md"
+                    />
+                    <VStack align="flex-start" spacing={1}>
+                      <Text fontWeight="bold">{user.name}</Text>
+                      <Text fontSize="sm" color="gray.500">
+                        {user.general_field}
+                      </Text>
+                    </VStack>
+                  </Flex>
+                ))
+              ) : viewType === "following" &&
+                authUser?.following?.length > 0 ? (
+                authUser.following.map((user) => (
+                  <Flex
+                    key={user.id}
+                    align="center"
+                    w="100%"
+                    gap={4}
+                    onClick={() => handleUserClick(user)} // Open UserPopup for clicked user
+                    cursor="pointer"
+                    _hover={{ bg: "gray.100" }}
+                    p={2}
+                    borderRadius="md"
+                  >
+                    <Avatar
+                      name={user.name}
+                      src={user.profile_picture}
+                      size="md"
+                    />
+                    <VStack align="flex-start" spacing={1}>
+                      <Text fontWeight="bold">{user.name}</Text>
+                      <Text fontSize="sm" color="gray.500">
+                        {user.general_field}
+                      </Text>
+                    </VStack>
+                  </Flex>
+                ))
+              ) : (
+                <Text>No {viewType} found.</Text>
+              )}
+            </VStack>
+          </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* User Popup */}
+      {selectedUser && (
+        <UserPopup
+          isOpen={isUserPopupOpen}
+          onClose={onUserPopupClose}
+          selectedUser={selectedUser}
+          setAllUsers={updateFollowingList} 
+          setSelectedUser={setSelectedUser}
+        />
+      )}
+    </Box>
   );
 };
 

@@ -35,5 +35,6 @@ Route::group([
 
     Route::post('user/follow', [UserController::class, 'follow']);
     Route::post('user/unfollow', [UserController::class, 'unfollow']);
-    Route::get('/users/search', [UserController::class, 'searchUsers']);
+    Route::get('users/search', [UserController::class, 'searchUsers']);
+    Route::get('user/{id}', [UserController::class, 'getUserById']);
 });
