@@ -32,4 +32,8 @@ Route::group([
     Route::get('projects/standalone', [ProjectController::class, 'getStandaloneProjects']);
 
     Route::get('user/cv-base64', [AuthController::class, 'getCvAsBase64']);
+
+    Route::post('/follow', [UserController::class, 'follow']);
+    Route::post('/unfollow', [UserController::class, 'unfollow']);
+    Route::get('/users/search', [UserController::class, 'searchUsers']);
 });

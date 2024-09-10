@@ -161,6 +161,7 @@ class AuthController extends Controller
             'skills' => 'nullable|array',
             'skills.*' => 'string',
             'cv' => 'nullable|file|mimes:pdf|max:5120',
+            'vector_id' => 'required|string|unique:users',
         ]);
     
         // Get the authenticated user
@@ -170,7 +171,8 @@ class AuthController extends Controller
         $user->update([
             'bio' => $request->input('bio'),
             'general_field' => $request->input('general_field'),
-            'profile_picture' => $user->profile_picture, // Assuming it's set somewhere else
+            'vector_id' => $request->input('vector_id'),
+            'profile_picture' => $user->profile_picture, 
         ]);
     
         // Handle the CV file upload

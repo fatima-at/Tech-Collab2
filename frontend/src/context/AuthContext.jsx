@@ -54,7 +54,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (authUser?.cv) {
+    if (authUser?.cv && !authUser?.base64Cv) {
       fetchUserBase64Cv();
     }
   }, [authUser]);

@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+    use HasFactory; 
 
     /**
      * Get the identifier that will be stored in the JWT token.
@@ -39,6 +41,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email',
+        'vector_id', // id of this user in the chromadB vector database
         'password',
         'bio',
         'general_field',

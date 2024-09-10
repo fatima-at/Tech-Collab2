@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   GridItem,
+  Grid,
   Text,
   Avatar,
   useColorModeValue,
@@ -12,10 +13,11 @@ import {
   Flex,
   Center,
 } from "@chakra-ui/react";
-import Slider from "react-slick"; // Import react-slick for carousel
+import Slider from "react-slick";
 import { ScreenContainer, EmptyState, Loader } from "../../components";
 import { UserPopup } from "./components/UserPopup";
 import { users as recommendedUsers } from "./users";
+import { searchUsers } from "../../services/UserApi";
 
 const ExploreUsers = () => {
   const cardBg = useColorModeValue("white", "gray.800");
@@ -33,11 +35,6 @@ const ExploreUsers = () => {
     setSelectedUser(user);
     onOpen();
   };
-
-  // Filter all users based on the search query
-  const filteredAllUsers = allUsers.filter((user) =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   // Settings for react-slick carousel with custom arrows and 5 slides
   const settings = {
@@ -67,6 +64,35 @@ const ExploreUsers = () => {
       },
     ],
   };
+
+  // Debouncing search query
+  useEffect(() => {
+    const controller = new AbortController(); // To handle request cancellation if needed
+    const signal = controller.signal;
+
+    if (searchQuery) {
+      setUsersLoading(true);
+
+      // Debounce the search request by 500ms
+      const delayDebounceFn = setTimeout(async () => {
+        try {
+          const response = await searchUsers(searchQuery, signal);
+          setAllUsers(response.data || []);
+        } catch (error) {
+          console.error("Error searching users:", error);
+        } finally {
+          setUsersLoading(false);
+        }
+      }, 500);
+
+      return () => {
+        clearTimeout(delayDebounceFn);
+        controller.abort();
+      };
+    } else {
+      setAllUsers([]);
+    }
+  }, [searchQuery]);
 
   return (
     <ScreenContainer>
@@ -157,14 +183,14 @@ const ExploreUsers = () => {
           </Center>
         ) : usersLoading ? (
           <Loader />
-        ) : filteredAllUsers.length === 0 ? (
+        ) : allUsers?.length === 0 ? (
           <EmptyState
             title="No users found"
             message="We couldn't find users matching your search."
           />
         ) : (
           <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={4}>
-            {filteredAllUsers.map((user) => (
+            {allUsers?.map((user) => (
               <GridItem
                 key={user.id}
                 bg={cardBg}

@@ -16,6 +16,7 @@ return new class extends Migration
                 $table->id();
                 $table->string('name');
                 $table->string('email')->unique();
+                $table->string('vector_id')->unique()->nullable(); // id of this user in the chromadB vector database
                 $table->string('password');
                 $table->boolean('email_verified')->default(false); 
                 $table->boolean('registration_completed')->default(false);

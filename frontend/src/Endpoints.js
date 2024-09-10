@@ -12,6 +12,7 @@ export const CRUD_PROJECT_SESSIONS = `${import.meta.env.VITE_API_URL}/api/v1/pro
 export const CRUD_PROJECTS = `${import.meta.env.VITE_API_URL}/api/v1/projects`;
 
 export const CRUD_USER = `${import.meta.env.VITE_API_URL}/api/v1/user`;
+export const CRUD_USERS = `${import.meta.env.VITE_API_URL}/api/v1/users`;
 
 export const AI_API = `${import.meta.env.VITE_AI_API_URL}`;
 
