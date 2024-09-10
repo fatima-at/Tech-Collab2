@@ -37,7 +37,6 @@ async def recommend_project_1(student_ID: int = Form(),
     Output: JSON string
     """
     try:  
-        # assert isinstance(preference, str) , "Preference must be a string"
         resume_json = get_resume_by_id(GeneratorModel_1.students_collection, student_ID)
         # pdf_path = save_b64_as_pdf(pdf_b64)
         # resume_text = extract_text_from_pdf(pdf_path)
@@ -101,7 +100,7 @@ async def Match_S2S(student_ID):
         # print(resume_text)
         resume_text = json.loads(resume_text)
         resume_skills = resume_text['skills']
-        resume_skills_summary = resume_skills + [resume_text['summary']]
+        # resume_skills_summary = resume_skills + [resume_text['summary']]
         students_IDs = GeneratorModel_1.match_S2S(resume_skills, number_similar=30)
         for i in ['27','37','38', '46', '63', '69', '73', '82']:
             if i in students_IDs:
@@ -146,6 +145,8 @@ async def Add_student_to_DB(pdf_b64: str = Form()):
         print("Failed to add New Student")
         logging.error('In Add_student_to_DB function in main.py: %s', str(e))
         return JSONResponse(content={'error': str(e)}, status_code=500)
+
+# add delete student API
 
 # tested successfully
 @app.post("/retrieve_projects")
@@ -254,6 +255,28 @@ async def generate_project_2(student_ID: int = Form(),
         generated_project = clean_json_string(generated_project)
         return JSONResponse(content=generated_project, status_code=200)
         # return generated_project
+
+    except Exception as e:
+        logging.error('In main.py: %s', str(e))
+        return JSONResponse(content={'error': str(e)}, status_code=500)
+
+
+@app.post("/retrieve_studentsDB")
+async def retrieve_studentsDB():
+    """
+    This API returns a list of JSON strings of all students Database.
+    Output: JSON string
+    """
+    try:
+        ids = GeneratorModel_1.students_collection.get()['ids']
+        docs = GeneratorModel_1.students_collection.get()['documents']
+        students_db_json_list = []
+        for id,doc in zip(ids, docs):
+            if id not in ['27','37','38', '46', '63', '69', '73', '82']:
+                dict_doc = json.loads(doc)
+                dict_doc['ID'] = id
+                students_db_json_list.append(dict_doc)
+        return JSONResponse(content=students_db_json_list, status_code=200)
 
     except Exception as e:
         logging.error('In main.py: %s', str(e))

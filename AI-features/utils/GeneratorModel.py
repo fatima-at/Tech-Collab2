@@ -1,5 +1,6 @@
 try:
     import tqdm
+    import json
     import chromadb
     from typing import List
 
@@ -151,9 +152,10 @@ class GeneratorModel:
         # 'included': ['metadatas', 'documents', 'distances']
             # }
 
-    def add_student_to_DB(self, resume_json):
+    def add_student_to_DB(self, resume_dict):
         try:
             student_ID = self.students_collection.count() + 1
+            resume_json = json.dumps(resume_dict)
             self.students_collection.add(documents=[resume_json], 
                                         ids=[str(student_ID)])
                                         #  metadatas=new_metadatas,
@@ -181,8 +183,6 @@ class GeneratorModel:
 
         new_count = self.projects_collection.count()
         print(f"Added {new_count - count} projects")
-
-
 
 
 
