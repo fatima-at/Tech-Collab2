@@ -1,3 +1,4 @@
+import React from "react";
 import { Text } from "../../../components";
 import ReactSelect from "../../../components/UI/ReactSelect";
 import { primaryTextColor } from "../../../constants/colors";

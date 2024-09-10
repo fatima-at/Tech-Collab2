@@ -14,6 +14,9 @@ import {
   Link,
   Box,
   Flex,
+  Wrap,
+  WrapItem,
+  Tag,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaLinkedin, FaUserMinus, FaUserPlus } from "react-icons/fa";
