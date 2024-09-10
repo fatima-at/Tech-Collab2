@@ -129,8 +129,8 @@ def preprocess_pdf(file_name='this_resume.pdf'):
     try:
         resume_text = extract_text_from_pdf(file_name)
         resume_json = LLM_structure_resume(resume_text)
-        resume_json = clean_json_string(resume_json)
-        return resume_json, resume_text
+        resume_json_clean = clean_json_string1(resume_json)
+        return resume_json_clean, resume_text
     except Exception as e:
         print(f'Failed to process resume file: {file_name}')
         print('Error in preprocess_pdf function in utils.py: %s', str(e))
