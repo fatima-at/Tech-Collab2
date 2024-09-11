@@ -9,3 +9,12 @@ export const addUserToVectorDB = async (body, signal) => {
     signal
   );
 };
+
+export const getMatchingUsers = async (userVectorId, signal) => {
+  return await HttpRequest.post(
+    e.AI_API + `/Match_S2S?student_ID=${userVectorId}`,
+    null,
+    "auth",
+    signal
+  );
+};

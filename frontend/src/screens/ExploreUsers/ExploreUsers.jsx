@@ -12,12 +12,16 @@ import {
   Heading,
   Flex,
   Center,
+  SkeletonCircle,
+  Skeleton,
 } from "@chakra-ui/react";
 import Slider from "react-slick";
 import { ScreenContainer, EmptyState, Loader } from "../../components";
-import { users as recommendedUsers } from "./users";
-import { searchUsers } from "../../services/UserApi";
+import { getUsersByVectorID, searchUsers } from "../../services/UserApi";
 import { UserPopup } from "../../components/Popup/UserPopup/UserPopup";
+import { toast } from "react-toastify";
+import { getMatchingUsers } from "../../services/UserAiApi";
+import { useAuth } from "../../context";
 
 const ExploreUsers = () => {
   const cardBg = useColorModeValue("white", "gray.800");
@@ -25,11 +29,14 @@ const ExploreUsers = () => {
   const textColor = useColorModeValue("gray.800", "white");
   const avatarBorderColor = useColorModeValue("gray.200", "gray.600");
 
+  const { authUser } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [allUsers, setAllUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
+  const [recommendedUsers, setRecommendedUsers] = useState([]);
+  const [recommendedUsersLoading, setRecommenededUsersLoading] = useState(true);
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
@@ -71,6 +78,30 @@ const ExploreUsers = () => {
     );
   };
 
+  const fetchRecommendedUsers = async () => {
+    if (!recommendedUsers) setRecommenededUsersLoading(true);
+    try {
+      // Call the Match_S2S API to get vector user IDs
+      const matchResponse = await getMatchingUsers(authUser.vector_id);
+
+      // Call getUsersByVectorID API with the retrieved vector IDs
+      const body = {
+        vector_ids: matchResponse,
+      };
+      const response = await getUsersByVectorID(body);
+
+      if (response.status) {
+        setRecommendedUsers(response.data);
+      } else {
+        toast.error("Error fetching users", response.message);
+      }
+    } catch (error) {
+      toast.error("Error:", error);
+    } finally {
+      setRecommenededUsersLoading(false);
+    }
+  };
+
   // Debouncing search query
   useEffect(() => {
     const controller = new AbortController(); // To handle request cancellation if needed
@@ -100,6 +131,10 @@ const ExploreUsers = () => {
     }
   }, [searchQuery]);
 
+  useEffect(() => {
+    fetchRecommendedUsers();
+  }, []);
+
   return (
     <ScreenContainer>
       {/* Recommended Users Section */}
@@ -112,50 +147,63 @@ const ExploreUsers = () => {
         </Text>
 
         <Slider {...settings}>
-          {recommendedUsers.map((user) => (
-            <Box key={user.id} p={3} cursor="pointer">
-              <VStack
-                bg={cardBg}
-                borderRadius="md"
-                boxShadow="md"
-                transition="all 0.3s ease-in-out"
-                _hover={{
-                  boxShadow: "lg",
-                  transform: "scale(1.05)",
-                  bg: cardHoverBg,
-                }}
-                onClick={() => handleUserClick(user)}
-                p={5}
-              >
-                <Avatar
-                  name={user.name}
-                  src={user.profile_picture}
-                  size="md"
-                  border="2px solid"
-                  borderColor={avatarBorderColor}
-                />
-                <Text
-                  fontSize="md"
-                  fontWeight="bold"
-                  color={textColor}
-                  textAlign="center"
-                >
-                  {user.name}
-                </Text>
-                <Text fontSize="sm" color="gray.500" textAlign="center">
-                  {user.general_field}
-                </Text>
-                <Text
-                  fontSize="xs"
-                  color={textColor}
-                  textAlign="center"
-                  noOfLines={2}
-                >
-                  {user.bio ? user.bio : "No bio available"}
-                </Text>
-              </VStack>
-            </Box>
-          ))}
+          {recommendedUsersLoading
+            ? Array(5)
+                .fill("")
+                .map((_, index) => (
+                  <Box key={index} p={3}>
+                    <VStack bg={cardBg} borderRadius="md" boxShadow="md" p={5}>
+                      <SkeletonCircle size="50px" />
+                      <Skeleton height="20px" width="80%" />
+                      <Skeleton height="15px" width="60%" />
+                      <Skeleton height="12px" width="90%" noOfLines={2} />
+                    </VStack>
+                  </Box>
+                ))
+            : recommendedUsers.map((user) => (
+                <Box key={user.id} p={3} cursor="pointer">
+                  <VStack
+                    bg={cardBg}
+                    borderRadius="md"
+                    boxShadow="md"
+                    transition="all 0.3s ease-in-out"
+                    _hover={{
+                      boxShadow: "lg",
+                      transform: "scale(1.05)",
+                      bg: cardHoverBg,
+                    }}
+                    onClick={() => handleUserClick(user)}
+                    p={5}
+                  >
+                    <Avatar
+                      name={user.name}
+                      src={user.profile_picture}
+                      size="md"
+                      border="2px solid"
+                      borderColor={avatarBorderColor}
+                    />
+                    <Text
+                      fontSize="md"
+                      fontWeight="bold"
+                      color={textColor}
+                      textAlign="center"
+                    >
+                      {user.name}
+                    </Text>
+                    <Text fontSize="sm" color="gray.500" textAlign="center">
+                      {user.general_field}
+                    </Text>
+                    <Text
+                      fontSize="xs"
+                      color={textColor}
+                      textAlign="center"
+                      noOfLines={2}
+                    >
+                      {user.bio ? user.bio : "No bio available"}
+                    </Text>
+                  </VStack>
+                </Box>
+              ))}
         </Slider>
       </Box>
 

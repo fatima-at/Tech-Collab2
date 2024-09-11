@@ -191,4 +191,33 @@ class UserController extends Controller
             'status' => true,
         ], 201);
     }
+
+    public function getUsersByVectorIds(Request $request)
+    {
+        // Validate that 'vector_ids' is present and is an array
+        $request->validate([
+            'vector_ids' => 'required|array',
+        ]);
+    
+        // Get the vector IDs from the request body
+        $vectorIds = $request->input('vector_ids');
+    
+        // Fetch users whose vector_id is in the provided array
+        $users = User::whereIn('vector_id', $vectorIds)->get();
+    
+        if ($users->isEmpty()) {
+            return response()->json([
+                'message' => 'No users found',
+                'data' => [],
+                'status' => false,
+            ], 404);
+        }
+    
+        // Return the array of users with the custom response format
+        return response()->json([
+            'message' => 'Users found',
+            'data' => $users,
+            'status' => true,
+        ], 200);
+    }
 }

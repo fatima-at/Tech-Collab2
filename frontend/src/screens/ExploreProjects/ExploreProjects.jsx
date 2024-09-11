@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  GridItem,
   Grid,
   Text,
   VStack,
@@ -25,7 +24,6 @@ import { IoMdBulb } from "react-icons/io";
 // Import slick carousel styles
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FaRobot } from "react-icons/fa";
 import ProjectCard from "../../components/Custom/ProjectCard/ProjectCard";
 
 const categories = [
@@ -43,8 +41,6 @@ const ExploreProjects = () => {
   const bgColor = useColorModeValue("white", "gray.800");
   const cardHoverBg = useColorModeValue("gray.50", "gray.700");
   const textColor = useColorModeValue("gray.800", "white");
-  const buttonBg = useColorModeValue("teal.400", "teal.500");
-  const buttonHoverBg = useColorModeValue("teal.500", "teal.600");
   const buttonTextColor = useColorModeValue("white", "gray.100");
 
   const handleCategorySelect = (category) => {

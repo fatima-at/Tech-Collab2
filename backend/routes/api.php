@@ -39,4 +39,5 @@ Route::group([
     Route::get('user/{id}', [UserController::class, 'getUserById']);
     Route::patch('user/skills', [UserController::class, 'updateSkills']);
     Route::post('user/project', [UserController::class, 'addUserProject']);
+    Route::post('users/get-by-vector-ids', [UserController::class, 'getUsersByVectorIds']);
 });

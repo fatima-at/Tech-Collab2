@@ -87,7 +87,8 @@ const GenerateProjects = () => {
     // Construct the form data
     const formData = new FormData();
     formData.append("preference", generateSessionString(sessionData));
-    if (sessionData.includeCV) formData.append("pdf_b64", authUser.base64Cv);
+    if (sessionData.includeCV)
+      formData.append("student_ID", authUser.vector_id);
 
     const apiRoute = sessionData.includeCV
       ? "/generate_project_2"
