@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Follow;
 use App\Models\User;
+use App\Models\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -116,6 +117,42 @@ class UserController extends Controller
         return response()->json([
             'message' => 'User found',
             'data' => $user,
+            'status' => true,
+        ], 200);
+    }
+
+    public function updateSkills(Request $request)
+    {
+        $request->validate([
+            'removedSkills' => 'array',
+            'removedSkills.*' => 'integer|exists:skills,id', 
+            'skills' => 'array',
+            'skills.*' => 'string|max:255', 
+        ]);
+
+        $userId = Auth::id(); 
+        $removedSkillsIds = $request->input('removedSkills');
+        $newSkills = $request->input('skills');
+
+        // Step 1: Remove skills by IDs
+        if (!empty($removedSkillsIds)) {
+            Skill::whereIn('id', $removedSkillsIds)
+                ->where('user_id', $userId) 
+                ->delete();
+        }
+
+        // Step 2: Add new skills
+        if (!empty($newSkills)) {
+            foreach ($newSkills as $skillName) {
+                Skill::create([
+                    'skill' => $skillName,
+                    'user_id' => $userId,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Skills updated successfully',
             'status' => true,
         ], 200);
     }

@@ -37,4 +37,5 @@ Route::group([
     Route::post('user/unfollow', [UserController::class, 'unfollow']);
     Route::get('users/search', [UserController::class, 'searchUsers']);
     Route::get('user/{id}', [UserController::class, 'getUserById']);
+    Route::patch('user/skills', [UserController::class, 'updateSkills']);
 });

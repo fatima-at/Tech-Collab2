@@ -20,3 +20,7 @@ export const unfollowUser = async (body, signal) => {
 export const getUser = async (userId, signal) => {
     return await HttpRequest.get(e.CRUD_USER + `/${userId}`, null, 'token', signal);
 };
+
+export const editSkills = async (body, signal) => {
+    return await HttpRequest.patchApi(e.CRUD_USER + "/skills", body, 'token', signal);
+};

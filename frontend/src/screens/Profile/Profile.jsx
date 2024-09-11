@@ -25,6 +25,8 @@ import {
 import { FaLinkedin } from "react-icons/fa";
 import { useAuth } from "../../context";
 import { UserPopup } from "../../components/Popup/UserPopup/UserPopup";
+import SkillsEditModal from "./components/SkillsEditModal";
+import { EditIcon } from "@chakra-ui/icons";
 
 const Profile = () => {
   const { authUser, setAuthUser } = useAuth();
@@ -33,6 +35,11 @@ const Profile = () => {
     isOpen: isUserPopupOpen,
     onOpen: onUserPopupOpen,
     onClose: onUserPopupClose,
+  } = useDisclosure();
+  const {
+    isOpen: isSkillsPopupOpen,
+    onOpen: onSkillsPopupOpen,
+    onClose: onSkillsPopupClose,
   } = useDisclosure();
   const [viewType, setViewType] = useState("followers"); // Modal state
   const [selectedUser, setSelectedUser] = useState(null); // To store the selected user
@@ -76,6 +83,13 @@ const Profile = () => {
         };
       });
     }
+  };
+
+  const setAuthUserSkills = (updatedSkills) => {
+    setAuthUser((current) => ({
+      ...current,
+      skills: updatedSkills,
+    }));
   };
 
   return (
@@ -152,10 +166,24 @@ const Profile = () => {
           <VStack spacing={6} align="stretch">
             {/* Skills Section */}
             <Box bg="white" p={6} borderRadius="lg" boxShadow="lg">
-              <Heading fontSize="lg" fontWeight="bold" color="gray.800" mb={4}>
-                Skills
-              </Heading>
-              <Wrap>
+              <Flex justify="space-between" alignItems="center">
+                <Heading fontSize="lg" fontWeight="bold" color="gray.800">
+                  Skills
+                </Heading>
+                <Button
+                  size="sm"
+                  leftIcon={<EditIcon />}
+                  variant="outline"
+                  colorScheme="blue"
+                  onClick={onSkillsPopupOpen}
+                  borderRadius="full"
+                  _hover={{ bg: "blue.50" }}
+                  px={4}
+                >
+                  Edit Skills
+                </Button>
+              </Flex>
+              <Wrap mt={4}>
                 {authUser?.skills?.length > 0 ? (
                   authUser.skills.map((skill, index) => (
                     <WrapItem key={index}>
@@ -170,6 +198,14 @@ const Profile = () => {
                   </Text>
                 )}
               </Wrap>
+
+              {/* Modal for editing skills */}
+              <SkillsEditModal
+                isOpen={isSkillsPopupOpen}
+                onClose={onSkillsPopupClose}
+                currentSkills={authUser?.skills || []}
+                setSkills={setAuthUserSkills}
+              />
             </Box>
 
             {/* Projects Section */}
@@ -306,7 +342,7 @@ const Profile = () => {
           isOpen={isUserPopupOpen}
           onClose={onUserPopupClose}
           selectedUser={selectedUser}
-          setAllUsers={updateFollowingList} 
+          setAllUsers={updateFollowingList}
           setSelectedUser={setSelectedUser}
         />
       )}
