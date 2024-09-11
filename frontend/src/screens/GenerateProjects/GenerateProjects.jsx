@@ -21,7 +21,6 @@ import SelectField from "./components/SelectField ";
 import InputField from "./components/InputField";
 import { useParams } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
-import { generateProjectWithoutCv } from "../../services/ProjectAiApi";
 import { AI_API } from "../../Endpoints";
 
 const GenerateProjects = () => {

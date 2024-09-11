@@ -150,7 +150,27 @@ async def Add_student_to_DB(pdf_b64: str = Form()):
         logging.error('In Add_student_to_DB function in main.py: %s', str(e))
         return JSONResponse(content={'error': str(e)}, status_code=500)
 
-# add delete student API
+
+@app.post("/delete_student_from_DB")
+async def delete_student_from_DB(student_id: str):
+    """
+    This API deletes a student from the vector database given their student ID.
+    Input: student_id (string)
+    Output: Success or failure message
+    """
+    try:
+        # Assuming the `GeneratorModel_1.students_collection` has a method to delete an entry by ID
+        result = GeneratorModel_1.students_collection.delete(student_id)
+        
+        if result:  # Assuming the result is True if the deletion was successful
+            return JSONResponse(content={"message": f"Student {student_id} deleted successfully"}, status_code=200)
+        else:
+            return JSONResponse(content={"error": f"Student {student_id} not found or could not be deleted"}, status_code=404)
+
+    except Exception as e:
+        logging.error('In delete_student_from_DB function: %s', str(e))
+        return JSONResponse(content={'error': str(e)}, status_code=500)
+
 
 # tested successfully
 @app.post("/retrieve_projects")

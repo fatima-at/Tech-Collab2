@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Button, Text } from "../../../components";
 import { useAuth } from "../../../context";
 import { toast } from "react-toastify";
-import { CRUD_API } from "../../../Endpoints";
+import { AI_API, CRUD_API } from "../../../Endpoints";
 import { TOKEN_KEY } from "../../../context/AuthContext";
 
 const CVForm = ({ formInputs, setCurrentStep }) => {
@@ -30,22 +30,57 @@ const CVForm = ({ formInputs, setCurrentStep }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const formData = new FormData();
-    formData.append("bio", formInputs.bio);
-    formData.append(
-      "general_field",
-      formInputs.generalField === "Other"
-        ? formInputs.otherGeneralField
-        : formInputs.generalField
-    );
-    formData.append("cv", selectedFile);
-    formData.append("vector_id", 1);
 
-    // Append skills as individual entries
-    formInputs.skills?.forEach((skill, index) => {
-      formData.append(`skills[${index}]`, skill.name);
-    });
     try {
+      // Convert the selected file (cv) to base64
+      const fileToBase64 = (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result.split(",")[1]); // Get base64 string only
+          reader.onerror = (error) => reject(error);
+        });
+
+      const pdf_b64 = await fileToBase64(selectedFile);
+
+      // Prepare form data for addUserToVectorDB API
+      const vectorFormData = new FormData();
+      vectorFormData.append("pdf_b64", pdf_b64);
+
+      // Call the addUserToVectorDB API
+      const addUserToVectorDBResponse = await fetch(
+        `${AI_API}/add_Student_To_DB`,
+        {
+          method: "POST",
+          body: vectorFormData,
+        }
+      );
+      const { student_ID, skills } = await addUserToVectorDBResponse.json();
+      console.log(student_ID, skills);
+
+      if (!student_ID) {
+        toast.error("Failed to retrieve student ID. Please try again.");
+        setIsLoading(false);
+        return;
+      }
+      // Prepare form data for complete-registration
+      const formData = new FormData();
+      formData.append("bio", formInputs.bio);
+      formData.append(
+        "general_field",
+        formInputs.generalField === "Other"
+          ? formInputs.otherGeneralField
+          : formInputs.generalField
+      );
+      formData.append("cv", selectedFile);
+      formData.append("vector_id", student_ID); // Use returned student_ID as vector_id
+
+      // Append skills returned from addUserToVectorDB API
+      skills?.forEach((skill, index) => {
+        formData.append(`skills[${index}]`, skill);
+      });
+
+      // Call the complete-registration API
       const response = await fetch(`${CRUD_API}/complete-registration`, {
         method: "POST",
         body: formData,
@@ -53,10 +88,12 @@ const CVForm = ({ formInputs, setCurrentStep }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       if (response.status) {
-        setAuthUser((currentAuthUser) => {
-          return { ...currentAuthUser, registration_completed: true };
-        });
+        setAuthUser((currentAuthUser) => ({
+          ...currentAuthUser,
+          registration_completed: true,
+        }));
         toast.success(response.message);
       } else {
         toast.error(response.message);
