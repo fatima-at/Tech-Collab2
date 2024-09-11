@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Follow;
 use App\Models\User;
 use App\Models\Skill;
+use App\Models\UserProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -155,5 +156,39 @@ class UserController extends Controller
             'message' => 'Skills updated successfully',
             'status' => true,
         ], 200);
+    }
+
+    public function addUserProject(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'nullable|string',
+            'url' => 'nullable|url',
+            'technologies' => 'nullable|array',
+            'technologies.*' => 'string|max:255', // Each technology should be a string
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
+        // Create a new project for the authenticated user
+        $project = UserProject::create([
+            'user_id' => Auth::id(), // Get the authenticated user's ID
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description'] ?? null,
+            'status' => $validatedData['status'] ?? null,
+            'url' => $validatedData['url'] ?? null,
+            'technologies' => implode(', ', $validatedData['technologies'] ?? []), // Convert array to string
+            'start_date' => $validatedData['start_date'] ?? null,
+            'end_date' => $validatedData['end_date'] ?? null,
+        ]);
+
+        // Return a success response
+        return response()->json([
+            'message' => 'Project added successfully.',
+            'data' => $project,
+            'status' => true,
+        ], 201);
     }
 }

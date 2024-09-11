@@ -22,11 +22,12 @@ import {
   ModalCloseButton,
   ModalFooter,
 } from "@chakra-ui/react";
-import { FaLinkedin } from "react-icons/fa";
+import { FaLinkedin, FaPlus } from "react-icons/fa";
 import { useAuth } from "../../context";
 import { UserPopup } from "../../components/Popup/UserPopup/UserPopup";
 import SkillsEditModal from "./components/SkillsEditModal";
 import { EditIcon } from "@chakra-ui/icons";
+import AddProjectModal from "./components/AddProjectModal";
 
 const Profile = () => {
   const { authUser, setAuthUser } = useAuth();
@@ -40,6 +41,11 @@ const Profile = () => {
     isOpen: isSkillsPopupOpen,
     onOpen: onSkillsPopupOpen,
     onClose: onSkillsPopupClose,
+  } = useDisclosure();
+  const {
+    isOpen: isAddProjectPopupOpen,
+    onOpen: onAddProjectPopupOpen,
+    onClose: onAddProjectPopupClose,
   } = useDisclosure();
   const [viewType, setViewType] = useState("followers"); // Modal state
   const [selectedUser, setSelectedUser] = useState(null); // To store the selected user
@@ -210,9 +216,28 @@ const Profile = () => {
 
             {/* Projects Section */}
             <Box bg="white" p={6} borderRadius="lg" boxShadow="lg">
-              <Heading fontSize="lg" fontWeight="bold" color="gray.800" mb={4}>
-                Projects ({authUser?.user_projects?.length || 0})
-              </Heading>
+              <Flex justify="space-between" alignItems="center">
+                <Heading
+                  fontSize="lg"
+                  fontWeight="bold"
+                  color="gray.800"
+                  mb={4}
+                >
+                  Projects ({authUser?.user_projects?.length || 0})
+                </Heading>
+                <Button
+                  colorScheme="blue"
+                  onClick={onAddProjectPopupOpen}
+                  leftIcon={<FaPlus />}
+                  borderRadius="md" // Slightly rounded corners for a clean look
+                  size="md" // Medium size, not too large
+                  fontWeight="medium" // Clean, modern font weight
+                  _hover={{ bg: "blue.600", color: "white" }} // Simple hover effect for interactivity
+                  px={6} // Padding to give it a balanced look without being too large
+                >
+                  Add Project
+                </Button>
+              </Flex>
               <VStack align="start" spacing={4} w="100%" mt={6}>
                 {authUser?.user_projects?.length > 0 ? (
                   authUser.user_projects.map((project) => (
@@ -239,7 +264,10 @@ const Profile = () => {
                           </Link>
                         )}
                         <Text fontSize="sm" fontWeight="400" color="gray.500">
-                          Technologies: {project.technologies.join(", ")}
+                          Technologies:{" "}
+                          {project.technologies
+                            ? project.technologies.split(", ").join(", ")
+                            : "N/A"}
                         </Text>
                         <Text fontSize="sm" fontWeight="400" color="gray.500">
                           {`Status: ${project.status}, Start: ${new Date(
@@ -259,6 +287,14 @@ const Profile = () => {
                   </Text>
                 )}
               </VStack>
+
+              {/* Add Project Modal */}
+              <AddProjectModal
+                isOpen={isAddProjectPopupOpen}
+                onClose={onAddProjectPopupClose}
+                authUser={authUser}
+                setAuthUser={setAuthUser}
+              />
             </Box>
           </VStack>
         </GridItem>

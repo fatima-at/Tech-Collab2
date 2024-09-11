@@ -24,3 +24,7 @@ export const getUser = async (userId, signal) => {
 export const editSkills = async (body, signal) => {
     return await HttpRequest.patchApi(e.CRUD_USER + "/skills", body, 'token', signal);
 };
+
+export const addProject = async (body, signal) => {
+    return await HttpRequest.post(e.CRUD_USER + `/project`, body, 'token', signal);
+};

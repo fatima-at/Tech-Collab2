@@ -136,10 +136,14 @@ async def Add_student_to_DB(pdf_b64: str = Form()):
     """
     try:
         pdf_path = save_b64_as_pdf(pdf_b64)
-        # resume_text = extract_text_from_pdf(pdf_path)
-        resume_json, resume_text = preprocess_pdf(pdf_path)
+        resume_json, resume_text = preprocess_pdf(pdf_path)  # assuming preprocess_pdf returns resume_json with a 'skills' field
         student_ID = GeneratorModel_1.add_student_to_DB(resume_json)
-        return JSONResponse(content=student_ID, status_code=200)
+        skills = resume_json.get('skills', [])  # Extract skills from resume_json
+        response_data = {
+            "student_ID": student_ID,
+            "skills": skills
+        }
+        return JSONResponse(content=response_data, status_code=200)
 
     except Exception as e:
         print("Failed to add New Student")

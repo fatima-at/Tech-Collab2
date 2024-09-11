@@ -38,4 +38,5 @@ Route::group([
     Route::get('users/search', [UserController::class, 'searchUsers']);
     Route::get('user/{id}', [UserController::class, 'getUserById']);
     Route::patch('user/skills', [UserController::class, 'updateSkills']);
+    Route::post('user/project', [UserController::class, 'addUserProject']);
 });

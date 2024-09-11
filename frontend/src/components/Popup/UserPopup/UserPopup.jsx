@@ -235,7 +235,9 @@ export const UserPopup = ({
 
                           {/* Technologies */}
                           <Text fontSize="sm" fontWeight="400" color="gray.500">
-                            Technologies: {project.technologies.join(", ")}
+                            {project.technologies
+                              ? project.technologies.split(", ").join(", ")
+                              : "N/A"}
                           </Text>
 
                           {/* Project Dates */}
