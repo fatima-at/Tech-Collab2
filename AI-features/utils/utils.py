@@ -317,7 +317,58 @@ def load_projects(filename):
         print(e)
         return None
     
-def retrieve_projects_by_category(collection, category, n_results=10):
+def retrieve_all_categories(collection):
+    try:
+        # Get all documents from the collection
+        results = collection.get()  # Retrieves all documents
+
+        categories = set()  # Using a set to avoid duplicates
+
+        # Loop through documents and extract categories
+        for document in results['documents']:
+            if isinstance(document, str):
+                document = json.loads(document)
+
+            # Check if 'category' field exists
+            if 'category' in document:
+                category_field = document['category']
+
+                # Add the exact category as it appears (even if it contains commas)
+                if isinstance(category_field, str):
+                    categories.add(category_field.strip())
+
+        # Convert the set back to a list and return it
+        return list(categories)
+
+    except Exception as e:
+        logging.error("Error in retrieve_exact_used_categories: " + str(e))
+        return None
+    
+def retrieve_projects_by_category(collection, category, start_index=0, chunk_size=24):
+    try:
+        # Retrieve projects filtered by the exact category using an exact match query
+        query = {"category": category}  # Exact match
+        results = collection.get(where=query)
+        
+        projects_json_list = results['documents']
+
+        # Return the projects in chunks (pagination)
+        return projects_json_list[start_index:start_index + chunk_size]
+    except Exception as e:
+        logging.error("Error in retrieve_projects_by_category: " + str(e))
+        return None
+
+def retrieve_projects_all_categories(collection, start_index=0, chunk_size=24):
+    try:
+        # Retrieve projects from all categories with pagination
+        results = collection.get()  # Retrieve all documents
+        projects_json_list = results['documents']
+        return projects_json_list[start_index:start_index + chunk_size]
+    except Exception as e:
+        logging.error("Error in retrieve_projects_all_categories: " + str(e))
+        return None
+    
+def retrieve_projects_by_category2(collection, category, n_results=10):
     try:
         # projects_IDs = []
         # for j in range(n_results):

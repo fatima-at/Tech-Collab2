@@ -1,48 +1,33 @@
 import React, { useEffect, useState } from "react";
+import AllProjects from "./components/AllProjects";
 import {
-  Grid,
   Text,
   VStack,
   useColorModeValue,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   Button,
   Box,
-  Input,
   Flex,
   useDisclosure,
   Skeleton,
   Spinner,
 } from "@chakra-ui/react";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import Slider from "react-slick";
 import { ScreenContainer } from "../../components";
 import { ProjectPopup } from "./components/ProjectPopup";
-import { projects } from "./projects";
 import { IoMdBulb } from "react-icons/io";
 
 // Import slick carousel styles
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import ProjectCard from "../../components/Custom/ProjectCard/ProjectCard";
 import { useAuth } from "../../context";
 import { toast } from "react-toastify";
 import { AI_API } from "../../Endpoints";
 import { RecommendedProjectPopup } from "./components/RecommendedProjectPopup";
 import { createStandAloneProject } from "../../services/ProjectApi";
 
-const categories = [
-  "All",
-  ...new Set(projects.map((project) => project.category)),
-];
-
 const ExploreProjects = () => {
   const { authUser } = useAuth();
-  const [filteredProjects, setFilteredProjects] = useState(projects);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+
   const [selectedProject, setSelectedProject] = useState(null);
   const [recommendedProject, setRecommendedProject] = useState({});
   const [recommendingProjectLoading, setRecommendingProjectLoading] =
@@ -62,40 +47,9 @@ const ExploreProjects = () => {
   const textColor = useColorModeValue("gray.800", "white");
   const buttonTextColor = useColorModeValue("white", "gray.100");
 
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    if (category === "All") {
-      setFilteredProjects(projects);
-    } else {
-      setFilteredProjects(
-        projects.filter((project) => project.category === category)
-      );
-    }
-  };
-
-  const handleSearch = (e) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-    setFilteredProjects(
-      projects.filter(
-        (project) =>
-          project.title.toLowerCase().includes(query) &&
-          (selectedCategory === "All" || project.category === selectedCategory)
-      )
-    );
-  };
-
   const handleProjectClick = (project) => {
     setSelectedProject(project);
     onOpen();
-  };
-
-  const handleToggleBookmark = async () => {
-    // Logic to toggle bookmark
-    setSelectedProject((prevProject) => ({
-      ...prevProject,
-      is_bookmarked: !prevProject.is_bookmarked,
-    }));
   };
 
   const fetchRecommendedProjects = async () => {
@@ -269,70 +223,16 @@ const ExploreProjects = () => {
       </Box>
 
       {/* All Projects Section */}
-      <Box mb={6}>
-        <Text fontSize="2xl" fontWeight="bold" mb={4} color={textColor}>
-          All Projects
-        </Text>
-
-        {/* Search Bar and Category Filter */}
-        <Flex justifyContent="center" alignItems="center" mb={6} gap={4}>
-          {/* Search Input */}
-          <Input
-            placeholder="Search projects by title..."
-            value={searchQuery}
-            onChange={handleSearch}
-            size="md"
-            maxW="400px" // Increased max width for better appearance
-            borderColor="gray.300"
-            boxShadow="sm"
-          />
-
-          {/* Category Dropdown */}
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<ChevronDownIcon />}
-              bg="white" // Different background color for contrast
-              color="gray.700"
-              _hover={{ bg: "gray.100" }}
-              _focus={{ boxShadow: "outline" }}
-            >
-              {selectedCategory}
-            </MenuButton>
-            <MenuList bg="white" boxShadow="lg">
-              {categories.map((category) => (
-                <MenuItem
-                  key={category}
-                  onClick={() => handleCategorySelect(category)}
-                  _hover={{ bg: "gray.200" }} // Hover effect for items
-                >
-                  {category}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-        </Flex>
-
-        {/* Projects Grid */}
-        <Grid templateColumns="repeat(3, minmax(250px, 1fr))" gap={6}>
-          {filteredProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              title={project.title}
-              description={project.description}
-              subtitle={project.category}
-              handleProjectClick={() => handleProjectClick(project)}
-            />
-          ))}
-        </Grid>
-      </Box>
+      <AllProjects
+        textColor={textColor}
+        handleProjectClick={handleProjectClick}
+      />
 
       {/* Project Popup */}
       <ProjectPopup
         isOpen={isOpen}
         onClose={onClose}
         selectedProject={selectedProject}
-        handleToggleBookmark={handleToggleBookmark}
       />
       <RecommendedProjectPopup
         isOpen={isRecommendedProjectOpen}

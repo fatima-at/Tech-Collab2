@@ -22,7 +22,7 @@ const ProjectCard = ({ title, subtitle, description, handleProjectClick }) => {
         <Text fontSize="md" color="gray.500">
           {subtitle}
         </Text>
-        <Text fontSize="sm" color="gray.600">
+        <Text fontSize="sm" color="gray.600" noOfLines={3}>
           {description}
         </Text>
       </VStack>

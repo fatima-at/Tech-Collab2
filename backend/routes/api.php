@@ -40,4 +40,7 @@ Route::group([
     Route::patch('user/skills', [UserController::class, 'updateSkills']);
     Route::post('user/project', [UserController::class, 'addUserProject']);
     Route::post('users/get-by-vector-ids', [UserController::class, 'getUsersByVectorIds']);
+
+    Route::post('projects/collection/get-by-category', [ProjectCollectionController::class, 'getPaginatedProjects']);
+    Route::get('projects/collection/categories', [ProjectCollectionController::class, 'getAllCategories']);
 });

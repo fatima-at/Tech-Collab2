@@ -6,8 +6,9 @@ try:
     from utils.utils import *
     from utils.prompts import *
     from utils.GeneratorModel import *
+    from pydantic import BaseModel
 
-    from fastapi import FastAPI, File, Form
+    from fastapi import FastAPI, File, Form, HTTPException
     from fastapi.responses import JSONResponse
     from fastapi.middleware.cors import CORSMiddleware
 except Exception as e:
@@ -171,70 +172,218 @@ async def delete_student_from_DB(student_id: str):
         logging.error('In delete_student_from_DB function: %s', str(e))
         return JSONResponse(content={'error': str(e)}, status_code=500)
 
-
-# tested successfully
-@app.post("/retrieve_projects")
-async def retrieve_projects(n_results,
-                            category):
+@app.get("/retrieve_categories")
+async def retrieve_categories():
     """
-    This API retrieves list of projects based on 1 given category from the database.
-    Input:  - category: AI, Android, Cloud, ...
-            - number of results
+    This API retrieves all unique project categories from the database.
+    Output: JSON string with a list of categories
+    """
+    try:
+        # Retrieve distinct categories from the database
+        categories = retrieve_all_categories(GeneratorModel_1.projects_collection)
+
+        if categories:
+            return JSONResponse(content={"categories": categories}, status_code=200)
+        else:
+            return JSONResponse(content={"message": "No categories found."}, status_code=404)
+
+    except Exception as e:
+        logging.error('In retrieve_categories function: %s', str(e))
+        return JSONResponse(content={'Error': str(e)}, status_code=500)
+    
+import json
+from fastapi import HTTPException
+
+@app.post("/retrieve_projects_by_category")
+async def retrieve_projects_by_category(category: str, page: int = 1):
+    """
+    This API retrieves projects filtered by the given category.
+    It supports infinite loading with each chunk containing 24 projects.
+    Input:  - category: The category to filter by (e.g., AI, Android, Cloud).
+            - page: The current page number (for pagination).
+    Output: JSON string with the list of filtered projects and the total count
+    """
+    try:
+        # Normalize the category for case-insensitive matching
+        normalized_category = category.strip().lower()
+
+        # Pagination: Calculate the starting index based on the page number
+        chunk_size = 24
+        start_index = (page - 1) * chunk_size
+
+        # Retrieve all projects from the collection
+        results = GeneratorModel_1.projects_collection.get()
+
+        # Check if results['documents'] is a list
+        if not isinstance(results['documents'], list):
+            raise HTTPException(status_code=500, detail="Invalid structure in project data")
+
+        # Deserialize projects and filter by the exact category
+        projects = []
+        for project in results['documents']:
+            # Check if the project is a string (and needs to be parsed) or a dictionary
+            if isinstance(project, str):
+                project = json.loads(project)  # Convert string to dictionary
+
+            # Ensure the project is a dictionary and contains 'category'
+            if isinstance(project, dict) and 'category' in project:
+                project_category = project['category']
+
+                # If category is a list, check if the given category exists in the list
+                if isinstance(project_category, list):
+                    project_category_list = [cat.strip().lower() for cat in project_category]
+                    if normalized_category in project_category_list:
+                        projects.append(project)
+
+                # If category is a string, normalize and compare directly
+                elif isinstance(project_category, str):
+                    if project_category.strip().lower() == normalized_category:
+                        projects.append(project)
+
+        # Get the total count of filtered projects
+        total_projects = len(projects)
+
+        # Return the filtered projects in chunks (pagination)
+        filtered_projects = projects[start_index:start_index + chunk_size]
+
+        if not filtered_projects:
+            raise HTTPException(status_code=404, detail="No projects found for the given category")
+
+        return JSONResponse(content={"total": total_projects, "projects": filtered_projects, "page": page}, status_code=200)
+
+    except Exception as e:
+        logging.error('Error in retrieve_projects_by_category function: %s', str(e))
+        return JSONResponse(content={'Error': str(e)}, status_code=500)
+
+class RetrieveProjectsByCategoriesRequest(BaseModel):
+    categories: List[str]
+    page: int = 1
+
+@app.post("/retrieve_projects_by_categories")
+async def retrieve_projects_by_categories(request: RetrieveProjectsByCategoriesRequest):
+    """
+    This API retrieves projects filtered by the given categories.
+    It supports infinite loading with each chunk containing 24 projects.
+    Input:  - categories: List of categories to filter by (e.g., AI, Android, Cloud).
+            - page: The current page number (for pagination).
+    Output: JSON string with the list of filtered projects and the total count
+    """
+    try:
+        # Normalize the categories for case-insensitive matching
+        normalized_categories = [category.strip().lower() for category in request.categories]
+        page = request.page
+
+        # Pagination: Calculate the starting index based on the page number
+        chunk_size = 24
+        start_index = (page - 1) * chunk_size
+
+        # Retrieve all projects from the collection
+        results = GeneratorModel_1.projects_collection.get()
+
+        # Check if results['documents'] is a list
+        if not isinstance(results['documents'], list):
+            raise HTTPException(status_code=500, detail="Invalid structure in project data")
+
+        # Deserialize projects and filter by the given categories
+        projects = []
+        for project in results['documents']:
+            # Check if the project is a string (and needs to be parsed) or a dictionary
+            if isinstance(project, str):
+                project = json.loads(project)  # Convert string to dictionary
+
+            # Ensure the project is a dictionary and contains 'category'
+            if isinstance(project, dict) and 'category' in project:
+                project_category = project['category']
+
+                # If category is a list, check if any of the given categories exist in the list
+                if isinstance(project_category, list):
+                    project_category_list = [cat.strip().lower() for cat in project_category]
+                    if any(cat in project_category_list for cat in normalized_categories):
+                        projects.append(project)
+
+                # If category is a string, normalize and compare to any of the given categories
+                elif isinstance(project_category, str):
+                    if project_category.strip().lower() in normalized_categories:
+                        projects.append(project)
+
+        # Get the total count of filtered projects
+        total_projects = len(projects)
+
+        # Return the filtered projects in chunks (pagination)
+        filtered_projects = projects[start_index:start_index + chunk_size]
+
+        if not filtered_projects:
+            raise HTTPException(status_code=404, detail="No projects found for the given categories")
+
+        return JSONResponse(content={"total": total_projects, "projects": filtered_projects, "page": page}, status_code=200)
+
+    except Exception as e:
+        logging.error('Error in retrieve_projects_by_categories function: %s', str(e))
+        return JSONResponse(content={'Error': str(e)}, status_code=500)
+
+
+class RetrieveProjectsRequest(BaseModel):
+    category: str
+    page: int = 1  # Default page is 1
+
+@app.post("/retrieve_projects")
+async def retrieve_projects(request: RetrieveProjectsRequest):
+    """
+    This API retrieves a list of projects based on the given category from the database.
+    It supports infinite loading with each chunk containing 24 projects.
+    Input:  - category: AI, Android, Cloud, or "all" for all categories.
+            - page: The current page number (for pagination).
     Output: JSON string
     """
     try:
-        n_results = int(n_results)
-        assert isinstance(category, str) , "category must be a string"
-        assert isinstance(n_results, int) , "n_results must be a integer number"
+        category = request.category
+        page = request.page
 
-        # Method 1
-        projects_json = retrieve_projects_by_category(GeneratorModel_1.projects_collection, category, n_results)
-        recommended_projects = []
-        for project in projects_json:
-            recommended_projects.append(json.loads(project))
-        
-        # Method 2
-        # if category == "Android":
-        #     AndroidProjects = load_projects(r"data\projects_text_json\android_projects.txt")
-        #     projects = AndroidProjects[:n_results]
-        
-        # elif category == "Cloud":
-        #     CloudProjects = load_projects(r"data\projects_text_json\cloud_projects.txt")
-        #     projects = CloudProjects[:n_results]
-        
-        # elif category == "AI":
-        #     ArtificialIntelligenceProjects = load_projects(r"data\projects_text_json\ai_projects.txt")
-        #     projects = ArtificialIntelligenceProjects[:n_results]
-        
-        # elif category == "SecurityEncryption":
-        #     SecurityEncryptionProjects = load_projects(r"data\projects_text_json\SecurityEncryption_projects.txt")
-        #     projects = SecurityEncryptionProjects[:n_results]
-        
-        # elif category == "raspberrypi":
-        #     RaspberryPiProjects = load_projects(r"data\projects_text_json\raspberrypi_projects.txt")
-        #     projects = RaspberryPiProjects[:n_results]
-        
-        # elif category == "ML":
-        #     MachineLearningProjects = load_projects(r"data\projects_text_json\ml_projects.txt")
-        #     projects = MachineLearningProjects[:n_results]
-        
-        # elif category == "IoT":
-        #     IoTProjects = load_projects(r"data\projects_text_json\clouiot_projects.txt")
-        #     projects = IoTProjects[:n_results]
-        
-        # elif category == "GPS_GSM":
-        #     GPS_GSM_projects = load_projects(r"data\projects_text_json\GPS_GSM_projects.txt")
-        #     projects = GPS_GSM_projects[:n_results]
-        
-        # elif category == "ImageProcessing":
-        #     imageProcessingProjects = load_projects(r"data\projects_text_json\ImageProcessing_projects.txt")
-        #     projects = imageProcessingProjects[:n_results]
+        assert isinstance(category, str), "category must be a string"
 
-        # projects_json = json.dumps(projects)
-        return JSONResponse(content=recommended_projects, status_code=200)
+        # Pagination: Calculate the starting index based on the page number
+        chunk_size = 24
+        start_index = (page - 1) * chunk_size
+
+        if category.lower() == "all":
+            # Load projects from all categories with infinite loading
+            projects_json = retrieve_projects_all_categories(GeneratorModel_1.projects_collection, start_index, chunk_size)
+        else:
+            # Load projects from a specific category
+            projects_json = retrieve_projects_by_category(GeneratorModel_1.projects_collection, category, start_index, chunk_size)
+
+        recommended_projects = [json.loads(project) for project in projects_json]
+
+        return JSONResponse(content={"projects": recommended_projects, "page": page}, status_code=200)
 
     except Exception as e:
         logging.error('In retrieve_projects function in main.py: %s', str(e))
+        return JSONResponse(content={'Error': str(e)}, status_code=500)
+    
+@app.get("/retrieve_all_projects")
+async def retrieve_all_projects():
+    """
+    This API retrieves all projects and their total count from the database.
+    Output: JSON string with the list of projects and the total count
+    """
+    try:
+        # Retrieve all projects from the collection
+        results = GeneratorModel_1.projects_collection.get()
+
+        # Get the list of projects
+        projects = results['documents']
+
+        # Ensure each project is deserialized from stringified JSON
+        deserialized_projects = [json.loads(project) if isinstance(project, str) else project for project in projects]
+
+        # Calculate the total number of projects
+        total_projects = len(deserialized_projects)
+
+        # Return the deserialized projects and their total count
+        return JSONResponse(content={"total": total_projects, "projects": deserialized_projects}, status_code=200)
+
+    except Exception as e:
+        logging.error('In retrieve_all_projects function: %s', str(e))
         return JSONResponse(content={'Error': str(e)}, status_code=500)
                              
 @app.post("/generate_project_1")

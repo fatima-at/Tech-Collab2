@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Text,
   Modal,
@@ -8,27 +8,10 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Button,
   VStack,
 } from "@chakra-ui/react";
 
-export function ProjectPopup({
-  isOpen,
-  onClose,
-  selectedProject,
-  handleToggleBookmark,
-}) {
-  const [loading, setLoading] = useState(false);
-
-  const handleBookmarkClick = async () => {
-    setLoading(true);
-    try {
-      await handleToggleBookmark();
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export function ProjectPopup({ isOpen, onClose, selectedProject }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -45,21 +28,7 @@ export function ProjectPopup({
             </Text>
           </VStack>
         </ModalBody>
-        <ModalFooter>
-          <Button
-            colorScheme={selectedProject?.is_bookmarked ? "red" : "green"}
-            onClick={handleBookmarkClick}
-            isLoading={loading}
-            disabled={loading}
-          >
-            {selectedProject?.is_bookmarked
-              ? "Remove Bookmark"
-              : "Add Bookmark"}
-          </Button>
-          <Button variant="ghost" onClick={onClose} ml={3}>
-            Close
-          </Button>
-        </ModalFooter>
+        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );
