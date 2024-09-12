@@ -1,14 +1,13 @@
 import React from "react";
-import { Input, Text } from "../../../components";
-import { primaryTextColor } from "../../../constants/colors";
+import { Input } from "../../../components";
+
+import { FormControl, FormLabel } from "@chakra-ui/react";
 
 const InputField = ({ label, ...props }) => (
-  <div className="flex-col-05">
-    <Text type="p" color={primaryTextColor}>
-      {label}
-    </Text>
+  <FormControl>
+    <FormLabel>{label}</FormLabel>
     <Input {...props} />
-  </div>
+  </FormControl>
 );
 
 export default InputField;

@@ -18,10 +18,10 @@ class CreateProjectSessionsTable extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->boolean('include_cv')->default(true);
-            $table->string('complexity_level');
-            $table->string('duration');
-            $table->string('team_size');
-            $table->string('expected_outcome');
+            $table->string('complexity_level')->nullable();
+            $table->string('duration')->nullable();
+            $table->string('team_size')->nullable();
+            $table->string('expected_outcome')->nullable();
             $table->timestamps();
         });
     }

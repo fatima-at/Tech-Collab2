@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./styles.css";
-import { Button, EmptyState, Loader, Text } from "../../components";
-import { Switch } from "@chakra-ui/react";
+import { EmptyState, Loader } from "../../components";
 import {
   focusAreaOptions,
   complexityLevelOptions,
@@ -22,25 +21,45 @@ import InputField from "./components/InputField";
 import { useParams } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
 import { AI_API } from "../../Endpoints";
+import {
+  Flex,
+  Box,
+  Heading,
+  Text,
+  Switch,
+  Button,
+  VStack,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import SelectOptions from "./components/SelectOptions";
 
 const GenerateProjects = () => {
+  const cardBg = useColorModeValue("white", "gray.800");
+  const bg = useColorModeValue("gray.50", "gray.900");
   const { authUser } = useAuth();
   const { sessionId: routeSessionId } = useParams();
+  const now = new Date();
+  const formattedDate = `${now.toLocaleDateString(
+    "en-GB"
+  )} ${now.toLocaleTimeString("en-GB", {
+    hour: "numeric",
+    minute: "numeric",
+  })}`;
 
   const [loading, setLoading] = useState(false);
   const [fetchingSessionDataLoading, setFetchingSessionDataLoading] = useState(
     routeSessionId ? true : false
   );
   const [sessionData, setSessionData] = useState({
-    sessionId: routeSessionId || null,
-    sessionTitle: "",
+    sessionId: routeSessionId || "",
+    sessionTitle: `Session ${formattedDate}`,
     includeCV: true,
     selectedFocusAreaOptions: [],
     selectedToolsAndTechnologiesOptions: [],
-    selectedComplexityLevel: null,
-    selectedDuration: null,
-    selectedTeamSize: null,
-    selectedExpectedOutcome: null,
+    selectedComplexityLevel: "",
+    selectedDuration: "",
+    selectedTeamSize: "",
+    selectedExpectedOutcome: "",
     generatedProjects: [],
   });
 
@@ -134,19 +153,19 @@ const GenerateProjects = () => {
       if (!sessionData.sessionId) {
         const sessionPayload = {
           user_id: authUser.id,
-          title: sessionData.sessionTitle,
+          title: sessionData.sessionTitle || `Session ${formattedDate}`,
           include_cv: sessionData.includeCV,
           focus_area: sessionData.selectedFocusAreaOptions.map(
             (option) => option.value
           ),
-          complexity_level: sessionData.selectedComplexityLevel?.value,
+          complexity_level: sessionData.selectedComplexityLevel,
           tools_and_technologies:
             sessionData.selectedToolsAndTechnologiesOptions.map(
               (option) => option.value
             ),
-          duration: sessionData.selectedDuration?.value,
-          team_size: sessionData.selectedTeamSize?.value,
-          expected_outcome: sessionData.selectedExpectedOutcome?.value,
+          duration: sessionData.selectedDuration,
+          team_size: sessionData.selectedTeamSize,
+          expected_outcome: sessionData.selectedExpectedOutcome,
         };
 
         const response = await createProjectSession(sessionPayload);
@@ -235,139 +254,174 @@ const GenerateProjects = () => {
     fetchSessionData();
   }, [routeSessionId]);
 
+  useEffect(() => {
+    console.log(sessionData);
+  }, [sessionData]);
+
   return (
     <>
       {fetchingSessionDataLoading ? (
         <Loader />
       ) : (
-        <div className="generate-projects-screen">
-          <div className="generate-projects-inputs-box">
-            <div className="generate-projects-inputs-container">
-              <div className="flex-between">
-                <Text type="h6" color="#333333">
-                  Include CV:
-                </Text>
-                <Switch
-                  id="include-cv"
-                  isChecked={sessionData.includeCV}
-                  onChange={() =>
-                    updateSessionData("includeCV", !sessionData.includeCV)
-                  }
-                  colorScheme="primary"
-                  disabled={sessionData.sessionId || loading}
-                />
-              </div>
-
-              <InputField
-                label="Session Title"
-                value={sessionData.sessionTitle}
-                onChange={(e) =>
-                  updateSessionData("sessionTitle", e.target.value)
-                }
-                placeholder="Enter session title"
-                disabled={sessionData.sessionId || loading}
-              />
-
-              <SelectField
-                label="Focus Area"
-                options={focusAreaOptions}
-                selectedOptions={sessionData.selectedFocusAreaOptions}
-                handleChange={(selected) =>
-                  updateSessionData("selectedFocusAreaOptions", selected)
-                }
-                placeholder="Select focus area options..."
-                disabled={sessionData.sessionId || loading}
-                isMulti
-              />
-
-              <SelectField
-                label="Complexity level"
-                options={complexityLevelOptions}
-                selectedOption={sessionData.selectedComplexityLevel}
-                handleChange={(selected) =>
-                  updateSessionData("selectedComplexityLevel", selected)
-                }
-                placeholder="Select complexity level"
-                disabled={sessionData.sessionId || loading}
-              />
-
-              <SelectField
-                label="Tools and Technologies"
-                options={toolsAndTechnologies}
-                selectedOptions={
-                  sessionData.selectedToolsAndTechnologiesOptions
-                }
-                handleChange={(selected) =>
-                  updateSessionData(
-                    "selectedToolsAndTechnologiesOptions",
-                    selected
-                  )
-                }
-                placeholder="Select tools and technologies..."
-                disabled={sessionData.sessionId || loading}
-                isMulti
-              />
-
-              <SelectField
-                label="Duration"
-                options={durationOptions}
-                selectedOption={sessionData.selectedDuration}
-                handleChange={(selected) =>
-                  updateSessionData("selectedDuration", selected)
-                }
-                placeholder="Select project duration"
-                disabled={sessionData.sessionId || loading}
-              />
-
-              <SelectField
-                label="Team Size"
-                options={teamSizeOptions}
-                selectedOption={sessionData.selectedTeamSize}
-                handleChange={(selected) =>
-                  updateSessionData("selectedTeamSize", selected)
-                }
-                placeholder="Select team size"
-                disabled={sessionData.sessionId || loading}
-              />
-
-              <SelectField
-                label="Expected Outcome"
-                options={expectedOutcomeOptions}
-                selectedOption={sessionData.selectedExpectedOutcome}
-                handleChange={(selected) =>
-                  updateSessionData("selectedExpectedOutcome", selected)
-                }
-                placeholder="Select expected outcome"
-                disabled={sessionData.sessionId || loading}
-              />
-            </div>
-
-            <Button
-              type="Primary"
-              style={{ width: "100%" }}
-              onClick={handleGenerateClick}
-              loading={loading}
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          gap={8}
+          p={8}
+          backgroundColor={bg}
+          width="100%"
+        >
+          {/* Options Box */}
+          <Flex flexDir="column" gap={4} flex={1}>
+            <Heading as="h5" size="md" mb={6} color="#333">
+              Customize Your Project Preferences
+            </Heading>
+            <Box
+              backgroundColor={cardBg}
+              p={6}
+              boxShadow="lg"
+              borderRadius="md"
+              overflowY="auto"
             >
-              Generate
-            </Button>
-          </div>
+              <VStack spacing={4} align="stretch">
+                <Flex justify="space-between" align="center">
+                  <Text fontSize="md" color="#333" fontWeight={500}>
+                    Personalize Project with My CV
+                  </Text>
+                  <Switch
+                    id="include-cv"
+                    isChecked={sessionData.includeCV}
+                    onChange={() =>
+                      updateSessionData("includeCV", !sessionData.includeCV)
+                    }
+                    colorScheme="primary"
+                    isDisabled={sessionData.sessionId || loading}
+                  />
+                </Flex>
 
-          <div className="generate-projects-outputs-box">
-            {sessionData.generatedProjects.length > 0 ? (
-              sessionData.generatedProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))
-            ) : (
-              <EmptyState
-                title="No Projects Generated Yet"
-                message="Start by selecting your preferences to generate projects."
-              />
-            )}
-          </div>
-        </div>
+                <InputField
+                  label="Session Title"
+                  value={sessionData.sessionTitle}
+                  onChange={(e) =>
+                    updateSessionData("sessionTitle", e.target.value)
+                  }
+                  placeholder="Enter session title"
+                  isDisabled={sessionData.sessionId || loading}
+                />
+
+                {renderSelectFields(sessionData, updateSessionData, loading)}
+              </VStack>
+            </Box>
+            <Button
+              colorScheme="primary"
+              size="lg"
+              width="full"
+              onClick={handleGenerateClick}
+              isLoading={loading}
+              loadingText="Generating..."
+              fontWeight="500"
+            >
+              Generate Projects
+            </Button>
+          </Flex>
+
+          {/* Projects Box */}
+          <Flex flexDir="column" gap={4} flex={2}>
+            <Heading as="h5" size="md" mb={6} color="#333">
+              Generated Projects
+            </Heading>
+
+            <Box
+              backgroundColor={cardBg}
+              p={6}
+              boxShadow="lg"
+              borderRadius="md"
+              overflowY="auto"
+              height="100%"
+            >
+              {sessionData.generatedProjects.length > 0 ? (
+                <VStack spacing={4} align="stretch">
+                  {sessionData.generatedProjects.map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </VStack>
+              ) : (
+                <EmptyState
+                  title="No Projects Generated Yet"
+                  message="Start by selecting your preferences to generate projects."
+                />
+              )}
+            </Box>
+          </Flex>
+        </Flex>
       )}
     </>
   );
 };
 
 export default GenerateProjects;
+
+const renderSelectFields = (sessionData, updateSessionData, loading) => (
+  <>
+    <SelectOptions
+      label="Focus Area"
+      options={focusAreaOptions}
+      selectedOptions={sessionData.selectedFocusAreaOptions}
+      onChange={(selected) =>
+        updateSessionData("selectedFocusAreaOptions", selected)
+      }
+      placeholder="Select focus area..."
+      isDisabled={sessionData.sessionId || loading}
+    />
+
+    <SelectField
+      label="Complexity level"
+      options={complexityLevelOptions}
+      value={sessionData.selectedComplexityLevel?.value}
+      onChange={(selected) =>
+        updateSessionData("selectedComplexityLevel", selected)
+      }
+      placeholder="Select complexity level"
+      isDisabled={sessionData.sessionId || loading}
+    />
+
+    <SelectOptions
+      label="Tools and Technologies"
+      options={toolsAndTechnologies}
+      selectedOptions={sessionData.selectedToolsAndTechnologiesOptions}
+      onChange={(selected) =>
+        updateSessionData("selectedToolsAndTechnologiesOptions", selected)
+      }
+      placeholder="Select tools and technologies..."
+      isDisabled={sessionData.sessionId || loading}
+    />
+
+    <SelectField
+      label="Duration"
+      options={durationOptions}
+      value={sessionData.selectedDuration?.value}
+      onChange={(selected) => updateSessionData("selectedDuration", selected)}
+      placeholder="Select project duration"
+      isDisabled={sessionData.sessionId || loading}
+    />
+
+    <SelectField
+      label="Team Size"
+      options={teamSizeOptions}
+      value={sessionData.selectedTeamSize?.value}
+      onChange={(selected) => updateSessionData("selectedTeamSize", selected)}
+      placeholder="Select team size"
+      isDisabled={sessionData.sessionId || loading}
+    />
+
+    <SelectField
+      label="Expected Outcome"
+      options={expectedOutcomeOptions}
+      value={sessionData.selectedExpectedOutcome?.value}
+      onChange={(selected) =>
+        updateSessionData("selectedExpectedOutcome", selected)
+      }
+      placeholder="Select expected outcome"
+      isDisabled={sessionData.sessionId || loading}
+    />
+  </>
+);

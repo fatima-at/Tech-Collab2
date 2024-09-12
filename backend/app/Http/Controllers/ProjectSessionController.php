@@ -17,12 +17,12 @@ class ProjectSessionController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'include_cv' => 'sometimes|boolean',
-            'focus_area' => 'required|array',
-            'complexity_level' => 'required|string',
-            'tools_and_technologies' => 'required|array',
-            'duration' => 'required|string',
-            'team_size' => 'required|string',
-            'expected_outcome' => 'required|string',
+            'focus_area' => 'nullable|array',
+            'complexity_level' => 'nullable|string',
+            'tools_and_technologies' => 'nullable|array',
+            'duration' => 'nullable|string',
+            'team_size' => 'nullable|string',
+            'expected_outcome' => 'nullable|string',
         ]);
     
         // Create a new project session
@@ -36,14 +36,20 @@ class ProjectSessionController extends Controller
             'expected_outcome' => $request->input('expected_outcome'),
         ]);
     
-        // Attach focus areas
-        foreach ($request->input('focus_area') as $focusArea) {
-            $projectSession->focusAreas()->create(['name' => $focusArea]);
+        if (!empty($request->input('focus_area'))) {
+            foreach ($request->input('focus_area') as $focusArea) {
+                if (!empty($focusArea)) {
+                    $projectSession->focusAreas()->create(['name' => $focusArea]);
+                }
+            }
         }
     
-        // Attach tools and technologies
-        foreach ($request->input('tools_and_technologies') as $tool) {
-            $projectSession->toolsAndTechnologies()->create(['name' => $tool]);
+        if (!empty($request->input('tools_and_technologies'))) {
+            foreach ($request->input('tools_and_technologies') as $tool) {
+                if (!empty($tool)) {
+                    $projectSession->toolsAndTechnologies()->create(['name' => $tool]);
+                }
+            }
         }
     
         return response()->json([

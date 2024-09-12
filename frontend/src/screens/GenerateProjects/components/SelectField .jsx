@@ -1,32 +1,34 @@
-import React from "react";
-import { Text } from "../../../components";
-import ReactSelect from "../../../components/UI/ReactSelect";
-import { primaryTextColor } from "../../../constants/colors";
+import { FormControl, FormLabel, Select } from "@chakra-ui/react";
 
 const SelectField = ({
   label,
   options,
-  selectedOption,
-  selectedOptions,
-  handleChange,
+  value,
+  onChange,
   placeholder,
-  disabled,
+  isDisabled,
   isMulti = false,
 }) => (
-  <div className="flex-col-05">
-    <Text type="p" color={primaryTextColor}>
-      {label}
-    </Text>
-    <ReactSelect
-      options={options}
-      selectedOptions={selectedOptions}
-      selectedOption={selectedOption}
-      handleChange={handleChange}
+  <FormControl isDisabled={isDisabled}>
+    <FormLabel>{label}</FormLabel>
+    <Select
       placeholder={placeholder}
-      disabled={disabled}
-      isMulti={isMulti}
-    />
-  </div>
+      value={value}
+      onChange={(e) => {
+        // For single-select, set the value directly
+        if (!isMulti) {
+          onChange(e.target.value);
+        }
+      }}
+      multiple={isMulti}
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </Select>
+  </FormControl>
 );
 
 export default SelectField;
