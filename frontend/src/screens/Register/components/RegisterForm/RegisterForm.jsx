@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Text } from "../../../../components";
+import {
+  VStack,
+  Input,
+  Button,
+  Text,
+  Box,
+  useColorModeValue,
+  Flex,
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { AUTH_ROUTE } from "../../../../constants/routes";
 import { toast } from "react-toastify";
 import { signUp } from "../../../../services/AuthApi";
+import { LogoHeader } from "../../../../components";
+import PasswordInput from "../../../../components/UI/PasswordInput/PasswordInput";
 
 const RegisterForm = ({ setDidSubmit }) => {
+  const cardBg = useColorModeValue("white", "gray.800");
+  const inputBg = useColorModeValue("gray.50", "gray.700");
+  const buttonBg = useColorModeValue("blue.500", "blue.600");
   const navigate = useNavigate();
   const [isFormValid, setIsFormValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,69 +89,116 @@ const RegisterForm = ({ setDidSubmit }) => {
   }, [registeredInfo]);
 
   return (
-    <div className="register-box-container">
-      <div className="register-box">
-        <Text type="h2" color="white" style={{ textAlign: "center" }}>
+    <Flex justify="center" align="center" h="100vh" width="100%">
+      <Box
+        maxW="400px"
+        width="100%"
+        p={6}
+        bg={cardBg}
+        borderRadius="lg"
+        boxShadow="xl"
+        border="1px solid"
+        borderColor={useColorModeValue("gray.200", "gray.700")}
+      >
+        <LogoHeader />
+        <Text
+          fontSize="2xl"
+          color={useColorModeValue("gray.800", "white")}
+          textAlign="center"
+          mb={6}
+          fontWeight={500}
+        >
           Register
         </Text>
+
         <form onSubmit={handleSubmit}>
-          <Input
-            label="Full Name"
-            name="name"
-            placeholder="Full Name"
-            value={registeredInfo.name}
-            onChange={handleInputChange}
-            required
-            fullWidth
-          />
-          <Input
-            type="email"
-            label="Email"
-            name="email"
-            placeholder="Enter Email"
-            value={registeredInfo.email}
-            onChange={handleInputChange}
-            required
-            fullWidth
-          />
-          <Input
-            type="password"
-            label="Password"
-            name="password"
-            placeholder="Enter Password"
-            value={registeredInfo.password}
-            onChange={handleInputChange}
-            required
-            fullWidth
-          />
-          <Input
-            type="password"
-            label="Confirm Password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={registeredInfo.confirmPassword}
-            onChange={handleInputChange}
-            required
-            fullWidth
-          />
-          <Button
-            type="Primary"
-            style={{ width: "100%", marginTop: ".5rem" }}
-            submit
-            disabled={!isFormValid}
-            loading={isLoading}
-          >
-            Register
-          </Button>
+          <VStack spacing={4} align="start" w="100%">
+            {/* Full Name Input */}
+            <Input
+              placeholder="Full Name"
+              value={registeredInfo.name}
+              onChange={handleInputChange}
+              bg={inputBg}
+              focusBorderColor="blue.400"
+              required
+              size="md"
+              borderRadius="md"
+              fullWidth
+              name="name"
+            />
+
+            {/* Email Input */}
+            <Input
+              type="email"
+              placeholder="Enter Email"
+              value={registeredInfo.email}
+              onChange={handleInputChange}
+              bg={inputBg}
+              focusBorderColor="blue.400"
+              required
+              size="md"
+              borderRadius="md"
+              fullWidth
+              name="email"
+            />
+
+            {/* Password Input */}
+            <PasswordInput
+              placeholder="Enter Password"
+              value={registeredInfo.password}
+              onChange={handleInputChange}
+              bg={inputBg}
+              focusBorderColor="blue.400"
+              required
+              size="md"
+              borderRadius="md"
+              fullWidth
+              name="password"
+            />
+
+            {/* Confirm Password Input */}
+            <PasswordInput
+              placeholder="Confirm Password"
+              value={registeredInfo.confirmPassword}
+              onChange={handleInputChange}
+              bg={inputBg}
+              focusBorderColor="blue.400"
+              required
+              size="md"
+              borderRadius="md"
+              fullWidth
+              name="confirmPassword"
+            />
+
+            {/* Register Button */}
+            <Button
+              type="submit"
+              colorScheme="blue"
+              bg={buttonBg}
+              width="100%"
+              borderRadius="md"
+              mt={4}
+              isDisabled={!isFormValid}
+              isLoading={isLoading}
+            >
+              Register
+            </Button>
+          </VStack>
         </form>
-        <span className="register-already-have-account-text">
+
+        <Text
+          fontSize="sm"
+          textAlign="center"
+          mt={4}
+          color={useColorModeValue("gray.600", "gray.300")}
+        >
           Already have an account?{" "}
-          <span className="register-login" onClick={login}>
+          <Text as="span" color="blue.400" cursor="pointer" onClick={login}>
             Login
-          </span>
-        </span>
-      </div>
-    </div>
+          </Text>
+        </Text>
+      </Box>
+    </Flex>
   );
 };
 

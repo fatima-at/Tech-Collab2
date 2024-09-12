@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
-import styles from "./styles.module.css";
-import Input from "../../components/UI/Input/Input";
-import Text from "../../components/UI/Text/Text";
-import Button from "../../components/UI/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { REGISTER_ROUTE } from "../../constants/routes";
 import { LogoHeader } from "../../components";
 import { login } from "../../services/AuthApi";
 import { toast } from "react-toastify";
 import { TOKEN_KEY, useAuth } from "../../context/AuthContext";
+import {
+  VStack,
+  Input,
+  Button,
+  Text,
+  Box,
+  useColorModeValue,
+  Flex,
+} from "@chakra-ui/react";
+import PasswordInput from "../../components/UI/PasswordInput/PasswordInput";
 
 const Auth = () => {
+  const cardBg = useColorModeValue("white", "gray.800");
+  const inputBg = useColorModeValue("gray.50", "gray.700");
+  const buttonBg = useColorModeValue("blue.500", "blue.600");
   const navigate = useNavigate();
   const { checkAuthentication } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -81,53 +90,86 @@ const Auth = () => {
   }, [authInfo]);
 
   return (
-    <div className={styles.container}>
-      <LogoHeader />
-      <div className={styles.loginBoxContainer}>
-        <div className={styles.loginBox}>
-          <Text type="h2" color="white" style={{ textAlign: "center" }}>
-            Login
-          </Text>
-          <form className={styles.form} onSubmit={handleSubmit}>
+    <Flex justify="center" align="center" h="100vh" width="100%">
+      <Box
+        maxW="400px"
+        width="100%"
+        p={6}
+        bg={cardBg}
+        borderRadius="lg"
+        boxShadow="xl"
+        border="1px solid"
+        borderColor={useColorModeValue("gray.200", "gray.700")}
+      >
+        <LogoHeader />
+        <Text
+          fontSize="2xl"
+          color={useColorModeValue("gray.800", "white")}
+          textAlign="center"
+          mb={6}
+          fontWeight={500}
+        >
+          Login
+        </Text>
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={4} align="start" w="100%">
+            {/* Email Input */}
             <Input
               type="email"
-              label="Email"
-              name="email"
               placeholder="Enter Email"
               value={authInfo.email}
               onChange={handleInputChange}
+              bg={inputBg}
+              focusBorderColor="blue.400"
               required
+              size="md"
+              borderRadius="md"
               fullWidth
+              name="email"
             />
-            <Input
-              type="password"
-              label="Password"
-              name="password"
+
+            {/* Password Input */}
+            <PasswordInput
               placeholder="Enter Password"
               value={authInfo.password}
               onChange={handleInputChange}
+              bg={inputBg}
+              focusBorderColor="blue.400"
               required
+              size="md"
+              borderRadius="md"
               fullWidth
+              name="password"
             />
+
+            {/* Login Button */}
             <Button
-              type="Primary"
-              style={{ width: "100%", marginTop: ".5rem" }}
-              disabled={!isFormValid}
-              submit
-              loading={isLoading}
+              type="submit"
+              colorScheme="blue"
+              bg={buttonBg}
+              width="100%"
+              borderRadius="md"
+              mt={4}
+              isDisabled={!isFormValid}
+              isLoading={isLoading}
             >
               Login
             </Button>
-          </form>
-          <span className={styles.dontHaveAccountText}>
-            Don't have an account?{" "}
-            <span className={styles.signUpText} onClick={signUp}>
-              Sign Up
-            </span>
-          </span>
-        </div>
-      </div>
-    </div>
+          </VStack>
+        </form>
+        <Text
+          fontSize="sm"
+          textAlign="center"
+          mt={4}
+          color={useColorModeValue("gray.600", "gray.300")}
+        >
+          Don't have an account?{" "}
+          <Text as="span" color="blue.400" cursor="pointer" onClick={signUp}>
+            Sign Up
+          </Text>
+        </Text>
+      </Box>
+    </Flex>
   );
 };
 

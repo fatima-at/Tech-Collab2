@@ -140,9 +140,11 @@ async def Add_student_to_DB(pdf_b64: str = Form()):
         resume_json, resume_text = preprocess_pdf(pdf_path)  # assuming preprocess_pdf returns resume_json with a 'skills' field
         student_ID = GeneratorModel_1.add_student_to_DB(resume_json)
         skills = resume_json.get('skills', [])  # Extract skills from resume_json
+        summary = resume_json.get('summary', "")  # Extract skills from resume_json
         response_data = {
             "student_ID": student_ID,
-            "skills": skills
+            "skills": skills,
+            "summary": summary
         }
         return JSONResponse(content=response_data, status_code=200)
 

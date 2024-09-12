@@ -14,6 +14,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http; 
 
 class AuthController extends Controller
 {
@@ -92,6 +93,8 @@ class AuthController extends Controller
 
         $user = JWTAuth::user();
 
+        $verificationToken = JWTAuth::fromUser($user);
+
         if (!$user->email_verified) {
             Mail::send('emails.verify', ['user' => $user, 'token' => $verificationToken], function ($message) use ($user) {
                 $message->to($user->email);
@@ -162,10 +165,9 @@ class AuthController extends Controller
         $request->validate([
             'bio' => 'nullable|string',
             'general_field' => 'nullable|string',
+            'linkedin_profile' => 'nullable|string',
             'skills' => 'nullable|array',
             'skills.*' => 'string',
-            'cv' => 'nullable|file|mimes:pdf|max:5120',
-            'vector_id' => 'required|string|unique:users',
         ]);
     
         // Get the authenticated user
@@ -175,16 +177,10 @@ class AuthController extends Controller
         $user->update([
             'bio' => $request->input('bio'),
             'general_field' => $request->input('general_field'),
-            'vector_id' => $request->input('vector_id'),
+            'linkedin_profile' => $request->input('linkedin_profile'),
             'profile_picture' => $user->profile_picture, 
+            'vector_id' => $user->vector_id, 
         ]);
-    
-        // Handle the CV file upload
-        if ($request->hasFile('cv')) {
-            $cvPath = $request->file('cv')->store('cvs', 'public');
-            $user->cv = $cvPath;
-            $user->save();
-        }
     
         // Handle the skills
         if ($request->has('skills')) {
@@ -196,8 +192,7 @@ class AuthController extends Controller
                 $user->skills()->create(['skill' => $skillName]);
             }
         }
-    
-        // Mark the user's registration as completed
+
         $user->registration_completed = true;
         $user->save();
     
@@ -242,5 +237,88 @@ class AuthController extends Controller
             'data' => $base64Cv,
             'status' => true
         ], 200);
+    }
+
+    public function uploadCV(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'cv' => 'nullable|file|mimes:pdf|max:5120',
+        ]);
+    
+        // Get the authenticated user
+        $user = Auth::user();
+    
+        // Handle the CV file upload and convert to base64
+        if ($request->hasFile('cv')) {
+            // Store the CV in the public disk
+            $cvPath = $request->file('cv')->store('cvs', 'public');
+            $cvContent = Storage::disk('public')->get($cvPath); // Get the file content
+            $cvBase64 = base64_encode($cvContent); // Convert the file content to base64
+    
+            // Prepare form data for API request
+            $formData = [
+                'pdf_b64' => $cvBase64,
+            ];
+    
+            // Send request to the external AI API to add the student to the database
+            $apiResponse = Http::asMultipart()->post(env('AI_API') . '/add_Student_To_DB', $formData);
+    
+            // Check if the API call was successful
+            if ($apiResponse->failed()) {
+                // Delete the uploaded CV if the API call fails
+                Storage::disk('public')->delete($cvPath);
+    
+                return response()->json([
+                    'message' => 'Error calling AI API.',
+                    'status' => false,
+                    'data' => $cvBase64
+                ], 500);
+            }
+    
+            // Decode the API response
+            $apiData = $apiResponse->json();
+    
+            // Check if a student_ID is returned
+            if (!isset($apiData['student_ID'])) {
+                // Delete the uploaded CV if the API call fails to return student_ID
+                Storage::disk('public')->delete($cvPath);
+    
+                return response()->json([
+                    'message' => 'Failed to get student ID from AI API.',
+                    'status' => false,
+                ], 400);
+            }
+    
+            // Update the user's CV and vector_id (from student_ID) in the database
+            $user->cv = $cvPath;
+            $user->vector_id = (string)$apiData['student_ID'];
+            $user->save();
+    
+            // Optional: If the API response contains skills, update them
+            if (isset($apiData['skills']) && is_array($apiData['skills'])) {
+                // Remove existing skills
+                Skill::where('user_id', $user->id)->delete();
+    
+                // Add new skills
+                foreach ($apiData['skills'] as $skillName) {
+                    $user->skills()->create(['skill' => $skillName]);
+                }
+            }
+    
+            // Return success response
+            return response()->json([
+                'message' => 'User registration completed successfully with AI data.',
+                'status' => true,
+                'user' => $user,
+                'data' => $apiData
+            ]);
+        }
+    
+        // If no CV is uploaded, return an error
+        return response()->json([
+            'message' => 'CV is required for registration.',
+            'status' => false,
+        ], 400);
     }
 }

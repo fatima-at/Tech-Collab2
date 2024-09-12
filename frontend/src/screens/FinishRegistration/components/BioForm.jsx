@@ -1,64 +1,115 @@
 import React from "react";
-import { Button, Input, Text } from "../../../components";
+import {
+  VStack,
+  Input,
+  Button,
+  Text,
+  Box,
+  useColorModeValue,
+  Flex,
+} from "@chakra-ui/react";
 import generalFieldOptions from "../../../constants/generalFieldOptions";
 
 const BioForm = ({ formInputs, handleInputChange, setCurrentStep }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    setCurrentStep(2);
+    setCurrentStep(3);
   };
+
+  const cardBg = useColorModeValue("white", "gray.800");
+  const inputBg = useColorModeValue("gray.50", "gray.700");
+  const buttonBg = useColorModeValue("blue.500", "blue.600");
+
   return (
-    <div className="register-box-container">
-      <div className="register-box">
-        <Text type="h2" color="white" style={{ textAlign: "center" }}>
+    <Flex justify="center" align="center" h="100%" width="100%">
+      <Box
+        maxW="500px"
+        width="100%"
+        p={6}
+        bg={cardBg}
+        borderRadius="lg"
+        boxShadow="xl"
+        border="1px solid"
+        borderColor={useColorModeValue("gray.200", "gray.700")}
+        mx="auto"
+      >
+        <Text
+          fontSize="2xl"
+          color={useColorModeValue("gray.800", "white")}
+          textAlign="center"
+          mb={6}
+          fontWeight="500"
+        >
           Tell Us About Yourself
         </Text>
-        <form onSubmit={handleSubmit}>
-          <Input
-            label="General Field"
-            name="generalField"
-            placeholder="Your general field"
-            value={formInputs.generalField}
-            onChange={handleInputChange}
-            type="select"
-            required
-            fullWidth
-            options={generalFieldOptions}
-            optionsValue="name"
-          />
-          <Input
-            label="Bio"
-            name="bio"
-            placeholder="Your bio here"
-            value={formInputs.bio}
-            onChange={handleInputChange}
-            required
-            fullWidth
-            type="textarea"
-            inputStyle={{ height: "5rem" }}
-          />
 
-          {formInputs.generalField === "Other" && (
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={4} align="start" w="100%">
+            {/* General Field */}
             <Input
-              label="General Field (Other)"
-              name="otherGeneralField"
-              placeholder="Specify your general field"
-              value={formInputs.otherGeneralField}
+              as="select"
+              placeholder="Your general field"
+              value={formInputs.generalField}
+              onChange={handleInputChange}
+              bg={inputBg}
+              focusBorderColor="blue.400"
+              required
+              size="md"
+              borderRadius="md"
+              name="generalField"
+            >
+              {generalFieldOptions.map((option) => (
+                <option key={option.name} value={option.name}>
+                  {option.name}
+                </option>
+              ))}
+            </Input>
+
+            {/* Bio */}
+            <Input
+              placeholder="Your bio here"
+              value={formInputs.bio}
               onChange={handleInputChange}
               required
-              fullWidth
+              size="md"
+              bg={inputBg}
+              focusBorderColor="blue.400"
+              as="textarea"
+              height="10rem"
+              borderRadius="md"
+              name="bio"
             />
-          )}
-          <Button
-            type="Primary"
-            style={{ width: "100%", marginTop: ".5rem" }}
-            submit
-          >
-            Next
-          </Button>
+
+            {/* Other General Field */}
+            {formInputs.generalField === "Other" && (
+              <Input
+                placeholder="Specify your general field"
+                value={formInputs.otherGeneralField}
+                onChange={handleInputChange}
+                required
+                size="md"
+                bg={inputBg}
+                focusBorderColor="blue.400"
+                borderRadius="md"
+                name="otherGeneralField"
+              />
+            )}
+
+            {/* Next Button */}
+            <Button
+              type="submit"
+              colorScheme="blue"
+              bg={buttonBg}
+              width="100%"
+              mt={4}
+              borderRadius="md"
+            >
+              Next
+            </Button>
+          </VStack>
         </form>
-      </div>
-    </div>
+      </Box>
+    </Flex>
   );
 };
 

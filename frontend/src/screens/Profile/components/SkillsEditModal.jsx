@@ -18,7 +18,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { FaTrash, FaPlus } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { editSkills } from "../../../services/UserApi";
 
 const SkillsEditModal = ({ isOpen, onClose, currentSkills, setSkills }) => {
@@ -89,10 +89,6 @@ const SkillsEditModal = ({ isOpen, onClose, currentSkills, setSkills }) => {
     setNewSkill("");
     onClose();
   };
-
-  useEffect(() => {
-    console.log(removedSkills, addedSkills);
-  }, [removedSkills, addedSkills]);
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>

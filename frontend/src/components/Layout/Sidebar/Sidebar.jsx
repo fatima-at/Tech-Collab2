@@ -24,13 +24,12 @@ import {
 } from "../../../constants/routes";
 import { useLocation, useNavigate } from "react-router-dom";
 import { primaryColor } from "../../../constants/colors";
-import Popup from "../../Custom/Popup";
 import { useModal } from "../../../hooks";
 import { logout } from "../../../services/AuthApi";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../context";
 import { TOKEN_KEY } from "../../../context/AuthContext";
-import { AnimatePresence } from "framer-motion";
+import LogoutPopup from "./components/LogoutPopup";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -86,17 +85,12 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <AnimatePresence>
-        {isModalOpened && (
-          <Popup
-            onClose={closeModal}
-            title="Logout"
-            description="Are you sure you want to logout of your account?"
-            primaryButtonText="Logout"
-            handleSubmit={handleLogout}
-          />
-        )}
-      </AnimatePresence>
+      <LogoutPopup
+        isOpen={isModalOpened}
+        onClose={closeModal}
+        primaryButtonText="Logout"
+        handleSubmit={handleLogout}
+      />
       <div className="sidebar-header">
         <img src={logo} alt="" />
         <Text type="h6" color="black">

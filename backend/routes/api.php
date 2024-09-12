@@ -17,6 +17,7 @@ Route::group([
     'prefix' => 'v1'
 
 ], function ($router) {
+    Route::post('upload-cv', [AuthController::class, 'uploadCV']);
     Route::post('complete-registration', [AuthController::class, 'completeRegistration']);
 
     // Project session routes
