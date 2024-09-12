@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Text,
   Modal,
@@ -8,58 +8,31 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Button,
   VStack,
   UnorderedList,
   ListItem,
 } from "@chakra-ui/react";
 
-export function ProjectPopup({
+export function RecommendedProjectPopup({
   isOpen,
   onClose,
-  selectedProject,
-  handleToggleBookmark,
-  isRecommended,
+  recommendedProject,
 }) {
-  const [loading, setLoading] = useState(false);
-
   // Parse the stringified arrays
-  const projectSteps = selectedProject?.project_steps
-    ? JSON.parse(selectedProject.project_steps)
-    : [];
-  const projectRequirements = selectedProject?.project_requirements
-    ? JSON.parse(selectedProject.project_requirements)
-    : [];
-  const projectTips = selectedProject?.project_tips
-    ? JSON.parse(selectedProject.project_tips)
-    : [];
-  const projectApplications = selectedProject?.project_applications
-    ? JSON.parse(selectedProject.project_applications)
-    : [];
-
-  const handleBookmarkClick = async () => {
-    setLoading(true);
-    try {
-      await handleToggleBookmark();
-    } finally {
-      setLoading(false);
-    }
-  };
+  const projectSteps = recommendedProject?.Project_Steps || [];
+  const projectRequirements = recommendedProject?.Project_Requirements || [];
+  const projectTips = recommendedProject?.Project_Tips || [];
+  const projectApplications = recommendedProject?.Project_Applications || [];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent maxW="800px">
-        <ModalHeader>{selectedProject?.title}</ModalHeader>
+        <ModalHeader>{recommendedProject?.Project_Name}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {selectedProject?.project_session ? (
-            <Text fontSize="md" color="gray.500">
-              Session: {selectedProject?.project_session?.title}
-            </Text>
-          ) : null}
           <Text mt={4}>
-            {selectedProject?.project_description ||
+            {recommendedProject?.Project_Description ||
               "No description available."}
           </Text>
 
@@ -127,26 +100,7 @@ export function ProjectPopup({
             </VStack>
           )}
         </ModalBody>
-        <ModalFooter>
-          {!isRecommended ? (
-            <>
-              {" "}
-              <Button
-                colorScheme={selectedProject?.is_bookmarked ? "red" : "green"}
-                onClick={handleBookmarkClick}
-                isLoading={loading}
-                disabled={loading}
-              >
-                {selectedProject?.is_bookmarked
-                  ? "Remove Bookmark"
-                  : "Add Bookmark"}
-              </Button>
-              <Button variant="ghost" onClick={onClose} ml={3}>
-                Close
-              </Button>{" "}
-            </>
-          ) : null}
-        </ModalFooter>
+        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );

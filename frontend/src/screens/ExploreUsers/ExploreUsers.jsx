@@ -79,7 +79,7 @@ const ExploreUsers = () => {
   };
 
   const fetchRecommendedUsers = async () => {
-    if (!recommendedUsers) setRecommenededUsersLoading(true);
+    if (!recommendedUsersLoading) setRecommenededUsersLoading(true);
     try {
       // Call the Match_S2S API to get vector user IDs
       const matchResponse = await getMatchingUsers(authUser.vector_id);

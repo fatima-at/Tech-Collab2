@@ -12,13 +12,11 @@ import {
   Textarea,
   FormControl,
   FormLabel,
-  useToast,
   Select,
   Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { addProject } from "../../../services/UserApi";
-import { FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const AddProjectModal = ({ isOpen, onClose, authUser, setAuthUser }) => {

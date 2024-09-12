@@ -15,6 +15,7 @@ class CreateProjectsTable extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('project_session_id')->nullable()->constrained('project_sessions')->onDelete('cascade');
             $table->string('title');
             $table->text('project_description')->nullable();
@@ -23,6 +24,7 @@ class CreateProjectsTable extends Migration
             $table->json('project_tips')->nullable();
             $table->json('project_applications')->nullable();
             $table->boolean('is_bookmarked')->default(false);
+            $table->boolean('is_recommended')->default(false);
             $table->timestamps();
         });
     }

@@ -8,10 +8,6 @@ import {
 import { EmptyState, Loader, ScreenContainer } from "../../components";
 import {
   Grid,
-  GridItem,
-  Text,
-  VStack,
-  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { ProjectPopup } from "./components/ProjectPopup";
@@ -23,9 +19,6 @@ const SavedProjects = () => {
     loading: savedProjectsLoading,
     setData: setSavedProjects,
   } = useFetch(() => getBookmarkedProjects());
-
-  const bgColor = useColorModeValue("gray.100", "gray.700");
-  const textColor = useColorModeValue("gray.800", "white");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedProject, setSelectedProject] = useState(null);

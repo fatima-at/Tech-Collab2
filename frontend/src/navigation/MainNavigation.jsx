@@ -5,21 +5,21 @@ import {
   EXPLORE_USERS_ROUTE,
   FINISH_REGISTRATION_ROUTE,
   GENERATE_PROJECTS_ROUTE,
-  HOME_ROUTE,
   PROFILE_ROUTE,
+  RECOMMENDED_PROJECTS_ROUTE,
   SAVED_PROJECTS_ROUTE,
   SESSIONS_HISTORY_ROUTE,
   SESSION_DETAIL_ROUTE,
 } from "../constants/routes";
 import {
   GenerateProjects,
-  Home,
   Profile,
   SessionsHistory,
   FinishRegistration,
   SavedProjects,
   ExploreProjects,
   ExploreUsers,
+  RecommendedProjects,
 } from "../screens";
 import { useAuth } from "../context";
 import { Sidebar } from "../components";
@@ -32,7 +32,6 @@ const MainNavigation = () => {
       <Routes>
         {authUser?.registration_completed ? (
           <>
-            <Route exact path={HOME_ROUTE} element={<Home />} />
             <Route
               exact
               path={GENERATE_PROJECTS_ROUTE}
@@ -62,6 +61,11 @@ const MainNavigation = () => {
               exact
               path={EXPLORE_USERS_ROUTE}
               element={<ExploreUsers />}
+            />
+            <Route
+              exact
+              path={RECOMMENDED_PROJECTS_ROUTE}
+              element={<RecommendedProjects />}
             />
             <Route exact path={PROFILE_ROUTE} element={<Profile />} />
             <Route path="*" element={<Navigate to={EXPLORE_USERS_ROUTE} />} />

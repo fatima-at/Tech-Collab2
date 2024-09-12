@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Text,
@@ -13,18 +13,25 @@ import {
   Input,
   Flex,
   useDisclosure,
+  Skeleton,
+  Spinner,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import Slider from "react-slick";
 import { ScreenContainer } from "../../components";
 import { ProjectPopup } from "./components/ProjectPopup";
-import { projects, recommendedProjects } from "./projects";
+import { projects } from "./projects";
 import { IoMdBulb } from "react-icons/io";
 
 // Import slick carousel styles
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ProjectCard from "../../components/Custom/ProjectCard/ProjectCard";
+import { useAuth } from "../../context";
+import { toast } from "react-toastify";
+import { AI_API } from "../../Endpoints";
+import { RecommendedProjectPopup } from "./components/RecommendedProjectPopup";
+import { createStandAloneProject } from "../../services/ProjectApi";
 
 const categories = [
   "All",
@@ -32,11 +39,23 @@ const categories = [
 ];
 
 const ExploreProjects = () => {
+  const { authUser } = useAuth();
   const [filteredProjects, setFilteredProjects] = useState(projects);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedProject, setSelectedProject] = useState(null);
+  const [recommendedProject, setRecommendedProject] = useState({});
+  const [recommendingProjectLoading, setRecommendingProjectLoading] =
+    useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isRecommendedProjectOpen,
+    onOpen: onRecommendedProjectOpen,
+    onClose: onRecommendedProjectClose,
+  } = useDisclosure();
+  const [recommendedProjects, setRecommendedProjects] = useState([]);
+  const [recommendedProjectsLoading, setRecommendedProjectsLoading] =
+    useState(true);
 
   const bgColor = useColorModeValue("white", "gray.800");
   const cardHoverBg = useColorModeValue("gray.50", "gray.700");
@@ -79,6 +98,67 @@ const ExploreProjects = () => {
     }));
   };
 
+  const fetchRecommendedProjects = async () => {
+    if (!recommendedProjectsLoading) setRecommendedProjectsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("student_ID", authUser.vector_id);
+      formData.append("preference", " ");
+      const recommendProjectsResponse = await fetch(
+        `${AI_API}/recommend_project_1`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const recommendedProjectsValue = await recommendProjectsResponse.json();
+      setRecommendedProjects(recommendedProjectsValue);
+    } catch (error) {
+      toast.error("Error:", error);
+    } finally {
+      setRecommendedProjectsLoading(false);
+    }
+  };
+
+  const handleRecommendProject = async () => {
+    setRecommendingProjectLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("student_ID", authUser.vector_id);
+      const recommendProjectResponse = await fetch(
+        `${AI_API}/recommend_project_2`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const recommendedProjectValue = await recommendProjectResponse.json();
+      setRecommendedProject(recommendedProjectValue);
+      const createProjectBody = {
+        title: recommendedProjectValue?.Project_Name || "",
+        project_description: recommendedProjectValue?.Project_Description || "",
+        project_steps: JSON.stringify(
+          recommendedProjectValue?.Project_Steps || []
+        ),
+        project_requirements: JSON.stringify(
+          recommendedProjectValue?.Project_Requirements || []
+        ),
+        project_tips: JSON.stringify(
+          recommendedProjectValue?.Project_Tips || []
+        ),
+        project_applications: JSON.stringify(
+          recommendedProjectValue?.Project_Applications || []
+        ),
+      };
+      await createStandAloneProject(createProjectBody);
+      onRecommendedProjectOpen();
+    } catch (error) {
+      toast.error("Error:", error);
+    } finally {
+      setRecommendingProjectLoading(false);
+    }
+  };
+
   // Settings for react-slick carousel
   const sliderSettings = {
     dots: true,
@@ -102,6 +182,10 @@ const ExploreProjects = () => {
     ],
   };
 
+  useEffect(() => {
+    fetchRecommendedProjects();
+  }, []);
+
   return (
     <ScreenContainer>
       {/* Recommended Projects Section */}
@@ -119,43 +203,68 @@ const ExploreProjects = () => {
             borderRadius="md"
             boxShadow="0 4px 14px rgba(0, 0, 0, 0.1)"
             transition="transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out"
-            _hover={{
-              bgGradient: "linear(to-r, cyan.500, teal.400)",
-              transform: "scale(1.025)",
-              boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2)",
-            }}
+            _hover={
+              !recommendingProjectLoading
+                ? {
+                    bgGradient: "linear(to-r, cyan.500, teal.400)",
+                    transform: "scale(1.025)",
+                    boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2)",
+                  }
+                : {}
+            }
+            isLoading={recommendingProjectLoading}
+            spinner={<Spinner size="sm" />}
+            loadingText="Analyzing Preferences..."
+            onClick={handleRecommendProject}
           >
             Recommend with AI
           </Button>
         </Flex>
         <Slider {...sliderSettings}>
-          {recommendedProjects.map((project) => (
-            <Box key={project.title} p={3} cursor="pointer">
-              <VStack
-                bg={bgColor}
-                borderRadius="md"
-                boxShadow="md"
-                transition="all 0.3s ease-in-out"
-                _hover={{
-                  boxShadow: "lg",
-                  transform: "scale(1.05)",
-                  bg: cardHoverBg,
-                }}
-                onClick={() => handleProjectClick(project)}
-                p={5}
-              >
-                <Text fontSize="xl" fontWeight="bold" color={textColor}>
-                  {project.title}
-                </Text>
-                <Text fontSize="md" color="gray.500">
-                  Category: {project.category}
-                </Text>
-                <Text fontSize="sm" color="gray.600">
-                  {project.description}
-                </Text>
-              </VStack>
-            </Box>
-          ))}
+          {recommendedProjectsLoading
+            ? Array(3)
+                .fill("")
+                .map((_, index) => (
+                  <Box key={index} p={3} cursor="pointer">
+                    <VStack bg={bgColor} borderRadius="md" boxShadow="md" p={5}>
+                      <Skeleton height="20px" width="80%" />
+                      <Skeleton height="15px" width="60%" />
+                      <Skeleton height="12px" width="90%" noOfLines={2} />
+                    </VStack>
+                  </Box>
+                ))
+            : recommendedProjects.map((project) => (
+                <Box key={project.ID} p={3} cursor="pointer">
+                  <VStack
+                    bg={bgColor}
+                    borderRadius="md"
+                    boxShadow="md"
+                    transition="all 0.3s ease-in-out"
+                    _hover={{
+                      boxShadow: "lg",
+                      transform: "scale(1.05)",
+                      bg: cardHoverBg,
+                    }}
+                    onClick={() => handleProjectClick(project)}
+                    p={5}
+                  >
+                    <Text
+                      fontSize="xl"
+                      fontWeight="bold"
+                      color={textColor}
+                      textAlign="center"
+                    >
+                      {project.title}
+                    </Text>
+                    <Text fontSize="md" color="gray.500">
+                      Category: {project.category}
+                    </Text>
+                    <Text fontSize="sm" color="gray.600" noOfLines={2}>
+                      {project.description}
+                    </Text>
+                  </VStack>
+                </Box>
+              ))}
         </Slider>
       </Box>
 
@@ -224,6 +333,11 @@ const ExploreProjects = () => {
         onClose={onClose}
         selectedProject={selectedProject}
         handleToggleBookmark={handleToggleBookmark}
+      />
+      <RecommendedProjectPopup
+        isOpen={isRecommendedProjectOpen}
+        onClose={onRecommendedProjectClose}
+        recommendedProject={recommendedProject}
       />
     </ScreenContainer>
   );

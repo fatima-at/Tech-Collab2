@@ -1,19 +1,12 @@
 import React from "react";
 import "./styles.css";
-import LogoHeader from "../../UI/LogoHeader";
 import {
   faBookmark,
-  faClipboardList,
   faCodeBranch,
-  faCogs,
-  faFolderOpen,
   faHistory,
-  faHouse,
   faLightbulb,
-  faMagic,
-  faProjectDiagram,
-  faSearch,
   faSignOut,
+  faStar,
   faUser,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
@@ -24,8 +17,8 @@ import {
   EXPLORE_PROJECTS_ROUTE,
   EXPLORE_USERS_ROUTE,
   GENERATE_PROJECTS_ROUTE,
-  HOME_ROUTE,
   PROFILE_ROUTE,
+  RECOMMENDED_PROJECTS_ROUTE,
   SAVED_PROJECTS_ROUTE,
   SESSIONS_HISTORY_ROUTE,
 } from "../../../constants/routes";
@@ -38,14 +31,12 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../../context";
 import { TOKEN_KEY } from "../../../context/AuthContext";
 import { AnimatePresence } from "framer-motion";
-import { useColorModeValue } from "@chakra-ui/react";
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { checkAuthentication } = useAuth();
   const { openModal, closeModal, isModalOpened } = useModal();
-  const sidebarBg = useColorModeValue("white", "#EDEDED");
   const sidebarButtons = [
     {
       name: "Explore Users",
@@ -56,6 +47,11 @@ const Sidebar = () => {
       name: "Explore Projects",
       logo: faLightbulb,
       route: EXPLORE_PROJECTS_ROUTE,
+    },
+    {
+      name: "Recommended Projects",
+      logo: faStar,
+      route: RECOMMENDED_PROJECTS_ROUTE,
     },
     {
       name: "Generate Projects",

@@ -20,6 +20,7 @@ class ProjectController extends Controller
             'project_tips' => 'nullable|string',
             'project_applications' => 'nullable|string',
             'is_bookmarked' => 'sometimes|boolean',
+            'is_recommended' => 'sometimes|boolean',
         ]);
     
         // Check if the session exists and belongs to the authenticated user
@@ -35,6 +36,7 @@ class ProjectController extends Controller
     
         // Create a new project linked to the session
         $project = Project::create([
+            'user_id' => Auth::id(),
             'project_session_id' => $sessionId,
             'title' => $request->input('title'),
             'project_description' => $request->input('project_description'),
@@ -43,6 +45,7 @@ class ProjectController extends Controller
             'project_tips' => $request->input('project_tips'),
             'project_applications' => $request->input('project_applications'),
             'is_bookmarked' => $request->input('is_bookmarked', false),
+            'is_recommended' => $request->input('is_recommended', false),
         ]);
     
         return response()->json([
@@ -51,6 +54,41 @@ class ProjectController extends Controller
             'status' => true
         ], 200);
     }
+
+    public function createStandaloneProject(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'project_description' => 'required|string',
+            'project_steps' => 'nullable|string',
+            'project_requirements' => 'nullable|string',
+            'project_tips' => 'nullable|string',
+            'project_applications' => 'nullable|string',
+            'is_bookmarked' => 'sometimes|boolean',
+            'is_recommended' => 'sometimes|boolean',
+        ]);
+    
+        // Create a new standalone project (without a session ID)
+        $project = Project::create([
+            'user_id' => Auth::id(),
+            'title' => $request->input('title'),
+            'project_description' => $request->input('project_description'),
+            'project_steps' => $request->input('project_steps'),
+            'project_requirements' => $request->input('project_requirements'),
+            'project_tips' => $request->input('project_tips'),
+            'project_applications' => $request->input('project_applications'),
+            'is_bookmarked' => $request->input('is_bookmarked', false),
+            'is_recommended' => $request->input('is_recommended', true),
+        ]);
+    
+        return response()->json([
+            'message' => 'Standalone project created successfully.',
+            'data' => $project,
+            'status' => true
+        ], 200);
+    }
+    
 
     public function toggleBookmark($projectId)
     {
@@ -84,9 +122,7 @@ class ProjectController extends Controller
 
         // Fetch bookmarked projects for the user and include the related project session
         $bookmarkedProjects = Project::with('projectSession')
-            ->whereHas('projectSession', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })
+            ->where('user_id', $user->id)
             ->where('is_bookmarked', true)
             ->get();
 
@@ -95,6 +131,25 @@ class ProjectController extends Controller
             'status' => true,
             'message' => 'Bookmarked projects retrieved successfully.',
             'data' => $bookmarkedProjects,
+        ], 200);
+    }
+    
+    public function getStandaloneProjects()
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Fetch bookmarked projects for the user and include the related project session
+        $recommendedProjects = Project::with('projectSession')
+            ->where('user_id', $user->id)
+            ->where('is_recommended', true)
+            ->get();
+
+        // Return the response
+        return response()->json([
+            'status' => true,
+            'message' => 'Recommended projects retrieved successfully.',
+            'data' => $recommendedProjects,
         ], 200);
     }
 }
