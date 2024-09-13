@@ -195,6 +195,10 @@ class AuthController extends Controller
 
         $user->registration_completed = true;
         $user->save();
+
+        $user->load('skills');
+        $user->load('following');
+        $user->load('followers');
     
         return response()->json([
             'message' => 'User information completed successfully.',

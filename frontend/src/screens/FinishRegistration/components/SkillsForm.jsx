@@ -58,6 +58,7 @@ const SkillsForm = ({ formInputs, setFormInputs, setCurrentStep }) => {
       formData.append(`skills[${index}]`, skill);
     });
     formData.append("bio", formInputs.bio);
+    formData.append("linkedin_profile", formInputs.linkedinProfileLink);
     formData.append(
       "general_field",
       formInputs.generalField === "Other"
@@ -73,11 +74,9 @@ const SkillsForm = ({ formInputs, setFormInputs, setCurrentStep }) => {
         },
       });
       if (response.status) {
+        const responseData = await response.json();
         localStorage.removeItem("vector_data");
-        setAuthUser((currentAuthUser) => ({
-          ...currentAuthUser,
-          registration_completed: true,
-        }));
+        setAuthUser(responseData.user);
       } else {
         toast.error("An error occurred.");
       }

@@ -72,7 +72,7 @@ button {
   height: 100vh;
   display: flex;
   overflow: visible;
-  background: var(--background-color);
+  /* background: var(--background-color); */
 }
 
 .flex-center {

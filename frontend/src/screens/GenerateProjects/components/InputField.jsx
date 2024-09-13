@@ -1,7 +1,5 @@
 import React from "react";
-import { Input } from "../../../components";
-
-import { FormControl, FormLabel } from "@chakra-ui/react";
+import { FormControl, FormLabel, Input } from "@chakra-ui/react";
 
 const InputField = ({ label, ...props }) => (
   <FormControl>

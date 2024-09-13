@@ -103,11 +103,11 @@ const Auth = () => {
       >
         <LogoHeader />
         <Text
-          fontSize="2xl"
+          fontSize="3xl"
           color={useColorModeValue("gray.800", "white")}
           textAlign="center"
           mb={6}
-          fontWeight={500}
+          fontWeight={600}
         >
           Login
         </Text>

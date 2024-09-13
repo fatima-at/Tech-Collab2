@@ -10,20 +10,22 @@ import {
   UnorderedList,
   Divider,
   OrderedList,
+  Spinner,
 } from "@chakra-ui/react";
-import { StarIcon } from "@chakra-ui/icons";
 import { toggleBookmarkProject } from "../../../services/ProjectApi";
 import { toast } from "react-toastify";
 import {
   primaryTextColor,
   secondaryTextColor,
 } from "../../../constants/colors";
+import { FaBookmark } from "react-icons/fa";
 
 const ProjectCard = ({ project }) => {
-  const bgColor = useColorModeValue("#F5F5F5", "#FFF");
+  const bgColor = useColorModeValue("#F5F5F5", "gray.900");
   const textColor = useColorModeValue(primaryTextColor, secondaryTextColor);
 
   const [isBookmarked, setIsBookmarked] = useState(project.is_bookmarked);
+  const [loading, setLoading] = useState(false); // Add loading state
   const debounceRef = useRef(false);
 
   // Parse the stringified arrays
@@ -41,8 +43,9 @@ const ProjectCard = ({ project }) => {
     : [];
 
   const handleBookmarkToggle = async () => {
-    if (debounceRef.current) return;
+    if (debounceRef.current || loading) return;
 
+    setLoading(true); // Set loading to true
     debounceRef.current = true;
 
     try {
@@ -57,6 +60,7 @@ const ProjectCard = ({ project }) => {
     } finally {
       setTimeout(() => {
         debounceRef.current = false;
+        setLoading(false); // Set loading to false after the action
       }, 300); // 300ms debounce duration
     }
   };
@@ -71,8 +75,22 @@ const ProjectCard = ({ project }) => {
       display="flex"
       flexDirection="column"
       boxShadow="md"
+      position="relative" // Added for absolute positioning of the bookmark button
       _hover={{ boxShadow: "lg" }}
     >
+      {/* Bookmark Button at the top right */}
+      <IconButton
+        aria-label="Bookmark project"
+        icon={loading ? <Spinner size="sm" /> : <FaBookmark />}
+        variant={isBookmarked ? "solid" : "outline"}
+        colorScheme="yellow"
+        onClick={handleBookmarkToggle}
+        position="absolute"
+        top={4}
+        right={4}
+        isLoading={loading} // Loading state
+      />
+
       <Stack spacing={4} mb={4}>
         <Text fontSize="lg" fontWeight="bold">
           {project.title}
@@ -156,15 +174,6 @@ const ProjectCard = ({ project }) => {
           </UnorderedList>
         </VStack>
       )}
-
-      <IconButton
-        aria-label="Bookmark project"
-        icon={<StarIcon />}
-        variant={isBookmarked ? "solid" : "outline"}
-        colorScheme="yellow"
-        onClick={handleBookmarkToggle}
-        alignSelf="end"
-      />
     </Box>
   );
 };

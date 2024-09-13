@@ -14,6 +14,13 @@ const theme = extendTheme({
       500: primaryColor,
     },
   },
+  styles: {
+    global: {
+      "html, body": {
+        fontFamily: "Roboto",
+      },
+    },
+  },
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(

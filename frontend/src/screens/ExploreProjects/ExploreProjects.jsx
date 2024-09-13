@@ -10,6 +10,7 @@ import {
   useDisclosure,
   Skeleton,
   Spinner,
+  Heading,
 } from "@chakra-ui/react";
 import Slider from "react-slick";
 import { ScreenContainer } from "../../components";
@@ -144,10 +145,15 @@ const ExploreProjects = () => {
     <ScreenContainer>
       {/* Recommended Projects Section */}
       <Box mb={6}>
-        <Flex justifyContent="space-between" alignItems="center" mb={6}>
-          <Text fontSize="2xl" fontWeight="bold" mb={4} color={textColor}>
-            Recommended Projects
-          </Text>
+        <Flex justifyContent="space-between" alignItems="start" mb={2}>
+          <Flex flexDir="column">
+            <Heading fontSize="2xl" fontWeight="bold" mb={2} color={textColor}>
+              Projects Recommended for You
+            </Heading>
+            <Text fontSize="md" color="gray.500" mb={4}>
+              Explore projects that match your unique profile and preferences.
+            </Text>
+          </Flex>
 
           <Button
             size="lg"

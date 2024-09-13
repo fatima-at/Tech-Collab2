@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./styles.css";
 import { EmptyState, Loader, ScreenContainer } from "../../components";
 import {
-  SimpleGrid,
-  Box,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
   Text,
-  Stack,
-  Card,
-  CardHeader,
-  CardBody,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { getProjectSessions } from "../../services/ProjectSessionApi";
 import useFetch from "../../hooks/useFetch";
@@ -21,9 +23,22 @@ const SessionsHistory = () => {
     () => getProjectSessions()
   );
 
-  const handleCardClick = (sessionId) => {
+  const handleRowClick = (sessionId) => {
     navigate(`/${SESSION_DETAIL_ROUTE.replace(":sessionId", sessionId)}`);
   };
+
+  // Extract colors using useColorModeValue
+  const rowHoverBg = useColorModeValue("gray.50", "gray.600");
+  const rowBg = useColorModeValue("white", "gray.700");
+  const titleTextColor = useColorModeValue("gray.900", "gray.100");
+  const subTextColor = useColorModeValue("gray.500", "gray.400");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+
+  // Sort project sessions by created_at (newest first)
+  const sortedSessions = projectSessions
+    ?.slice()
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
   return (
     <ScreenContainer>
       {projectSessionsLoading ? (
@@ -34,40 +49,82 @@ const SessionsHistory = () => {
           message="You haven't started any project sessions yet."
         />
       ) : (
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-          {projectSessions?.map((session) => (
-            <Card
-              key={session.id}
-              bg="#F3F4F6"
-              borderRadius="md"
-              shadow="md"
-              cursor="pointer"
-              _hover={{ shadow: "lg" }}
-              onClick={() => handleCardClick(session.id)}
-            >
-              <CardHeader pb={2}>
-                <Text fontSize="lg" fontWeight="bold" color="#191919">
-                  {session.title}
-                </Text>
-              </CardHeader>
-              <CardBody pt={2}>
-                <Stack spacing={3}>
-                  <Text fontSize="md" fontWeight="medium" color="#333">
-                    Projects: {session.projects_count}
-                  </Text>
-                  <Box p={2} bg="#E2E8F0" borderRadius="md">
-                    <Text fontSize="sm" fontWeight="bold" color="#555">
-                      Created on:{" "}
-                      <Text as="span" fontWeight="normal">
-                        {new Date(session.created_at).toLocaleDateString()}
-                      </Text>
+        <TableContainer
+          borderRadius="md"
+          borderWidth="1px"
+          borderColor={borderColor}
+          overflowX="auto"
+        >
+          <Table variant="simple" colorScheme="gray" size="md">
+            <Thead bg="#BEE3F8">
+              <Tr>
+                <Th
+                  color={subTextColor}
+                  fontSize="sm"
+                  fontWeight="normal"
+                  pb={3}
+                >
+                  Session Title
+                </Th>
+                <Th
+                  color={subTextColor}
+                  fontSize="sm"
+                  fontWeight="normal"
+                  pb={3}
+                >
+                  Projects
+                </Th>
+                <Th
+                  color={subTextColor}
+                  fontSize="sm"
+                  fontWeight="normal"
+                  pb={3}
+                >
+                  Created On
+                </Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {sortedSessions?.map((session) => (
+                <Tr
+                  key={session.id}
+                  bg={rowBg}
+                  cursor="pointer"
+                  _hover={{ bg: rowHoverBg }}
+                  onClick={() => handleRowClick(session.id)}
+                >
+                  <Td>
+                    <Text
+                      fontWeight="medium"
+                      color={titleTextColor}
+                      fontSize="md"
+                    >
+                      {session.title}
                     </Text>
-                  </Box>
-                </Stack>
-              </CardBody>
-            </Card>
-          ))}
-        </SimpleGrid>
+                  </Td>
+                  <Td>
+                    <Text
+                      fontWeight="normal"
+                      color={subTextColor}
+                      fontSize="sm"
+                    >
+                      {session.projects_count}
+                    </Text>
+                  </Td>
+                  <Td>
+                    <Text
+                      fontWeight="normal"
+                      color={subTextColor}
+                      fontSize="sm"
+                    >
+                      {new Date(session.created_at).toLocaleDateString()}
+                    </Text>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       )}
     </ScreenContainer>
   );

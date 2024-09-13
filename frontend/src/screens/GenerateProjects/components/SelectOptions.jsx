@@ -13,6 +13,7 @@ import {
   Text,
   useDisclosure,
   Badge,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { AddIcon, CheckIcon, EditIcon } from "@chakra-ui/icons";
 import React, { useRef, useState } from "react";
@@ -26,6 +27,7 @@ const SelectOptions = ({
   placeholder,
   isDisabled,
 }) => {
+  const bg = useColorModeValue("white", "gray.800");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [tempSelectedOptions, setTempSelectedOptions] = useState(
     selectedOptions || []
@@ -124,7 +126,7 @@ const SelectOptions = ({
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader position="sticky" top="0" bg="white" zIndex="1">
+          <ModalHeader position="sticky" top="0" bg={bg} zIndex="1">
             Select {label}
           </ModalHeader>
           <ModalCloseButton />
@@ -146,7 +148,7 @@ const SelectOptions = ({
                         ? "solid"
                         : "outline"
                     }
-                    colorScheme="primary"
+                    colorScheme="blue"
                     onClick={() => toggleOption(option)}
                   >
                     {option.label}
@@ -162,7 +164,7 @@ const SelectOptions = ({
             p={4}
             position="sticky"
             bottom="0"
-            bg="white"
+            bg={bg}
             zIndex="1"
             w="100%"
             gap={4}
@@ -176,7 +178,7 @@ const SelectOptions = ({
                 flex="1"
               />
               <Button
-                colorScheme="primary"
+                colorScheme="blue"
                 size="sm"
                 fontWeight="normal"
                 leftIcon={<AddIcon />}
@@ -187,7 +189,7 @@ const SelectOptions = ({
             </Flex>
 
             <Button
-              colorScheme="primary"
+              colorScheme="blue"
               size="sm"
               fontWeight="normal"
               leftIcon={<CheckIcon />}

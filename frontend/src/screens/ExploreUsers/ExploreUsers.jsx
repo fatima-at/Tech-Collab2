@@ -14,6 +14,7 @@ import {
   Center,
   SkeletonCircle,
   Skeleton,
+  Spinner,
 } from "@chakra-ui/react";
 import Slider from "react-slick";
 import { ScreenContainer, EmptyState, Loader } from "../../components";
@@ -139,7 +140,7 @@ const ExploreUsers = () => {
     <ScreenContainer>
       {/* Recommended Users Section */}
       <Box mb={6} position="relative">
-        <Heading as="h1" size="lg" mb={2} color={textColor}>
+        <Heading fontSize="2xl" fontWeight="bold" mb={2} color={textColor}>
           Recommended Users Based on Your Profile
         </Heading>
         <Text fontSize="md" color="gray.500" mb={4}>
@@ -160,50 +161,52 @@ const ExploreUsers = () => {
                     </VStack>
                   </Box>
                 ))
-            : recommendedUsers.map((user) => (
-                <Box key={user.id} p={3} cursor="pointer">
-                  <VStack
-                    bg={cardBg}
-                    borderRadius="md"
-                    boxShadow="md"
-                    transition="all 0.3s ease-in-out"
-                    _hover={{
-                      boxShadow: "lg",
-                      transform: "scale(1.05)",
-                      bg: cardHoverBg,
-                    }}
-                    onClick={() => handleUserClick(user)}
-                    p={5}
-                  >
-                    <Avatar
-                      name={user.name}
-                      src={user.profile_picture}
-                      size="md"
-                      border="2px solid"
-                      borderColor={avatarBorderColor}
-                    />
-                    <Text
-                      fontSize="md"
-                      fontWeight="bold"
-                      color={textColor}
-                      textAlign="center"
+            : recommendedUsers
+                ?.filter((user) => user.id !== authUser.id)
+                ?.map((user) => (
+                  <Box key={user.id} p={3} cursor="pointer">
+                    <VStack
+                      bg={cardBg}
+                      borderRadius="md"
+                      boxShadow="md"
+                      transition="all 0.3s ease-in-out"
+                      _hover={{
+                        boxShadow: "lg",
+                        transform: "scale(1.05)",
+                        bg: cardHoverBg,
+                      }}
+                      onClick={() => handleUserClick(user)}
+                      p={5}
                     >
-                      {user.name}
-                    </Text>
-                    <Text fontSize="sm" color="gray.500" textAlign="center">
-                      {user.general_field}
-                    </Text>
-                    <Text
-                      fontSize="xs"
-                      color={textColor}
-                      textAlign="center"
-                      noOfLines={2}
-                    >
-                      {user.bio ? user.bio : "No bio available"}
-                    </Text>
-                  </VStack>
-                </Box>
-              ))}
+                      <Avatar
+                        name={user.name}
+                        src={user.profile_picture}
+                        size="md"
+                        border="2px solid"
+                        borderColor={avatarBorderColor}
+                      />
+                      <Text
+                        fontSize="md"
+                        fontWeight="bold"
+                        color={textColor}
+                        textAlign="center"
+                      >
+                        {user.name}
+                      </Text>
+                      <Text fontSize="sm" color="gray.500" textAlign="center">
+                        {user.general_field}
+                      </Text>
+                      <Text
+                        fontSize="xs"
+                        color={textColor}
+                        textAlign="center"
+                        noOfLines={2}
+                      >
+                        {user.bio ? user.bio : "No bio available"}
+                      </Text>
+                    </VStack>
+                  </Box>
+                ))}
         </Slider>
       </Box>
 
@@ -236,7 +239,9 @@ const ExploreUsers = () => {
             </VStack>
           </Center>
         ) : usersLoading ? (
-          <Loader />
+          <Flex justifyContent="center" alignItems="center" mt={6}>
+            <Spinner size="lg" />
+          </Flex>
         ) : allUsers?.length === 0 ? (
           <EmptyState
             title="No users found"
@@ -244,52 +249,54 @@ const ExploreUsers = () => {
           />
         ) : (
           <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={4}>
-            {allUsers?.map((user) => (
-              <GridItem
-                key={user.id}
-                bg={cardBg}
-                p={3}
-                borderRadius="md"
-                boxShadow="md"
-                transition="all 0.3s ease-in-out"
-                _hover={{
-                  boxShadow: "lg",
-                  transform: "scale(1.05)",
-                  bg: cardHoverBg,
-                }}
-                onClick={() => handleUserClick(user)}
-                cursor="pointer"
-              >
-                <VStack align="center" spacing={2}>
-                  <Avatar
-                    name={user.name}
-                    src={user.profile_picture}
-                    size="md"
-                    border="2px solid"
-                    borderColor={avatarBorderColor}
-                  />
-                  <Text
-                    fontSize="md"
-                    fontWeight="bold"
-                    color={textColor}
-                    textAlign="center"
-                  >
-                    {user.name}
-                  </Text>
-                  <Text fontSize="sm" color="gray.500" textAlign="center">
-                    {user.general_field}
-                  </Text>
-                  <Text
-                    fontSize="xs"
-                    color={textColor}
-                    textAlign="center"
-                    noOfLines={2}
-                  >
-                    {user.bio ? user.bio : "No bio available"}
-                  </Text>
-                </VStack>
-              </GridItem>
-            ))}
+            {allUsers
+              ?.filter((user) => user.id !== authUser.id)
+              ?.map((user) => (
+                <GridItem
+                  key={user.id}
+                  bg={cardBg}
+                  p={3}
+                  borderRadius="md"
+                  boxShadow="md"
+                  transition="all 0.3s ease-in-out"
+                  _hover={{
+                    boxShadow: "lg",
+                    transform: "scale(1.05)",
+                    bg: cardHoverBg,
+                  }}
+                  onClick={() => handleUserClick(user)}
+                  cursor="pointer"
+                >
+                  <VStack align="center" spacing={2}>
+                    <Avatar
+                      name={user.name}
+                      src={user.profile_picture}
+                      size="md"
+                      border="2px solid"
+                      borderColor={avatarBorderColor}
+                    />
+                    <Text
+                      fontSize="md"
+                      fontWeight="bold"
+                      color={textColor}
+                      textAlign="center"
+                    >
+                      {user.name}
+                    </Text>
+                    <Text fontSize="sm" color="gray.500" textAlign="center">
+                      {user.general_field}
+                    </Text>
+                    <Text
+                      fontSize="xs"
+                      color={textColor}
+                      textAlign="center"
+                      noOfLines={2}
+                    >
+                      {user.bio ? user.bio : "No bio available"}
+                    </Text>
+                  </VStack>
+                </GridItem>
+              ))}
           </Grid>
         )}
       </Box>

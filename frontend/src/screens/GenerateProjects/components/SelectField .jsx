@@ -13,11 +13,14 @@ const SelectField = ({
     <FormLabel>{label}</FormLabel>
     <Select
       placeholder={placeholder}
-      value={value}
+      value={value || ""} // Ensure that value is set to an empty string when cleared
       onChange={(e) => {
-        // For single-select, set the value directly
+        // For single-select, find the selected option object and pass it
         if (!isMulti) {
-          onChange(e.target.value);
+          const selectedOption = options.find(
+            (option) => option.value === e.target.value
+          );
+          onChange(selectedOption || null); // Pass the entire object, or null if nothing is selected
         }
       }}
       multiple={isMulti}

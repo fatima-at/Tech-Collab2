@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./styles.css";
 import { EmptyState, Loader } from "../../components";
 import {
@@ -32,10 +32,12 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import SelectOptions from "./components/SelectOptions";
+import { FaRocket, FaSyncAlt } from "react-icons/fa";
 
 const GenerateProjects = () => {
   const cardBg = useColorModeValue("white", "gray.800");
-  const bg = useColorModeValue("gray.50", "gray.900");
+  const textColor = useColorModeValue("gray.800", "white");
+  const projectsBoxRef = useRef(null);
   const { authUser } = useAuth();
   const { sessionId: routeSessionId } = useParams();
   const now = new Date();
@@ -56,10 +58,10 @@ const GenerateProjects = () => {
     includeCV: true,
     selectedFocusAreaOptions: [],
     selectedToolsAndTechnologiesOptions: [],
-    selectedComplexityLevel: "",
-    selectedDuration: "",
-    selectedTeamSize: "",
-    selectedExpectedOutcome: "",
+    selectedComplexityLevel: {},
+    selectedDuration: {},
+    selectedTeamSize: {},
+    selectedExpectedOutcome: {},
     generatedProjects: [],
   });
 
@@ -158,14 +160,14 @@ const GenerateProjects = () => {
           focus_area: sessionData.selectedFocusAreaOptions.map(
             (option) => option.value
           ),
-          complexity_level: sessionData.selectedComplexityLevel,
+          complexity_level: sessionData.selectedComplexityLevel?.value,
           tools_and_technologies:
             sessionData.selectedToolsAndTechnologiesOptions.map(
               (option) => option.value
             ),
-          duration: sessionData.selectedDuration,
-          team_size: sessionData.selectedTeamSize,
-          expected_outcome: sessionData.selectedExpectedOutcome,
+          duration: sessionData.selectedDuration?.value,
+          team_size: sessionData.selectedTeamSize?.value,
+          expected_outcome: sessionData.selectedExpectedOutcome?.value,
         };
 
         const response = await createProjectSession(sessionPayload);
@@ -194,12 +196,39 @@ const GenerateProjects = () => {
           ...sessionData.generatedProjects,
           response.data,
         ]);
+        if (projectsBoxRef.current) {
+          projectsBoxRef.current.scrollTo({ top: 0, behavior: "smooth" });
+        }
       } else {
         toast.error(response.message);
       }
     } catch (error) {
       toast.error(error.message);
     }
+  };
+
+  const clearSessionData = () => {
+    setSessionData({
+      sessionId: "",
+      sessionTitle: `Session ${formattedDate}`,
+      includeCV: true,
+      selectedFocusAreaOptions: [],
+      selectedToolsAndTechnologiesOptions: [],
+      selectedComplexityLevel: {},
+      selectedDuration: {},
+      selectedTeamSize: {},
+      selectedExpectedOutcome: {},
+      generatedProjects: [],
+    });
+  };
+
+  // Function to remove sessionId and generated projects
+  const startNewSession = () => {
+    setSessionData((prevData) => ({
+      ...prevData,
+      sessionId: "",
+      generatedProjects: [],
+    }));
   };
 
   useEffect(() => {
@@ -254,10 +283,6 @@ const GenerateProjects = () => {
     fetchSessionData();
   }, [routeSessionId]);
 
-  useEffect(() => {
-    console.log(sessionData);
-  }, [sessionData]);
-
   return (
     <>
       {fetchingSessionDataLoading ? (
@@ -267,12 +292,12 @@ const GenerateProjects = () => {
           direction={{ base: "column", md: "row" }}
           gap={8}
           p={8}
-          backgroundColor={bg}
           width="100%"
+          overflowY="auto"
         >
           {/* Options Box */}
-          <Flex flexDir="column" gap={4} flex={1}>
-            <Heading as="h5" size="md" mb={6} color="#333">
+          <Flex flexDir="column" gap={6} flex={1}>
+            <Heading as="h5" size="md" color={textColor}>
               Customize Your Project Preferences
             </Heading>
             <Box
@@ -284,7 +309,7 @@ const GenerateProjects = () => {
             >
               <VStack spacing={4} align="stretch">
                 <Flex justify="space-between" align="center">
-                  <Text fontSize="md" color="#333" fontWeight={500}>
+                  <Text fontSize="md" color={textColor} fontWeight={500}>
                     Personalize Project with My CV
                   </Text>
                   <Switch
@@ -293,7 +318,7 @@ const GenerateProjects = () => {
                     onChange={() =>
                       updateSessionData("includeCV", !sessionData.includeCV)
                     }
-                    colorScheme="primary"
+                    colorScheme="blue"
                     isDisabled={sessionData.sessionId || loading}
                   />
                 </Flex>
@@ -311,22 +336,46 @@ const GenerateProjects = () => {
                 {renderSelectFields(sessionData, updateSessionData, loading)}
               </VStack>
             </Box>
-            <Button
-              colorScheme="primary"
-              size="lg"
-              width="full"
-              onClick={handleGenerateClick}
-              isLoading={loading}
-              loadingText="Generating..."
-              fontWeight="500"
-            >
-              Generate Projects
-            </Button>
+
+            <Flex gap={4}>
+              {/* Conditionally render Clear or Start New Session button */}
+              {sessionData.sessionId ? (
+                <Button
+                  leftIcon={<FaSyncAlt />}
+                  colorScheme="yellow"
+                  onClick={startNewSession}
+                  flex={1}
+                >
+                  Start New Session
+                </Button>
+              ) : (
+                <Button
+                  colorScheme="red"
+                  onClick={clearSessionData}
+                  isDisabled={loading}
+                  flex={1}
+                >
+                  Clear
+                </Button>
+              )}
+              <Button
+                colorScheme="blue"
+                size="md"
+                onClick={handleGenerateClick}
+                isLoading={loading}
+                loadingText="Generating..."
+                fontWeight="500"
+                leftIcon={<FaRocket />}
+                flex={1}
+              >
+                Generate Project
+              </Button>
+            </Flex>
           </Flex>
 
           {/* Projects Box */}
-          <Flex flexDir="column" gap={4} flex={2}>
-            <Heading as="h5" size="md" mb={6} color="#333">
+          <Flex flexDir="column" gap={6} flex={2}>
+            <Heading as="h5" size="md" color={textColor}>
               Generated Projects
             </Heading>
 
@@ -337,12 +386,16 @@ const GenerateProjects = () => {
               borderRadius="md"
               overflowY="auto"
               height="100%"
+              ref={projectsBoxRef}
             >
               {sessionData.generatedProjects.length > 0 ? (
                 <VStack spacing={4} align="stretch">
-                  {sessionData.generatedProjects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))}
+                  {sessionData.generatedProjects
+                    ?.slice()
+                    ?.reverse()
+                    ?.map((project) => (
+                      <ProjectCard key={project.id} project={project} />
+                    ))}
                 </VStack>
               ) : (
                 <EmptyState

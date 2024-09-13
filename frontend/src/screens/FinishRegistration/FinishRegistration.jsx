@@ -7,13 +7,13 @@ import { useAuth } from "../../context";
 
 const FinishRegistration = () => {
   const { authUser } = useAuth();
-  console.log(authUser);
   const [currentStep, setCurrentStep] = useState(authUser?.vector_id ? 2 : 1);
   const [formInputs, setFormInputs] = useState({
     bio: "",
     generalField: "",
     otherGeneralField: "",
     skills: [],
+    linkedinProfileLink: "",
   });
 
   const handleInputChange = (e) => {

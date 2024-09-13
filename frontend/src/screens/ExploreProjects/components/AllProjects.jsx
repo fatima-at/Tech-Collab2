@@ -11,6 +11,7 @@ import {
   MenuList,
   Text,
   Spinner,
+  Heading,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { categoryGroups } from "../../../constants/projectsCategories";
@@ -34,7 +35,6 @@ const AllProjects = ({ textColor, handleProjectClick }) => {
 
     // Check if the data is already cached
     if (cache[cacheKey]) {
-      console.log("Returning cached data for:", cacheKey);
       setProjects((prevProjects) => [
         ...prevProjects,
         ...cache[cacheKey], // Use cached data
@@ -100,9 +100,7 @@ const AllProjects = ({ textColor, handleProjectClick }) => {
 
         // Check if the user is near the bottom of the screen-container div
         if (scrollTop + containerHeight + 50 >= scrollHeight) {
-          console.log("Reached near bottom of the screen-container");
           if (!loading && hasMore) {
-            console.log("Fetching more projects...");
             setPage((prevPage) => {
               const nextPage = prevPage + 1;
               fetchProjects(selectedCategory, debouncedSearchQuery, nextPage); // Fetch with the correct page
@@ -135,9 +133,9 @@ const AllProjects = ({ textColor, handleProjectClick }) => {
 
   return (
     <Box mb={6}>
-      <Text fontSize="2xl" fontWeight="bold" mb={4} color={textColor}>
-        All Projects
-      </Text>
+      <Heading fontSize="2xl" fontWeight="bold" mb={2} color={textColor}>
+        Browse All Available Projects
+      </Heading>
 
       {/* Search Bar and Category Filter */}
       <Flex justifyContent="center" alignItems="center" mb={6} gap={4}>

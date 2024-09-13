@@ -21,6 +21,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalFooter,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaLinkedin, FaPlus } from "react-icons/fa";
 import { useAuth } from "../../context";
@@ -30,6 +31,13 @@ import { EditIcon } from "@chakra-ui/icons";
 import AddProjectModal from "./components/AddProjectModal";
 
 const Profile = () => {
+  const bgGradient = useColorModeValue(
+    "linear(to-br, gray.50, gray.100)",
+    "linear(to-br, gray.700, gray.900)"
+  );
+  const cardBg = useColorModeValue("white", "gray.800");
+  const projectTitleColor = useColorModeValue("gray.800", "white");
+  const projectBg = useColorModeValue("gray.50", "gray.900");
   const { authUser, setAuthUser } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -97,9 +105,10 @@ const Profile = () => {
       skills: updatedSkills,
     }));
   };
+  console.log(authUser.following);
 
   return (
-    <Box bg="#EDEDED" w="100%" minH="100vh" py={8} px={{ base: 4, md: 8 }}>
+    <Box bg={bgGradient} w="100%" minH="100vh" py={8} px={{ base: 4, md: 8 }}>
       <Grid
         templateColumns={{ base: "1fr", md: "1fr 2fr" }}
         gap={8}
@@ -109,7 +118,7 @@ const Profile = () => {
         {/* User Info */}
         <GridItem>
           <Box
-            bg="white"
+            bg={cardBg}
             borderRadius="lg"
             boxShadow="lg"
             p={6}
@@ -171,9 +180,13 @@ const Profile = () => {
         <GridItem>
           <VStack spacing={6} align="stretch">
             {/* Skills Section */}
-            <Box bg="white" p={6} borderRadius="lg" boxShadow="lg">
+            <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="lg">
               <Flex justify="space-between" alignItems="center">
-                <Heading fontSize="lg" fontWeight="bold" color="gray.800">
+                <Heading
+                  fontSize="lg"
+                  fontWeight="bold"
+                  color={projectTitleColor}
+                >
                   Skills
                 </Heading>
                 <Button
@@ -215,12 +228,12 @@ const Profile = () => {
             </Box>
 
             {/* Projects Section */}
-            <Box bg="white" p={6} borderRadius="lg" boxShadow="lg">
+            <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="lg">
               <Flex justify="space-between" alignItems="center">
                 <Heading
                   fontSize="lg"
                   fontWeight="bold"
-                  color="gray.800"
+                  color={projectTitleColor}
                   mb={4}
                 >
                   Projects ({authUser?.user_projects?.length || 0})
@@ -232,7 +245,7 @@ const Profile = () => {
                   borderRadius="md" // Slightly rounded corners for a clean look
                   size="md" // Medium size, not too large
                   fontWeight="medium" // Clean, modern font weight
-                  _hover={{ bg: "blue.600", color: "white" }} // Simple hover effect for interactivity
+                  _hover={{ bg: "blue.600", color: { cardBg } }} // Simple hover effect for interactivity
                   px={6} // Padding to give it a balanced look without being too large
                 >
                   Add Project
@@ -244,7 +257,7 @@ const Profile = () => {
                     <Box
                       key={project.id}
                       w="100%"
-                      bg="gray.50"
+                      bg={projectBg}
                       p={6}
                       borderRadius="lg"
                       boxShadow="lg"
@@ -252,7 +265,11 @@ const Profile = () => {
                       _hover={{ transform: "scale(1.02)" }}
                     >
                       <VStack align="start" spacing={3}>
-                        <Text fontSize="xl" fontWeight="600" color="gray.800">
+                        <Text
+                          fontSize="xl"
+                          fontWeight="600"
+                          color={projectTitleColor}
+                        >
                           {project.title}
                         </Text>
                         <Text fontSize="md" fontWeight="400" color="gray.500">

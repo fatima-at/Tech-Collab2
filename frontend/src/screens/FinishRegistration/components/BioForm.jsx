@@ -95,6 +95,18 @@ const BioForm = ({ formInputs, handleInputChange, setCurrentStep }) => {
               />
             )}
 
+            <Input
+              placeholder="LinkedIn profile link"
+              value={formInputs.linkedinProfileLink}
+              onChange={handleInputChange}
+              size="md"
+              bg={inputBg}
+              focusBorderColor="blue.400"
+              borderRadius="md"
+              name="linkedinProfileLink"
+              type="url"
+            />
+
             {/* Next Button */}
             <Button
               type="submit"

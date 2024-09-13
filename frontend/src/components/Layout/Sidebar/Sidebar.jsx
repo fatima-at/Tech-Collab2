@@ -1,5 +1,14 @@
 import React from "react";
-import "./styles.css";
+import {
+  Box,
+  Button,
+  Flex,
+  Icon,
+  Image,
+  Text,
+  useColorModeValue,
+  VStack,
+} from "@chakra-ui/react";
 import {
   faBookmark,
   faCodeBranch,
@@ -11,8 +20,7 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Text from "../../UI/Text";
-import { logo } from "../../../assets";
+import { logoEmblem } from "../../../assets";
 import {
   EXPLORE_PROJECTS_ROUTE,
   EXPLORE_USERS_ROUTE,
@@ -23,7 +31,6 @@ import {
   SESSIONS_HISTORY_ROUTE,
 } from "../../../constants/routes";
 import { useLocation, useNavigate } from "react-router-dom";
-import { primaryColor } from "../../../constants/colors";
 import { useModal } from "../../../hooks";
 import { logout } from "../../../services/AuthApi";
 import { toast } from "react-toastify";
@@ -36,12 +43,9 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { checkAuthentication } = useAuth();
   const { openModal, closeModal, isModalOpened } = useModal();
+
   const sidebarButtons = [
-    {
-      name: "Explore Users",
-      logo: faUsers,
-      route: EXPLORE_USERS_ROUTE,
-    },
+    { name: "Explore Users", logo: faUsers, route: EXPLORE_USERS_ROUTE },
     {
       name: "Explore Projects",
       logo: faLightbulb,
@@ -62,11 +66,7 @@ const Sidebar = () => {
       logo: faHistory,
       route: SESSIONS_HISTORY_ROUTE,
     },
-    {
-      name: "Saved Projects",
-      logo: faBookmark,
-      route: SAVED_PROJECTS_ROUTE,
-    },
+    { name: "Saved Projects", logo: faBookmark, route: SAVED_PROJECTS_ROUTE },
   ];
 
   const handleLogout = async () => {
@@ -83,93 +83,96 @@ const Sidebar = () => {
     }
   };
 
+  const primaryColor = useColorModeValue("blue.500", "blue.200");
+  const sidebarBg = useColorModeValue("#F8F8F8", "gray.800");
+  const iconColor = useColorModeValue("black", "white");
+  const activeButtonColor = useColorModeValue("white", "gray.700");
+
   return (
-    <div className="sidebar">
+    <Box
+      w="250px"
+      h="100vh"
+      bg={sidebarBg}
+      boxShadow="lg"
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
+    >
+      {/* Logout Popup */}
       <LogoutPopup
         isOpen={isModalOpened}
         onClose={closeModal}
         primaryButtonText="Logout"
         handleSubmit={handleLogout}
       />
-      <div className="sidebar-header">
-        <img src={logo} alt="" />
-        <Text type="h6" color="black">
+
+      {/* Sidebar Header */}
+      <Flex direction="column" align="center" py={6}>
+        <Image src={logoEmblem} alt="Logo" boxSize="50px" mb={2} />
+        <Text fontSize="xl" fontWeight="bold">
           Tech-Collab
         </Text>
-      </div>
-      <div className="sidebar-body">
+      </Flex>
+
+      {/* Sidebar Buttons */}
+      <VStack spacing={4} align="stretch" px={4}>
         {sidebarButtons.map((button) => (
-          <button
-            className="sidebar-button"
-            style={
-              location.pathname.includes(button.route)
-                ? {
-                    backgroundColor: primaryColor,
-                  }
-                : {}
-            }
-            onClick={() => {
-              navigate(`/${button.route}`);
-            }}
+          <Button
             key={button.name}
+            leftIcon={<Icon as={FontAwesomeIcon} icon={button.logo} />}
+            bg={
+              location.pathname.includes(button.route)
+                ? primaryColor
+                : "transparent"
+            }
+            color={
+              location.pathname.includes(button.route)
+                ? activeButtonColor
+                : iconColor
+            }
+            justifyContent="flex-start"
+            variant="solid"
+            _hover={{ bg: primaryColor, color: activeButtonColor }}
+            onClick={() => navigate(`/${button.route}`)}
           >
-            <FontAwesomeIcon
-              icon={button.logo}
-              style={{
-                color: location.pathname.includes(button.route)
-                  ? "white"
-                  : "black",
-              }}
-            />
-            <Text
-              type="p"
-              color={
-                location.pathname.includes(button.route) ? "white" : "black"
-              }
-            >
-              {button.name}
-            </Text>
-          </button>
+            {button.name}
+          </Button>
         ))}
-      </div>
-      <div className="sidebar-footer">
-        <button
-          className="sidebar-button"
-          style={
+      </VStack>
+
+      {/* Sidebar Footer */}
+      <VStack spacing={4} align="stretch" px={4} mb={6}>
+        <Button
+          leftIcon={<Icon as={FontAwesomeIcon} icon={faUser} />}
+          bg={
             location.pathname.includes(PROFILE_ROUTE)
-              ? {
-                  backgroundColor: primaryColor,
-                  color: "white",
-                }
-              : {}
+              ? primaryColor
+              : "transparent"
           }
+          color={
+            location.pathname.includes(PROFILE_ROUTE)
+              ? activeButtonColor
+              : iconColor
+          }
+          justifyContent="flex-start"
+          _hover={{ bg: primaryColor, color: activeButtonColor }}
           onClick={() => navigate(`/${PROFILE_ROUTE}`)}
         >
-          <FontAwesomeIcon
-            icon={faUser}
-            style={{
-              color: location.pathname.includes(PROFILE_ROUTE)
-                ? "white"
-                : "black",
-            }}
-          />
-          <Text
-            type="p"
-            color={
-              location.pathname.includes(PROFILE_ROUTE) ? "white" : "black"
-            }
-          >
-            Your Profile
-          </Text>
-        </button>
-        <button className="sidebar-button" onClick={openModal}>
-          <FontAwesomeIcon icon={faSignOut} color="black" />
-          <Text type="p" color="black">
-            Logout
-          </Text>
-        </button>
-      </div>
-    </div>
+          Your Profile
+        </Button>
+        <Button
+          leftIcon={<Icon as={FontAwesomeIcon} icon={faSignOut} />}
+          justifyContent="flex-start"
+          variant="solid"
+          bg="transparent"
+          color={iconColor}
+          _hover={{ bg: primaryColor, color: activeButtonColor }}
+          onClick={openModal}
+        >
+          Logout
+        </Button>
+      </VStack>
+    </Box>
   );
 };
 

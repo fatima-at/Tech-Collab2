@@ -65,11 +65,6 @@ const CVForm = ({ setCurrentStep, setFormInputs }) => {
             skills: responseData?.data?.skills || [],
           };
         });
-        console.log(
-          responseData.data,
-          JSON.stringify(responseData.data),
-          responseData
-        );
         localStorage.setItem("vector_data", JSON.stringify(responseData.data));
         setCurrentStep(2);
         toast.success(responseData.message);
