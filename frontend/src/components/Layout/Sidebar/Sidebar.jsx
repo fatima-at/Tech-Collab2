@@ -20,7 +20,7 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { logoEmblem } from "../../../assets";
+import { logoEmblem as darkLogoEmblem, whiteLogoEmblem } from "../../../assets";
 import {
   EXPLORE_PROJECTS_ROUTE,
   EXPLORE_USERS_ROUTE,
@@ -87,6 +87,7 @@ const Sidebar = () => {
   const sidebarBg = useColorModeValue("#F8F8F8", "gray.800");
   const iconColor = useColorModeValue("black", "white");
   const activeButtonColor = useColorModeValue("white", "gray.700");
+  const logoEmblem = useColorModeValue(darkLogoEmblem, whiteLogoEmblem);
 
   return (
     <Box

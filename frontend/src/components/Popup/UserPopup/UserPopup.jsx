@@ -97,10 +97,6 @@ export const UserPopup = ({
     if (selectedUser?.id) fetchSelectedUser(); // Fetch the selected user when the component mounts
   }, [selectedUser?.id]);
 
-  useEffect(() => {
-    console.log(authUser);
-  }, [authUser]);
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="2xl">
       <ModalOverlay />

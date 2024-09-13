@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import {
   Box,
   Text,
@@ -66,115 +67,122 @@ const ProjectCard = ({ project }) => {
   };
 
   return (
-    <Box
-      w="100%"
-      p={6}
-      borderRadius="md"
-      bg={bgColor}
-      color={textColor}
-      display="flex"
-      flexDirection="column"
-      boxShadow="md"
-      position="relative" // Added for absolute positioning of the bookmark button
-      _hover={{ boxShadow: "lg" }}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }} // Initial animation state
+      animate={{ opacity: 1, y: 0 }} // Final state after appearing
+      exit={{ opacity: 0, y: -20 }} // State when the card is removed (if applicable)
+      transition={{ duration: 0.5 }} // Animation duration
     >
-      {/* Bookmark Button at the top right */}
-      <IconButton
-        aria-label="Bookmark project"
-        icon={loading ? <Spinner size="sm" /> : <FaBookmark />}
-        variant={isBookmarked ? "solid" : "outline"}
-        colorScheme="yellow"
-        onClick={handleBookmarkToggle}
-        position="absolute"
-        top={4}
-        right={4}
-        isLoading={loading} // Loading state
-      />
+      <Box
+        w="100%"
+        p={6}
+        borderRadius="md"
+        bg={bgColor}
+        color={textColor}
+        display="flex"
+        flexDirection="column"
+        boxShadow="md"
+        position="relative" // Added for absolute positioning of the bookmark button
+        _hover={{ boxShadow: "lg" }}
+      >
+        {/* Bookmark Button at the top right */}
+        <IconButton
+          aria-label="Bookmark project"
+          icon={loading ? <Spinner size="sm" /> : <FaBookmark />}
+          variant={isBookmarked ? "solid" : "outline"}
+          colorScheme="yellow"
+          onClick={handleBookmarkToggle}
+          position="absolute"
+          top={4}
+          right={4}
+          isLoading={loading} // Loading state
+        />
 
-      <Stack spacing={4} mb={4}>
-        <Text fontSize="lg" fontWeight="bold">
-          {project.title}
-        </Text>
-        <Text fontSize="sm" color="gray.500">
-          {`Created at: ${new Date().toLocaleDateString()}`}
-        </Text>
-        <Text fontSize="md" color="gray.600">
-          {project.project_description}
-        </Text>
-      </Stack>
-
-      <Divider my={4} borderColor="gray.500" />
-
-      {/* Display project steps */}
-      {projectSteps.length > 0 && (
-        <VStack align="start" spacing={2} mb={4}>
-          <Text fontSize="md" fontWeight="bold">
-            Steps:
+        <Stack spacing={4} mb={4}>
+          <Text fontSize="lg" fontWeight="bold">
+            {project.title}
           </Text>
-          <OrderedList spacing={1} pl={4}>
-            {projectSteps.map((step, index) => (
-              <ListItem key={index} fontSize="sm">
-                {step}
-              </ListItem>
-            ))}
-          </OrderedList>
-        </VStack>
-      )}
-
-      <Divider my={4} borderColor="gray.500" />
-
-      {/* Display project requirements */}
-      {projectRequirements.length > 0 && (
-        <VStack align="start" spacing={2} mb={4}>
-          <Text fontSize="md" fontWeight="bold">
-            Requirements:
+          <Text fontSize="sm" color="gray.500">
+            {`Created at: ${new Date().toLocaleDateString()}`}
           </Text>
-          <UnorderedList spacing={1} pl={4}>
-            {projectRequirements.map((requirement, index) => (
-              <ListItem key={index} fontSize="sm">
-                {requirement}
-              </ListItem>
-            ))}
-          </UnorderedList>
-        </VStack>
-      )}
-
-      <Divider my={4} borderColor="gray.500" />
-
-      {/* Display project tips */}
-      {projectTips.length > 0 && (
-        <VStack align="start" spacing={2} mb={4}>
-          <Text fontSize="md" fontWeight="bold">
-            Tips:
+          <Text fontSize="md" color="gray.600">
+            {project.project_description}
           </Text>
-          <UnorderedList spacing={1} pl={4}>
-            {projectTips.map((tip, index) => (
-              <ListItem key={index} fontSize="sm">
-                {tip}
-              </ListItem>
-            ))}
-          </UnorderedList>
-        </VStack>
-      )}
+        </Stack>
 
-      <Divider my={4} borderColor="gray.500" />
+        <Divider my={4} borderColor="gray.500" />
 
-      {/* Display project applications */}
-      {projectApplications.length > 0 && (
-        <VStack align="start" spacing={2} mb={4}>
-          <Text fontSize="md" fontWeight="bold">
-            Applications:
-          </Text>
-          <UnorderedList spacing={1} pl={4}>
-            {projectApplications.map((application, index) => (
-              <ListItem key={index} fontSize="sm">
-                {application}
-              </ListItem>
-            ))}
-          </UnorderedList>
-        </VStack>
-      )}
-    </Box>
+        {/* Display project steps */}
+        {projectSteps.length > 0 && (
+          <VStack align="start" spacing={2} mb={4}>
+            <Text fontSize="md" fontWeight="bold">
+              Steps:
+            </Text>
+            <OrderedList spacing={1} pl={4}>
+              {projectSteps.map((step, index) => (
+                <ListItem key={index} fontSize="sm">
+                  {step}
+                </ListItem>
+              ))}
+            </OrderedList>
+          </VStack>
+        )}
+
+        <Divider my={4} borderColor="gray.500" />
+
+        {/* Display project requirements */}
+        {projectRequirements.length > 0 && (
+          <VStack align="start" spacing={2} mb={4}>
+            <Text fontSize="md" fontWeight="bold">
+              Requirements:
+            </Text>
+            <UnorderedList spacing={1} pl={4}>
+              {projectRequirements.map((requirement, index) => (
+                <ListItem key={index} fontSize="sm">
+                  {requirement}
+                </ListItem>
+              ))}
+            </UnorderedList>
+          </VStack>
+        )}
+
+        <Divider my={4} borderColor="gray.500" />
+
+        {/* Display project tips */}
+        {projectTips.length > 0 && (
+          <VStack align="start" spacing={2} mb={4}>
+            <Text fontSize="md" fontWeight="bold">
+              Tips:
+            </Text>
+            <UnorderedList spacing={1} pl={4}>
+              {projectTips.map((tip, index) => (
+                <ListItem key={index} fontSize="sm">
+                  {tip}
+                </ListItem>
+              ))}
+            </UnorderedList>
+          </VStack>
+        )}
+
+        <Divider my={4} borderColor="gray.500" />
+
+        {/* Display project applications */}
+        {projectApplications.length > 0 && (
+          <VStack align="start" spacing={2} mb={4}>
+            <Text fontSize="md" fontWeight="bold">
+              Applications:
+            </Text>
+            <UnorderedList spacing={1} pl={4}>
+              {projectApplications.map((application, index) => (
+                <ListItem key={index} fontSize="sm">
+                  {application}
+                </ListItem>
+              ))}
+            </UnorderedList>
+          </VStack>
+        )}
+      </Box>
+    </motion.div>
   );
 };
 

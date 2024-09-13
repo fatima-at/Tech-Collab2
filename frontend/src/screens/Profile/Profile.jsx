@@ -105,7 +105,6 @@ const Profile = () => {
       skills: updatedSkills,
     }));
   };
-  console.log(authUser.following);
 
   return (
     <Box bg={bgGradient} w="100%" minH="100vh" py={8} px={{ base: 4, md: 8 }}>
