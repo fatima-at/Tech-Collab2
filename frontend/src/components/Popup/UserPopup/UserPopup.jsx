@@ -58,17 +58,17 @@ export const UserPopup = ({
       let updatedAuthUser;
       if (
         authUser.following?.some(
-          (followingUser) => followingUser.id === selectedUser.id
+          (followingUser) => followingUser.id === selectedUser?.id
         )
       ) {
         // Unfollow the user
         const response = await unfollowUser(body);
         if (response.status) {
-          // Update authUser's following array by removing the selectedUser's ID
+          // Update authUser's following array by removing the ?'s ID
           updatedAuthUser = {
             ...authUser,
             following: authUser.following.filter(
-              (followee) => followee.id !== selectedUser.id
+              (followee) => followee.id !== selectedUser?.id
             ),
           };
         }
@@ -113,7 +113,7 @@ export const UserPopup = ({
               onClick={handleFollowToggle}
               colorScheme={
                 authUser.following?.some(
-                  (followingUser) => followingUser.id === selectedUser.id
+                  (followingUser) => followingUser?.id === selectedUser?.id
                 )
                   ? "red"
                   : "blue"
@@ -128,7 +128,7 @@ export const UserPopup = ({
               px={4}
             >
               {authUser.following?.some(
-                (followingUser) => followingUser.id === selectedUser.id
+                (followingUser) => followingUser?.id === selectedUser?.id
               )
                 ? "Unfollow"
                 : "Follow"}
@@ -155,7 +155,7 @@ export const UserPopup = ({
                 </Text>
                 {/* LinkedIn Button */}
                 {selectedUser?.linkedin_profile && (
-                  <Link href={selectedUser.linkedin_profile} isExternal>
+                  <Link href={selectedUser?.linkedin_profile} isExternal>
                     <Button
                       leftIcon={<FaLinkedin />}
                       colorScheme="linkedin"
