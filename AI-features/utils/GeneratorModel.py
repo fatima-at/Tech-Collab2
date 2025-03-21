@@ -15,13 +15,13 @@ except Exception as e:
 class GeneratorModel:
     def __init__(self):
         try:
-            self.model = genai.GenerativeModel("gemini-pro", generation_config={"response_mime_type": "application/json"})
+            self.model = genai.GenerativeModel("gemini-2.0-flash", generation_config={"response_mime_type": "application/json"})
             google_api_key = 'AIzaSyCxHZzWgfpgT91e-ReTrqioroVenes4Ato'
             genai.configure(api_key=google_api_key)
 
             # This will automatically load any previously saved collections.
-            persist_directory_projects = r'data\vector_db'
-            persist_directory_students = r'data\vector_db_2'
+            persist_directory_projects = r'data/vector_db'
+            persist_directory_students = r'data/vector_db_2'
             self.client_projects = chromadb.PersistentClient(path=persist_directory_projects)
             self.client_students = chromadb.PersistentClient(path=persist_directory_students)
 

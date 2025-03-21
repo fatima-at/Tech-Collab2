@@ -7,7 +7,7 @@ from IPython.display import Markdown
 google_api_key = 'AIzaSyDRqbzZeq1PU_7zBMDFZ0RSjyaHGMVlpgc'
 genai.configure(api_key= google_api_key)
 
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 def get_completion(prompt, temp = 0.9):
     response = model.generate_content(
