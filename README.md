@@ -1,13 +1,13 @@
 # 🛠️ Tech Collab – Full Stack Project Setup Guide
 
-This guide will help you run everything **locally** on your computer – whether you're using **macOS** or **Windows**.
+This guide will help you run everything **locally** on your computer
 
 ---
 
 ## 📁 Project Structure
 
 ```
-tech-collab/
+Tech-Collab/
 │
 ├── frontend/         # React JS app
 ├── backend/          # Laravel API
