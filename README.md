@@ -155,9 +155,8 @@ React app should now be available at:
 ### 4️⃣ Setup the AI API (FastAPI)
 
 ```bash
-cd ../AI-features
-pip install -r requirements.txt
-python main.py
+pip install -r AI-features/requirements.txt
+python AI-features/main.py
 ```
 
 This will run the AI server at:  
@@ -171,7 +170,7 @@ This will run the AI server at:
 |------------|-----------------------------|--------------------------------|
 | Laravel    | http://localhost:8000       | `php artisan serve`           |
 | React JS   | http://localhost:5173       | `npm run dev`                 |
-| FastAPI    | http://localhost:8001       | `python main.py`              |
+| FastAPI    | http://localhost:8001       | `python AI-features/main.py`  |
 
 ---
 
