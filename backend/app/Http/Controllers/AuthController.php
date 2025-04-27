@@ -25,7 +25,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
-
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -33,19 +33,29 @@ class AuthController extends Controller
             'email_verified' => false,
             'registration_completed' => false,
         ]);
-
+    
         $verificationToken = JWTAuth::fromUser($user);
-
-        Mail::send('emails.verify', ['user' => $user, 'token' => $verificationToken], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Verify your email address');
-        });
-
+    
+        // Generate the verification link
+        $verificationLink = env('FRONTEND_URL') . '/verify-email?token=' . $verificationToken;
+    
+        try {
+            Mail::send('emails.verify', ['user' => $user, 'token' => $verificationToken], function ($message) use ($user) {
+                $message->to($user->email);
+                $message->subject('Verify your email address');
+            });
+        } catch (\Exception $e) {
+            // Log the error, but don't interrupt the registration process
+            \Log::error('Failed to send verification email: ' . $e->getMessage());
+        }
+        
+    
         return response()->json([
             'message' => 'User registered successfully. Please check your email for verification.',
-            'status' => true
+            'status' => true,
+            'verification_link' => $verificationLink, 
         ], 201);
-    }
+    }    
 
     public function verifyEmail(Request $request)
     {

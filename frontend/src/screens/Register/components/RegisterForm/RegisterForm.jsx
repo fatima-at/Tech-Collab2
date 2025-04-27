@@ -66,6 +66,7 @@ const RegisterForm = ({ setDidSubmit }) => {
     try {
       const response = await signUp(body);
       if (response.status) {
+        console.log(response.verification_link);
         toast.success(response.message);
         setDidSubmit(true);
       } else {
