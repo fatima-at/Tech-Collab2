@@ -154,7 +154,11 @@ class GeneratorModel:
 
     def add_student_to_DB(self, resume_dict):
         try:
-            student_ID = self.students_collection.count() + 1
+            existing_ids = self.students_collection.get()['ids']
+            existing_numeric_ids = [int(i) for i in existing_ids if i.isdigit()]
+            max_existing_id = max(existing_numeric_ids, default=0)
+            student_ID = max_existing_id + 1
+
             resume_json = json.dumps(resume_dict)
             self.students_collection.add(documents=[resume_json], 
                                         ids=[str(student_ID)])

@@ -141,10 +141,12 @@ async def Add_student_to_DB(pdf_b64: str = Form()):
         student_ID = GeneratorModel_1.add_student_to_DB(resume_json)
         skills = resume_json.get('skills', [])  # Extract skills from resume_json
         summary = resume_json.get('summary', "")  # Extract skills from resume_json
+        projects = resume_json.get('projects', [])
         response_data = {
             "student_ID": student_ID,
             "skills": skills,
-            "summary": summary
+            "summary": summary,
+            "projects": projects
         }
         return JSONResponse(content=response_data, status_code=200)
 

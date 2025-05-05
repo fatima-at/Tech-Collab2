@@ -422,7 +422,15 @@ def initialize_students_DB(resumes_folder_path, embedding_function):
     save_resumes_in_text_file(resumes_json_list, file_path='resumes_json.txt')
     
     # Create corresponding unique IDs and metadata
-    all_ids = [str(i) for i in range(len(resumes_json_list))]
+    existing_ids = students_collection.get()['ids']
+    existing_numeric_ids = [int(i) for i in existing_ids if i.isdigit()]
+    print(f"Number of existing vector IDs: {len(existing_numeric_ids)}")
+
+    max_existing_id = max(existing_numeric_ids, default=-1)
+    print(f"Max existing vector ID: {max_existing_id}")
+
+    start_id = max_existing_id + 1
+    all_ids = [str(i) for i in range(start_id, start_id + len(resumes_json_list))]
 
     # Add the flattened list to the collection
     students_collection.add(

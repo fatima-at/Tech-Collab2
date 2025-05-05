@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\backend\\app",
+    "\\backend\\app\\Models",
+    "\\backend\\docs",
+    "\\backend\\routes",
+    "\\frontend",
+    "\\frontend\\src",
+    "\\frontend\\src\\screens",
+    "\\frontend\\src\\screens\\Profile",
+    "\\frontend\\src\\screens\\Profile\\components",
+    "\\myenv"
+  ],
+  "SelectedNode": "\\frontend\\yarn.lock",
+  "PreviewInSolutionExplorer": false
+}
